@@ -37,3 +37,79 @@ applied-time-series-econometrics/
 ├── figures/
 │
 └── README.md
+```
+
+## Current Projects
+
+### Box–Jenkins Methodology and Seasonal Adjustment
+
+Comparative forecasting analysis using:
+
+- SARIMA models estimated on original macroeconomic series
+- ARMA models estimated on seasonally adjusted series
+- X-13 seasonal adjustment procedure
+- Out-of-sample forecast evaluation
+
+Analyzed variables include:
+
+- Private consumption
+- Exports
+- Gross fixed investment
+- Gross domestic product (GDP)
+
+---
+
+## Tools and Libraries
+
+### Language
+
+- R
+
+### Main Packages
+
+- forecast
+- seasonal
+- tseries
+- ggplot2
+- readxl
+- dplyr
+
+---
+
+## Methodological Approach
+
+The repository follows a reproducible econometric workflow based on:
+
+1. Exploratory analysis of time series
+2. ACF and PACF diagnostics
+3. Model identification
+4. Estimation and validation
+5. Residual diagnostics
+6. Forecast generation
+7. Out-of-sample evaluation
+
+Forecast accuracy is evaluated using metrics such as:
+
+- RMSE
+- MAE
+- MAPE
+- Theil’s U
+
+---
+
+## Academic Context
+
+Projects developed as part of graduate coursework in:
+
+- Applied Econometrics
+- Time Series Analysis
+- Forecasting Methods
+- Applied Macroeconomics
+
+Faculty of Economic Sciences — Universidad de Buenos Aires (UBA)
+
+---
+
+## License
+
+This repository is released under the MIT License.
