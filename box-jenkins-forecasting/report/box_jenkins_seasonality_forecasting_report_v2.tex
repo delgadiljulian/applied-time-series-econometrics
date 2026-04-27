@@ -1,0 +1,784 @@
+\documentclass[12pt,a4paper]{article}
+
+% =========================
+% PAQUETES
+% =========================
+\usepackage[spanish, es-nodecimaldot]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[a4paper, margin=2.5cm]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage[backend=biber,style=apa]{biblatex}
+\addbibresource{referencias.bib}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+
+% =========================
+% CONFIGURACIÓN GENERAL
+% =========================
+\onehalfspacing
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black,
+	urlcolor=blue,
+	citecolor=black
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Trabajo Práctico N.\textdegree 1}
+%\fancyhead[R]{Series de Tiempo II}
+\fancyfoot[C]{\thepage}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+
+% =========================
+% DOCUMENTO
+% =========================
+\begin{document}
+	
+	% =========================
+	% PORTADA
+	% =========================
+	\begin{titlepage}
+		\centering
+		
+		{\large Universidad de Buenos Aires \par}
+		\vspace{0.3cm}
+		{\large Maestría en Economía Aplicada \par}
+		\vspace{0.3cm}
+		{\large Facultad de Ciencias Económicas \par}
+		
+		\vspace{2.0cm}
+		
+		{\Large \textbf{Trabajo Práctico N.\textdegree 1} \par}
+		\vspace{0.5cm}
+		{\large \textbf{Series de Tiempo II} \par}
+		
+		\vspace{1.5cm}
+		
+		{\Large \textbf{Metodología Box-Jenkins aplicada a series con y sin desestacionalización: evidencia para series trimestrales de cuentas nacionales} \par}
+		
+		\vspace{2cm}
+		
+		\begin{flushleft}
+			\textbf{Integrantes:} \\
+			Christian Arias \\
+			Leonardo Ávila \\
+			Andrea Chasi \\
+			Julián Delgadillo
+			
+			\vspace{0.8cm}
+			
+			\textbf{Docente:} \\
+			Julio Eduardo Fabris
+			
+			\vspace{0.8cm}
+			
+			\textbf{Fecha de entrega:} \\
+			27 de abril de 2026
+		\end{flushleft}
+		
+		\vfill
+		
+		%{\large Abril 2026 \par}
+	\end{titlepage}
+	
+	% =========================
+	% RESUMEN
+	% =========================
+	\section*{Resumen}
+	
+	El presente trabajo evalúa el desempeño predictivo de dos estrategias de modelización aplicadas a series trimestrales de cuentas nacionales expresadas en diferencias logarítmicas: por un lado, la estimación directa de modelos con componentes estacionales sobre las series originales y, por otro, la desestacionalización previa mediante el algoritmo X-13 seguida de la estimación de modelos ARMA sobre las series ajustadas. El análisis se realiza para cuatro variables macroeconómicas: consumo privado, exportaciones, inversión bruta fija y producto interno bruto. La muestra de estimación comprende el período 2004T2--2023T4, mientras que el horizonte de evaluación fuera de muestra corresponde a 2024T1--2025T4. Los resultados se comparan a partir de métricas de error de pronóstico, con el fin de determinar cuál de las dos estrategias ofrece un mejor desempeño predictivo en cada serie y en el conjunto del ejercicio empírico.
+	
+	\vspace{1em}
+	\textbf{Palabras clave:} Box-Jenkins, ARMA, SARIMA, desestacionalización, X-13, pronóstico.
+	
+	\newpage
+	
+	% =========================
+	% INTRODUCCIÓN
+	% =========================
+	\section{Introducción}
+	
+	El análisis de series temporales constituye una herramienta fundamental en economía aplicada, tanto para la comprensión de la dinámica de variables macroeconómicas como para la elaboración de pronósticos útiles en contextos de monitoreo y toma de decisiones. En este marco, uno de los problemas metodológicos más relevantes es la forma en que se trata la estacionalidad, especialmente cuando se trabaja con series de frecuencia trimestral, en las que suelen observarse patrones recurrentes asociados al calendario económico. La presencia de este componente puede alterar la identificación de la dinámica subyacente de las variables y, en consecuencia, influir de manera directa en la capacidad predictiva de los modelos estimados.
+	
+	En términos generales, existen dos estrategias alternativas para abordar este problema. La primera consiste en modelizar directamente las series observadas, incorporando de forma explícita la estacionalidad dentro de la especificación econométrica. La segunda estrategia consiste en remover previamente dicho componente mediante un procedimiento de desestacionalización, estimar luego un modelo sobre la serie ajustada y, finalmente, reincorporar la estacionalidad al momento de construir los pronósticos de la serie original. Aunque ambas aproximaciones resultan válidas desde el punto de vista econométrico, su desempeño relativo depende de las características específicas de las series analizadas, por lo que su comparación constituye una cuestión empírica y no meramente teórica.
+	
+	El objetivo de este trabajo es comparar ambas estrategias de modelización en un conjunto de series trimestrales de cuentas nacionales, correspondientes a consumo privado, exportaciones, inversión bruta fija y producto interno bruto, expresadas en diferencias logarítmicas. Para ello, se adopta la metodología Box-Jenkins y se estiman modelos sobre un período de entrenamiento comprendido entre 2004T2 y 2023T4, reservando el período 2024T1--2025T4 para la evaluación fuera de muestra. La comparación entre métodos se realiza a partir de métricas de error de pronóstico, con el propósito de determinar cuál enfoque ofrece mejores resultados en términos predictivos. De este modo, el trabajo busca aportar evidencia aplicada sobre el tratamiento de la estacionalidad en ejercicios de pronóstico de series macroeconómicas trimestrales.
+	
+	\section{Marco metodológico}
+	
+	El proceso de modelización sigue la metodología Box-Jenkins, que consiste en tres etapas fundamentales: identificación, estimación y validación del modelo. En la etapa de identificación, se analiza la estructura de dependencia temporal de la serie mediante herramientas como la función de autocorrelación (ACF) y autocorrelación parcial (PACF), con el fin de determinar el orden adecuado de los componentes autorregresivos y de medias móviles. Este procedimiento se fundamenta en la caracterización de las series de tiempo a través de sus propiedades estadísticas, particularmente la estacionariedad y la estructura de correlación serial.
+	
+	Un modelo general de series de tiempo lineal puede representarse mediante una especificación ARMA$(p,q)$ de la forma:
+	
+	\begin{equation}
+		y_t = \mu + \sum_{i=1}^{p} \phi_i y_{t-i} + \sum_{j=1}^{q} \theta_j \varepsilon_{t-j} + \varepsilon_t,
+	\end{equation}
+	
+	donde $y_t$ es la variable de interés, $\mu$ es la media del proceso, $\phi_i$ y $\theta_j$ son los parámetros del modelo, y $\varepsilon_t$ es un término de error no correlacionado. Este tipo de modelos puede interpretarse como una extensión dinámica de los modelos de regresión, en los cuales la variable dependiente se explica a partir de sus propios rezagos y de perturbaciones pasadas.
+	
+	Dado que muchas series económicas presentan no estacionariedad, es necesario aplicar transformaciones previas, como diferenciación o transformaciones logarítmicas, para garantizar que las propiedades estadísticas del proceso sean estables en el tiempo. En este sentido, el uso de diferencias logarítmicas permite interpretar la serie como tasas de crecimiento y facilita el cumplimiento del supuesto de estacionariedad requerido para la estimación consistente de los parámetros.
+	
+	Un elemento central en el análisis de series macroeconómicas es la presencia de patrones estacionales. De acuerdo con \cite{PindyckRubinfeld}, la estacionalidad puede ser tratada ya sea incorporándola explícitamente dentro del modelo o eliminándola previamente mediante técnicas de descomposición. En este trabajo se adoptan ambas estrategias con el fin de comparar su desempeño predictivo.
+	
+	La primera estrategia consiste en modelar la serie original, permitiendo que la estacionalidad sea capturada a través de componentes estacionales dentro del modelo. La segunda estrategia implica la desestacionalización previa de la serie mediante el método X-13, que descompone la serie en componentes tendencial, estacional e irregular. Bajo una descomposición aditiva, la serie puede expresarse como:
+	
+	\begin{equation}
+		y_t = y_t^{SA} + s_t,
+	\end{equation}
+	
+	donde $y_t^{SA}$ es la serie ajustada estacionalmente y $s_t$ representa la componente estacional. Esta descomposición permite estimar modelos sobre una serie más estable, eliminando fluctuaciones sistemáticas asociadas al calendario.
+	
+	Siguiendo la lógica de evaluación de modelos planteada en la literatura, se requiere que los residuos del modelo se comporten como ruido blanco, es decir, que no presenten autocorrelación ni patrones sistemáticos. Para ello, se emplean pruebas estadísticas como el test de Ljung-Box, así como el análisis gráfico de autocorrelaciones residuales.
+	
+	Finalmente, el desempeño de los modelos se evalúa en términos de su capacidad predictiva. Tal como señalan \cite{PindyckRubinfeld}, una de las principales ventajas de los modelos econométricos frente a enfoques intuitivos es la posibilidad de cuantificar la precisión de los pronósticos mediante métricas estadísticas. En este trabajo se utilizan indicadores como el error cuadrático medio (RMSE), el error absoluto medio (MAE) y el error porcentual absoluto medio (MAPE), los cuales permiten comparar de manera objetiva las diferentes especificaciones consideradas.
+	
+	\section{Datos}
+	
+	El análisis empírico se realiza a partir del archivo \texttt{Datos\_TP1}, elaborado con información proveniente del Instituto Nacional de Estadística y Censos de la República Argentina (INDEC), específicamente de la base \texttt{sh\_oferta\_demanda\_03\_26.xls}. La base contiene cuatro series trimestrales de cuentas nacionales a precios constantes de 2004: Producto Interno Bruto (PIB), Consumo Privado, Inversión Bruta Fija y Exportaciones. Estas variables se utilizan en sus diferencias logarítmicas.
+	
+	Las variables analizadas son, por tanto, las siguientes: \textit{DL\_PIB}, correspondiente a la diferencia logarítmica del Producto Interno Bruto; \textit{DL\_CPRIV}, correspondiente a la diferencia logarítmica del Consumo Privado; \textit{DL\_IBF}, correspondiente a la diferencia logarítmica de la Inversión Bruta Fija; y \textit{DL\_EXPO}, correspondiente a la diferencia logarítmica de las Exportaciones. En todos los casos, la periodicidad de observación es trimestral.
+	
+	Desde el punto de vista económico, cada una de estas series representa una dimensión distinta de la dinámica macroeconómica. El PIB resume el comportamiento agregado del nivel de actividad; el consumo privado capta la evolución del gasto de los hogares y, por tanto, de uno de los principales componentes de la demanda agregada; la inversión bruta fija refleja la dinámica de la acumulación de capital, usualmente más volátil y sensible a expectativas y condiciones macroeconómicas; y las exportaciones representan el desempeño del sector externo, incorporando tanto factores domésticos como condiciones de demanda internacional. Esta diversidad de comportamientos esperados hace particularmente relevante la comparación entre métodos de pronóstico, ya que no necesariamente la misma estrategia de modelización será óptima para todas las series.
+	
+	La transformación empleada en la base es la diferencia logarítmica, que para una variable genérica $X_t$ puede representarse como:
+	
+	\begin{equation}
+		\Delta \log(X_t)=\log(X_t)-\log(X_{t-1}).
+	\end{equation}
+	
+	Esta transformación permite interpretar la serie como una aproximación de su tasa de crecimiento trimestral y, al mismo tiempo, reduce problemas asociados a tendencias en nivel, facilitando la estimación de modelos ARMA sobre procesos estacionarios. En cuanto al horizonte temporal, el período muestral destinado a la estimación de los modelos abarca desde el segundo trimestre de 2004 hasta el cuarto trimestre de 2023. 
+	
+	A partir de esta muestra de entrenamiento, se generan pronósticos para los ocho trimestres comprendidos entre 2024 y 2025, que constituyen el período de evaluación fuera de muestra. 
+	
+	A partir de estas series se construyen dos estrategias empíricas alternativas. La primera utiliza directamente las series originales en diferencias logarítmicas, incorporando en la especificación econométrica los componentes estacionales que resulten necesarios. La segunda parte de la desestacionalización previa de esas mismas series mediante el algoritmo X-13, para luego modelizar la serie ajustada y, finalmente, reincorporar la componente estacional al momento de construir los pronósticos de la serie original. De este modo, la base de datos permite evaluar de manera comparativa si conviene modelizar la estacionalidad de forma explícita dentro del modelo o si resulta preferible removerla ex ante y restituirla posteriormente en la fase predictiva. 
+	\section{Estrategia empírica}
+	
+	La estrategia empírica del presente trabajo tiene como objetivo comparar el desempeño predictivo de dos enfoques alternativos para la modelización de series trimestrales: (i) la estimación de modelos sobre las series originales en diferencias logarítmicas, incorporando componentes estacionales cuando corresponda, y (ii) la estimación de modelos sobre series previamente desestacionalizadas mediante el algoritmo X-13, seguida de la reintroducción de la componente estacional en la etapa de pronóstico. Este enfoque comparativo se aplica a las cuatro series consideradas: consumo privado, exportaciones, inversión bruta fija y producto interno bruto. 
+	
+	\subsection{Modelización sobre series originales}
+	
+	En la primera estrategia, se utilizan directamente las series en diferencias logarítmicas sin aplicar desestacionalización previa. La identificación de los modelos se realiza mediante el análisis de las funciones de autocorrelación (ACF) y autocorrelación parcial (PACF), complementado con el uso del procedimiento automático \texttt{auto.arima()} del software \texttt{R}, el cual permite seleccionar especificaciones óptimas en términos de criterios de información como AIC y BIC.
+	
+	En esta etapa se permite la inclusión de componentes estacionales dentro de la especificación, lo que da lugar a modelos del tipo ARIMA con términos estacionales SARIMA. La selección final del modelo se basa no solo en criterios de información, sino también en la validación de los residuos, exigiendo que estos no presenten autocorrelación significativa y se comporten como ruido blanco.
+	
+	Una vez estimados los modelos, se generan pronósticos para los ocho trimestres del período de evaluación. Estos pronósticos se comparan con los valores observados de cada serie, permitiendo calcular distintas métricas de error.
+	
+	\subsection{Modelización sobre series desestacionalizadas}
+	
+	La segunda estrategia consiste en desestacionalizar previamente las series utilizando el método X-13, implementado mediante la función \texttt{seas()} del paquete \texttt{seasonal} en \texttt{R}. Siguiendo las especificaciones del enunciado, se utiliza una descomposición aditiva sin transformaciones adicionales, lo que permite obtener una serie ajustada que elimina las fluctuaciones sistemáticas asociadas a la estacionalidad. 
+	
+	A partir de la serie desestacionalizada, se procede a estimar modelos ARMA sin incluir componentes estacionales, dado que la variación estacional ha sido removida previamente. La identificación y selección de los modelos se realiza de manera análoga al caso anterior, utilizando criterios de información y validación de residuos.
+	
+	Para recuperar los valores de la serie original en el horizonte de pronóstico, se reintroduce la componente estacional. Para ello, se calcula la diferencia entre la serie original y la serie desestacionalizada, obteniendo una estimación de la componente estacional en cada período. A partir de esta, se construyen coeficientes estacionales promedio por trimestre, los cuales son normalizados de modo que su suma sea igual a cero. Finalmente, estos coeficientes se suman a los pronósticos de la serie desestacionalizada para obtener los valores pronosticados de la serie original.
+	
+	\subsection{Evaluación del desempeño predictivo}
+	
+	La comparación entre ambas estrategias se realiza a partir de métricas de error de pronóstico calculadas sobre el período fuera de muestra. En particular, se consideran el error cuadrático medio (RMSE), el error absoluto medio (MAE) y el error porcentual absoluto medio (MAPE), definidos respectivamente como:
+	
+	\begin{equation}
+		RMSE = \sqrt{\frac{1}{n} \sum_{t=1}^{n} (y_t - \hat{y}_t)^2},
+	\end{equation}
+	
+	\begin{equation}
+		MAE = \frac{1}{n} \sum_{t=1}^{n} |y_t - \hat{y}_t|,
+	\end{equation}
+	
+	\begin{equation}
+		MAPE = \frac{100}{n} \sum_{t=1}^{n} \left| \frac{y_t - \hat{y}_t}{y_t} \right|.
+	\end{equation}
+	
+	Estas métricas permiten evaluar la precisión de los pronósticos desde distintas perspectivas. No obstante, dado que las series se expresan en tasas de crecimiento, el MAPE puede presentar valores elevados cuando las observaciones son cercanas a cero, por lo que su interpretación debe realizarse con cautela, privilegiando el análisis de RMSE y MAE.
+	
+	\section{Resultados}
+	
+	En esta sección se presentan los resultados de la estimación, validación y evaluación predictiva de los modelos para las cuatro series analizadas: producto interno bruto, consumo privado, exportaciones e inversión bruta fija. Para cada variable se sigue el mismo esquema analítico. En primer lugar, se examina el comportamiento de la serie original y se identifican sus principales rasgos dinámicos a partir de las funciones de autocorrelación y autocorrelación parcial. En segundo lugar, se estima el modelo seleccionado sobre la serie original y se evalúa su adecuación mediante el análisis de residuos y el test de Ljung-Box. Posteriormente, se repite el procedimiento sobre la serie desestacionalizada mediante X-13 y, finalmente, se comparan ambos enfoques con base en las métricas de error obtenidas en el período fuera de muestra.
+	
+	\subsection{Producto Interno Bruto (PIB)}
+	
+	\subsubsection{Análisis de la serie e identificación del modelo}
+	
+	La Figura \ref{fig:pib_serie} presenta la evolución de la serie de diferencias logarítmicas del PIB. En términos generales, la serie fluctúa alrededor de su media y exhibe episodios de mayor volatilidad en momentos de disrupción macroeconómica, particularmente en torno al shock de 2020.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/pib_01_serie_original.png}
+		\caption{Serie original del PIB}
+		\label{fig:pib_serie}
+	\end{figure}
+	
+	Las funciones de autocorrelación y autocorrelación parcial sugieren la existencia de dependencia temporal y de una estructura estacional compatible con la periodicidad trimestral de la serie.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.45\textwidth]{imagenes/pib_02_acf.png}
+		\includegraphics[width=0.45\textwidth]{imagenes/pib_03_pacf.png}
+		\caption{Funciones ACF y PACF del PIB}
+		\label{fig:pib_acf_pacf}
+	\end{figure}
+	
+	\subsubsection{Estimación y diagnóstico del modelo sobre la serie original}
+	
+	La especificación seleccionada para la serie original corresponde a un modelo SARIMA$(0,0,0)(0,1,1)_4$. Esta elección indica que la dinámica de la serie puede ser representada adecuadamente mediante un componente estacional de medias móviles, sin necesidad de incorporar términos no estacionales adicionales.
+	
+	El análisis de residuos se presenta en la Figura \ref{fig:pib_residuos_crudo}. No se observan patrones sistemáticos remanentes, lo que constituye una primera evidencia a favor de la adecuada especificación del modelo.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/pib_05_residuos_crudo.png}
+		\caption{Diagnóstico de residuos del modelo estimado serie PIB}
+		\label{fig:pib_residuos_crudo}
+	\end{figure}
+	
+	Esta conclusión se confirma mediante el test de Ljung-Box, cuyo valor p es igual a 0.9336. En consecuencia, no se rechaza la hipótesis nula de ausencia de autocorrelación serial, por lo que los residuos pueden considerarse consistentes con un proceso de ruido blanco.
+	
+	\subsubsection{Pronóstico y evaluación de desempeño}
+	
+	La Figura \ref{fig:pib_pronostico_crudo} muestra los pronósticos generados por el modelo estimado sobre la serie original y su comparación con los valores observados en el período de evaluación.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/pib_04_pronostico_crudo.png}
+		\caption{Pronóstico del modelo estimado serie del PIB}
+		\label{fig:pib_pronostico_crudo}
+	\end{figure}
+	
+	Las métricas de error obtenidas para este enfoque se presentan en la Tabla \ref{tab:pib_crudo_metricas}. Los resultados muestran un buen desempeño predictivo, particularmente en términos de RMSE y MAE.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Métricas de error del modelo sobre la serie original del PIB}
+		\label{tab:pib_crudo_metricas}
+		\begin{tabular}{lccc}
+			\toprule
+			RMSE & MAE & MAPE \\
+			\midrule
+			0.0169 & 0.0130 & 79.5 \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	\subsubsection{Modelo sobre la serie desestacionalizada}
+	
+	La Figura \ref{fig:pib_original_sa} compara la serie original con su versión desestacionalizada. La serie ajustada elimina la componente estacional sistemática y permite aislar con mayor claridad la dinámica no estacional.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/pib_06_original_vs_sa.png}
+		\caption{Serie original y serie desestacionalizada del PIB}
+		\label{fig:pib_original_sa}
+	\end{figure}
+	
+	La componente estacional estimada se presenta en la Figura \ref{fig:pib_comp_estacional}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/pib_07_componente_estacional.png}
+		\caption{Componente estacional estimada del PIB}
+		\label{fig:pib_comp_estacional}
+	\end{figure}
+	
+	Sobre la serie desestacionalizada, el modelo seleccionado corresponde a un ARIMA$(0,0,0)$ con media. Este resultado sugiere que, una vez removida la estacionalidad, la serie pierde gran parte de su estructura dinámica y puede aproximarse a un proceso estacionario simple alrededor de una media constante.
+	
+	El diagnóstico de residuos se presenta en la Figura \ref{fig:pib_residuos_sa}. El test de Ljung-Box arroja un valor p igual a 0.7941, por lo que nuevamente no se rechaza la hipótesis de ruido blanco.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/pib_09_residuos_desestacionalizado.png}
+		\caption{Diagnóstico de residuos del modelo estimado serie del PIB}
+		\label{fig:pib_residuos_sa}
+	\end{figure}
+	
+	El pronóstico reestacionalizado se presenta en la Figura \ref{fig:pib_pronostico_sa}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/pib_08_pronostico_desestacionalizado.png}
+		\caption{Pronóstico del modelo sobre la serie desestacionalizada del PIB}
+		\label{fig:pib_pronostico_sa}
+	\end{figure}
+	
+	Las métricas de error correspondientes se presentan en la Tabla \ref{tab:pib_sa_metricas}.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Métricas de error del modelo sobre la serie desestacionalizada del PIB}
+		\label{tab:pib_sa_metricas}
+		\begin{tabular}{lccc}
+			\toprule
+			RMSE & MAE & MAPE \\
+			\midrule
+			0.0299 & 0.0242 & 84.3 \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	\subsubsection{Comparación de métodos}
+	
+	La Tabla \ref{tab:pib_comparacion} resume el desempeño de ambos enfoques. En términos de las tres métricas consideradas, el modelo estimado sobre la serie original supera al modelo basado en la serie desestacionalizada. Este resultado indica que, para el PIB, la estacionalidad constituye una fuente de información útil para el pronóstico y que su modelización directa resulta preferible a su eliminación previa.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Comparación de métodos para el PIB}
+		\label{tab:pib_comparacion}
+		\begin{tabular}{lccc}
+			\toprule
+			Método & RMSE & MAE & MAPE \\
+			\midrule
+			Serie original & 0.0169 & 0.0130 & 79.5 \\
+			Serie desestacionalizada & 0.0299 & 0.0242 & 84.3 \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	\subsection{Consumo privado}
+	
+	\subsubsection{Análisis de la serie e identificación del modelo}
+	
+	La Figura \ref{fig:cpriv_serie} muestra la evolución de la serie de diferencias logarítmicas del consumo privado. En comparación con otras variables de demanda agregada, el consumo presenta una trayectoria relativamente más estable, aunque con fluctuaciones que reflejan cambios en el ciclo económico y eventuales perturbaciones macroeconómicas.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/consumo_privado_01_serie_original.png}
+		\caption{Serie original del consumo privado}
+		\label{fig:cpriv_serie}
+	\end{figure}
+	
+	Las funciones ACF y PACF sugieren la presencia de dependencia temporal de corto plazo, así como de un patrón estacional compatible con la frecuencia trimestral de la serie.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.45\textwidth]{imagenes/consumo_privado_02_acf.png}
+		\includegraphics[width=0.45\textwidth]{imagenes/consumo_privado_03_pacf.png}
+		\caption{Funciones ACF y PACF del consumo privado}
+		\label{fig:cpriv_acf_pacf}
+	\end{figure}
+	
+	\subsubsection{Estimación y diagnóstico del modelo sobre la serie original}
+	
+	Para la serie original del consumo privado, la especificación seleccionada corresponde a un SARIMA$(0,0,0)(0,1,1)_4$. Este resultado indica que la dinámica de la serie se explica principalmente por un componente estacional de medias móviles.
+	
+	La Figura \ref{fig:cpriv_residuos_crudo} presenta el diagnóstico de residuos del modelo estimado. Visualmente, no se observan patrones remanentes relevantes.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/consumo_privado_05_residuos_crudo.png}
+		\caption{Diagnóstico de residuos del modelo serie consumo privado}
+		\label{fig:cpriv_residuos_crudo}
+	\end{figure}
+	
+	El test de Ljung-Box arroja un valor p de 0.8602. En consecuencia, no se rechaza la hipótesis nula de ausencia de autocorrelación serial, lo que valida la especificación adoptada.
+	
+	\subsubsection{Pronóstico y evaluación de desempeño}
+	
+	Los pronósticos fuera de muestra se presentan en la Figura \ref{fig:cpriv_pronostico_crudo}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/consumo_privado_04_pronostico_crudo.png}
+		\caption{Pronóstico del modelo estimado serie del consumo privado}
+		\label{fig:cpriv_pronostico_crudo}
+	\end{figure}
+	
+	Las métricas de error se presentan en la Tabla \ref{tab:cpriv_crudo_metricas}.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Métricas de error del modelo sobre la serie original del consumo privado}
+		\label{tab:cpriv_crudo_metricas}
+		\begin{tabular}{lccc}
+			\toprule
+			RMSE & MAE & MAPE \\
+			\midrule
+			0.0351 & 0.0299 & 243.2 \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	\subsubsection{Modelo sobre la serie desestacionalizada}
+	
+	La comparación entre la serie original y la serie desestacionalizada se presenta en la Figura \ref{fig:cpriv_original_sa}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/consumo_privado_06_original_vs_sa.png}
+		\caption{Serie original y serie desestacionalizada del consumo privado}
+		\label{fig:cpriv_original_sa}
+	\end{figure}
+	
+	Sobre la serie ajustada, el modelo seleccionado corresponde a un ARIMA$(0,0,0)$ con media. Ello sugiere que, luego de remover la estacionalidad, la serie presenta una dinámica considerablemente más simple.
+	
+	El diagnóstico de residuos se presenta en la Figura \ref{fig:cpriv_residuos_sa}. El valor p del test de Ljung-Box es 0.9761, lo que confirma la ausencia de autocorrelación remanente.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/consumo_privado_09_residuos_desestacionalizado.png}
+		\caption{Diagnóstico de residuos la serie desestacionalizada del consumo privado}
+		\label{fig:cpriv_residuos_sa}
+	\end{figure}
+	
+	Los pronósticos reestacionalizados se muestran en la Figura \ref{fig:cpriv_pronostico_sa}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/consumo_privado_08_pronostico_desestacionalizado.png}
+		\caption{Pronóstico del modelo serie desestacionalizada del consumo privado}
+		\label{fig:cpriv_pronostico_sa}
+	\end{figure}
+	
+	Las métricas de error se presentan en la Tabla \ref{tab:cpriv_sa_metricas}.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Métricas de error del modelo sobre la serie desestacionalizada del consumo privado}
+		\label{tab:cpriv_sa_metricas}
+		\begin{tabular}{lccc}
+			\toprule
+			RMSE & MAE & MAPE \\
+			\midrule
+			0.0402 & 0.0353 & 91.7 \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	\subsubsection{Comparación de métodos}
+	
+	La Tabla \ref{tab:cpriv_comparacion} resume el desempeño relativo de ambos enfoques. En esta serie, el modelo sobre la serie original obtiene menores errores de pronóstico según RMSE y MAE, mientras que el modelo desestacionalizado presenta un MAPE inferior. Esto sugiere que la modelización directa de la estacionalidad conserva una ventaja en términos de errores absolutos, aunque la evidencia basada en errores porcentuales debe interpretarse con cautela.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Comparación de métodos para el consumo privado}
+		\label{tab:cpriv_comparacion}
+		\begin{tabular}{lccc}
+			\toprule
+			Método & RMSE & MAE & MAPE \\
+			\midrule
+			Serie original & 0.0351 & 0.0299 & 243.2 \\
+			Serie desestacionalizada & 0.0402 & 0.0353 & 91.7 \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	\subsection{Exportaciones}
+	
+	\subsubsection{Análisis de la serie e identificación del modelo}
+	
+	La serie de exportaciones, presentada en la Figura \ref{fig:expo_serie}, exhibe una volatilidad superior a la observada en el PIB y en el consumo privado. Este comportamiento resulta consistente con la sensibilidad de las ventas externas a shocks externos, cambios en la demanda internacional y variaciones en precios relativos.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/exportaciones_01_serie_original.png}
+		\caption{Serie original de exportaciones}
+		\label{fig:expo_serie}
+	\end{figure}
+	
+	Las funciones ACF y PACF indican la presencia de dependencia temporal y de una estructura compatible con la incorporación de términos estacionales.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.45\textwidth]{imagenes/exportaciones_02_acf.png}
+		\includegraphics[width=0.45\textwidth]{imagenes/exportaciones_03_pacf.png}
+		\caption{Funciones ACF y PACF de exportaciones}
+		\label{fig:expo_acf_pacf}
+	\end{figure}
+	
+	\subsubsection{Estimación y diagnóstico del modelo sobre la serie original}
+	
+	Para la serie original de exportaciones, el modelo seleccionado corresponde a un SARIMA$(1,0,1)(0,1,1)_4$. Esta especificación incorpora tanto dinámica no estacional como un componente estacional de medias móviles.
+	
+	La Figura \ref{fig:expo_residuos_crudo} presenta el diagnóstico de residuos. Los residuos no muestran evidencia clara de patrones sistemáticos.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/exportaciones_05_residuos_crudo.png}
+		\caption{Diagnóstico de residuos del modelo estimado serie exportaciones}
+		\label{fig:expo_residuos_crudo}
+	\end{figure}
+	
+	El test de Ljung-Box arroja un valor p de 0.1421. Por tanto, no se rechaza la hipótesis nula de ausencia de autocorrelación serial y el modelo puede considerarse adecuadamente especificado.
+	
+	\subsubsection{Pronóstico y evaluación de desempeño}
+	
+	La Figura \ref{fig:expo_pronostico_crudo} muestra los pronósticos generados por el modelo estimado sobre la serie original.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/exportaciones_04_pronostico_crudo.png}
+		\caption{Pronóstico del modelo estimado sobre la serie original de exportaciones}
+		\label{fig:expo_pronostico_crudo}
+	\end{figure}
+	
+	Las métricas de error obtenidas se presentan en la Tabla \ref{tab:expo_crudo_metricas}.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Métricas de error del modelo sobre la serie original de exportaciones}
+		\label{tab:expo_crudo_metricas}
+		\begin{tabular}{lccc}
+			\toprule
+			RMSE & MAE & MAPE \\
+			\midrule
+			0.0697 & 0.0544 & 320.5 \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	\subsubsection{Modelo sobre la serie desestacionalizada}
+	
+	La comparación entre la serie original y la serie desestacionalizada se presenta en la Figura \ref{fig:expo_original_sa}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/exportaciones_06_original_vs_sa.png}
+		\caption{Serie original y serie desestacionalizada de exportaciones}
+		\label{fig:expo_original_sa}
+	\end{figure}
+	
+	Sobre la serie ajustada, la especificación seleccionada corresponde a un ARIMA$(0,0,1)$ sin media. Este resultado muestra que la eliminación de la componente estacional reduce significativamente la complejidad dinámica de la serie.
+	
+	El diagnóstico de residuos se presenta en la Figura \ref{fig:expo_residuos_sa}. El valor p del test de Ljung-Box es 0.2373, lo que confirma que los residuos son consistentes con ruido blanco.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/exportaciones_09_residuos_desestacionalizado.png}
+		\caption{Diagnóstico de residuos del modelo estimado serie desestacionalizada exportaciones }
+		\label{fig:expo_residuos_sa}
+	\end{figure}
+	
+	Los pronósticos reestacionalizados se muestran en la Figura \ref{fig:expo_pronostico_sa}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/exportaciones_08_pronostico_desestacionalizado.png}
+		\caption{Pronóstico del modelo estimado serie desestacionalizada exportaciones }
+		\label{fig:expo_pronostico_sa}
+	\end{figure}
+	
+	Las métricas de error se presentan en la Tabla \ref{tab:expo_sa_metricas}.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Métricas de error del modelo sobre la serie desestacionalizada de exportaciones}
+		\label{tab:expo_sa_metricas}
+		\begin{tabular}{lccc}
+			\toprule
+			RMSE & MAE & MAPE \\
+			\midrule
+			0.0828 & 0.0670 & 475.5 \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	\subsubsection{Comparación de métodos}
+	
+	La Tabla \ref{tab:expo_comparacion} resume el desempeño de ambos enfoques. Los resultados muestran que la modelización sobre la serie original domina nuevamente al enfoque desestacionalizado, tanto en RMSE como en MAE y MAPE.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Comparación de métodos para exportaciones}
+		\label{tab:expo_comparacion}
+		\begin{tabular}{lccc}
+			\toprule
+			Método & RMSE & MAE & MAPE \\
+			\midrule
+			Serie original & 0.0697 & 0.0544 & 320.5 \\
+			Serie desestacionalizada & 0.0828 & 0.0670 & 475.5 \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	En este caso, los resultados sugieren que la estacionalidad representa una dimensión informativa relevante en la dinámica de las exportaciones y que su modelización explícita mejora el desempeño predictivo.
+	
+	\subsection{Inversión Bruta Fija}
+	
+	\subsubsection{Análisis de la serie e identificación del modelo}
+	
+	La Figura \ref{fig:ibf_serie} muestra la evolución de la serie de diferencias logarítmicas de la inversión bruta fija. Esta es la variable más volátil del conjunto analizado, lo cual es consistente con la sensibilidad de la inversión a las expectativas, las condiciones macroeconómicas y la incertidumbre.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/inversion_bruta_fija_01_serie_original.png}
+		\caption{Serie original de inversión bruta fija}
+		\label{fig:ibf_serie}
+	\end{figure}
+	
+	Las funciones ACF y PACF muestran una estructura compatible con la presencia de dependencia temporal y componente estacional.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.45\textwidth]{imagenes/inversion_bruta_fija_02_acf.png}
+		\includegraphics[width=0.45\textwidth]{imagenes/inversion_bruta_fija_03_pacf.png}
+		\caption{Funciones ACF y PACF de la inversión bruta fija}
+		\label{fig:ibf_acf_pacf}
+	\end{figure}
+	
+	\subsubsection{Estimación y diagnóstico del modelo sobre la serie original}
+	
+	Para la serie original de inversión bruta fija, el modelo seleccionado corresponde a un ARIMA$(2,0,1)(0,1,1)_4$. Esta especificación refleja una dinámica más compleja que la observada en las restantes variables, coherente con la mayor volatilidad de la serie.
+	
+	El diagnóstico de residuos se presenta en la Figura \ref{fig:ibf_residuos_crudo}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/inversion_bruta_fija_05_residuos_crudo.png}
+		\caption{Diagnóstico de residuos del modelo de la serie de inversión bruta fija}
+		\label{fig:ibf_residuos_crudo}
+	\end{figure}
+	
+	El test de Ljung-Box arroja un valor p de 0.3465, por lo que no se rechaza la hipótesis nula de ausencia de autocorrelación serial. En consecuencia, la especificación puede considerarse válida desde el punto de vista del diagnóstico residual.
+	
+	\subsubsection{Pronóstico y evaluación de desempeño}
+	
+	La Figura \ref{fig:ibf_pronostico_crudo} muestra los pronósticos fuera de muestra obtenidos a partir del modelo estimado sobre la serie original.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/inversion_bruta_fija_04_pronostico_crudo.png}
+		\caption{Pronóstico del modelo estimado sobre la serie original de inversión bruta fija}
+		\label{fig:ibf_pronostico_crudo}
+	\end{figure}
+	
+	Las métricas de error se presentan en la Tabla \ref{tab:ibf_crudo_metricas}.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Métricas de error del modelo sobre la serie original de inversión bruta fija}
+		\label{tab:ibf_crudo_metricas}
+		\begin{tabular}{lccc}
+			\toprule
+			RMSE & MAE & MAPE \\
+			\midrule
+			0.2013 & 0.1485 & 694.6 \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	\subsubsection{Modelo sobre la serie desestacionalizada}
+	
+	La comparación entre la serie original y la serie desestacionalizada se presenta en la Figura \ref{fig:ibf_original_sa}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/inversion_bruta_fija_06_original_vs_sa.png}
+		\caption{Serie original y serie desestacionalizada de inversión bruta fija}
+		\label{fig:ibf_original_sa}
+	\end{figure}
+	
+	Sobre la serie ajustada, el modelo seleccionado corresponde a un ARIMA$(0,0,4)$ sin media. Esta especificación muestra que, aun después de remover la estacionalidad, la inversión mantiene una dinámica más compleja que la observada en otras series desestacionalizadas.
+	
+	La Figura \ref{fig:ibf_residuos_sa} presenta el diagnóstico de residuos del modelo estimado sobre la serie desestacionalizada. El test de Ljung-Box arroja un valor p de 0.6618, lo que confirma la ausencia de autocorrelación residual.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/inversion_bruta_fija_09_residuos_desestacionalizado.png}
+		\caption{Diagnóstico de residuos del modelo estimado sobre la serie desestacionalizada de inversión bruta fija}
+		\label{fig:ibf_residuos_sa}
+	\end{figure}
+	
+	Los pronósticos reestacionalizados se muestran en la Figura \ref{fig:ibf_pronostico_sa}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\textwidth]{imagenes/inversion_bruta_fija_08_pronostico_desestacionalizado.png}
+		\caption{Pronóstico del modelo estimado serie desestacionalizada de inversión bruta fija}
+		\label{fig:ibf_pronostico_sa}
+	\end{figure}
+	
+	Las métricas correspondientes se presentan en la Tabla \ref{tab:ibf_sa_metricas}.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Métricas de error del modelo sobre la serie desestacionalizada de inversión bruta fija}
+		\label{tab:ibf_sa_metricas}
+		\begin{tabular}{lccc}
+			\toprule
+			RMSE & MAE & MAPE \\
+			\midrule
+			0.2511 & 0.1777 & 65.7 \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	\subsubsection{Comparación de métodos}
+	
+	La Tabla \ref{tab:ibf_comparacion} resume el desempeño de ambas estrategias. En esta serie, el modelo estimado sobre la serie original presenta menores errores según RMSE y MAE, mientras que el modelo desestacionalizado exhibe un MAPE sustancialmente menor. No obstante, debe señalarse que, en términos absolutos, esta sigue siendo la serie con peor desempeño predictivo, lo cual resulta coherente con su mayor volatilidad.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Comparación de métodos para la inversión bruta fija}
+		\label{tab:ibf_comparacion}
+		\begin{tabular}{lccc}
+			\toprule
+			Método & RMSE & MAE & MAPE \\
+			\midrule
+			Serie original & 0.2013 & 0.1485 & 694.6 \\
+			Serie desestacionalizada & 0.2511 & 0.1777 & 65.7 \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	\subsection{Comparación global de modelos y resultados}
+	
+	La Tabla \ref{tab:comparacion_global_modelos} resume las especificaciones seleccionadas, los resultados del test de Ljung-Box y las métricas de desempeño fuera de muestra para todas las series y ambos enfoques de modelización.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Comparación global de modelos y desempeño predictivo}
+		\label{tab:comparacion_global_modelos}
+		\resizebox{\textwidth}{!}{
+			\begin{tabular}{llccccc}
+				\toprule
+				Serie & Método & Modelo seleccionado & p-valor Ljung-Box & RMSE & MAE & MAPE \\
+				\midrule
+				PIB & Serie original & ARIMA$(0,0,0)(0,1,1)_4$ & 0.9336 & 0.0169 & 0.0130 & 79.5 \\
+				PIB & Serie desestacionalizada & ARIMA$(0,0,0)$ con media & 0.7941 & 0.0299 & 0.0242 & 84.3 \\
+				\midrule
+				Consumo privado & Serie original & ARIMA$(0,0,0)(0,1,1)_4$ & 0.8602 & 0.0351 & 0.0299 & 243.2 \\
+				Consumo privado & Serie desestacionalizada & ARIMA$(0,0,0)$ con media & 0.9761 & 0.0402 & 0.0353 & 91.7 \\
+				\midrule
+				Exportaciones & Serie original & ARIMA$(1,0,1)(0,1,1)_4$ & 0.1421 & 0.0697 & 0.0544 & 320.5 \\
+				Exportaciones & Serie desestacionalizada & ARIMA$(0,0,1)$ sin media & 0.2373 & 0.0828 & 0.0670 & 475.5 \\
+				\midrule
+				Inversión bruta fija & Serie original & ARIMA$(2,0,1)(0,1,1)_4$ & 0.3465 & 0.2013 & 0.1485 & 694.6 \\
+				Inversión bruta fija & Serie desestacionalizada & ARIMA$(0,0,4)$ sin media & 0.6618 & 0.2511 & 0.1777 & 65.7 \\
+				\bottomrule
+			\end{tabular}
+		}
+	\end{table}
+	
+	\section{Conclusiones}
+	Los resultados obtenidos muestran un patrón empírico claro: en todas las series analizadas, los modelos estimados sobre las series originales presentan un mejor desempeño predictivo cuando se consideran las métricas RMSE y MAE, las cuales resultan sistemáticamente menores bajo el enfoque que modeliza explícitamente la estacionalidad. En cambio, el MAPE no exhibe un comportamiento uniforme entre series: favorece al modelo sobre la serie original en el caso del PIB y las exportaciones, pero resulta menor para los modelos desestacionalizados en consumo privado e inversión bruta fija. Esta divergencia refuerza la necesidad de interpretar el MAPE con cautela, dado que las series están expresadas en diferencias logarítmicas y pueden tomar valores cercanos a cero, amplificando artificialmente los errores relativos.
+	
+	Desde una perspectiva metodológica, un aspecto relevante es que ambos enfoques generan modelos adecuadamente especificados. En efecto, el análisis de residuos y los resultados del test de Ljung-Box indican que, en todos los casos, no se rechaza la hipótesis de ausencia de autocorrelación serial, lo que implica que los modelos capturan de manera satisfactoria la estructura dinámica de las series. En consecuencia, las diferencias observadas en el desempeño predictivo no pueden atribuirse a problemas de especificación, sino a la distinta capacidad de cada estrategia para aprovechar la información contenida en la serie.
+	
+	En este contexto, la evidencia sugiere que la estacionalidad no constituye un componente puramente mecánico o irrelevante, sino que contiene información útil para la predicción. Al ser incorporada explícitamente en la estructura del modelo, contribuye a mejorar la precisión de los pronósticos, especialmente cuando esta se evalúa mediante RMSE y MAE. Por el contrario, su eliminación previa mediante procedimientos de desestacionalización tiende a simplificar en exceso la dinámica de la serie, reduciendo su capacidad explicativa y, en consecuencia, su desempeño predictivo según esas métricas. Este resultado es particularmente claro en el caso del PIB, mientras que para consumo privado la ventaja del modelo sobre la serie original se mantiene en RMSE y MAE, aunque no en MAPE.
+	
+	Asimismo, el análisis pone de manifiesto diferencias importantes entre las variables consideradas. En particular, la inversión bruta fija se caracteriza por presentar los mayores errores de pronóstico bajo ambos enfoques, lo cual es consistente con su elevada volatilidad y su sensibilidad a factores macroeconómicos y de expectativas. En contraste, el PIB muestra el mejor desempeño relativo, especialmente cuando se modeliza directamente la estacionalidad. Esta heterogeneidad resalta la importancia de considerar la naturaleza específica de cada serie al momento de seleccionar la estrategia de modelización.
+	
+	En síntesis, los resultados del trabajo permiten concluir que, para las series analizadas y en el período considerado, la modelización directa de las series originales con incorporación explícita de la estacionalidad constituye la estrategia más efectiva en términos de capacidad predictiva cuando se priorizan métricas como RMSE y MAE. No obstante, esta conclusión debe interpretarse con cautela y en el contexto del ejercicio empírico realizado, ya que el MAPE ofrece señales menos uniformes entre variables. El desempeño relativo de los métodos puede depender de factores como la estabilidad de la componente estacional, la frecuencia de los datos, la longitud del horizonte de pronóstico y la volatilidad inherente de la serie. En este sentido, una extensión natural de este trabajo consistiría en replicar el análisis en otros contextos y con distintas variables, con el fin de evaluar la robustez de estos resultados y delimitar con mayor precisión las condiciones bajo las cuales cada enfoque resulta preferible.
+	
+	
+	\newpage
+	\section*{Referencias}
+	\nocite{*}
+	\printbibliography[heading=none]
+	
+	
+\end{document}
