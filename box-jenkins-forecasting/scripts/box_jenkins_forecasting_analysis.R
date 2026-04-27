@@ -4,7 +4,6 @@
 # Materia: Series de Tiempo
 # Trabajo Práctico N.º 1
 #
-# Estudiante: Julián Delgadillo Marín
 #
 # ============================================================
 
