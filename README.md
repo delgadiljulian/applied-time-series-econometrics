@@ -11,6 +11,8 @@ This repository contains applied work focused on macroeconomic forecasting, time
 - Box–Jenkins methodology
 - ARIMA and SARIMA models
 - Seasonal adjustment with X-13ARIMA-SEATS
+- Cointegration and error correction models
+- Foreign trade elasticities
 - Forecast evaluation and model comparison
 - Macroeconomic time series analysis
 - Stationarity and autocorrelation analysis
@@ -24,17 +26,21 @@ This repository contains applied work focused on macroeconomic forecasting, time
 ```text
 applied-time-series-econometrics/
 │
-├── box-jenkins/
-│   ├── tp1-sarima-x13/
-│   ├── tp2/
-│   ├── tp3/
-│   └── tp4/
+├── box-jenkins-forecasting/
+│   ├── data/
+│   ├── docs/
+│   ├── figures/
+│   ├── outputs/
+│   ├── report/
+│   └── scripts/
 │
-├── forecasting/
-│
-├── tutorials/
-│
-├── figures/
+├── trade-elasticities-cointegration/
+│   ├── data/
+│   ├── docs/
+│   ├── figures/
+│   ├── outputs/
+│   ├── report/
+│   └── scripts/
 │
 └── README.md
 ```
@@ -56,6 +62,24 @@ Analyzed variables include:
 - Exports
 - Gross fixed investment
 - Gross domestic product (GDP)
+
+### Trade Elasticities and Cointegration
+
+Cointegration-based analysis of Argentina's foreign trade elasticities using:
+
+- Unit root and integration order tests
+- Engle-Granger cointegration methodology
+- Gregory-Hansen cointegration tests with structural breaks
+- Short-run models in first differences
+- Error correction models when cointegration is supported
+
+Analyzed variables include:
+
+- Argentine GDP
+- Exports
+- Imports
+- Multilateral real exchange rate
+- Trade-partner GDP
 
 ---
 
