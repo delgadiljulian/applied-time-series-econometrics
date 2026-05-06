@@ -21,11 +21,32 @@ library(seasonal)
 # ============================================================
 
 Eval_Pron=function(Y_P,Y_A,Nombre="Pron_1"){
+  Y_P <- as.numeric(Y_P)
+  Y_A <- as.numeric(Y_A)
+  
+  if (length(Y_P) != length(Y_A)) {
+    stop("Y_P and Y_A must have the same length.")
+  }
+  
+  if (anyNA(Y_P) || anyNA(Y_A)) {
+    stop("Y_P and Y_A must not contain NA values.")
+  }
+  
+  if (length(Y_P) == 0) {
+    stop("Y_P and Y_A must contain at least one observation.")
+  }
+  
+  nonzero_actual <- Y_A != 0
+  
   RMSE=sqrt(sum((Y_P-Y_A)^2)/length(Y_P))
   MAE=sum(abs(Y_P-Y_A)/length(Y_P))
-  MAPE=100*sum(abs((Y_P-Y_A)/Y_A)/length(Y_P))
+  MAPE=if (any(nonzero_actual)) {
+    100*mean(abs((Y_P[nonzero_actual]-Y_A[nonzero_actual])/Y_A[nonzero_actual]))
+  } else {
+    NA_real_
+  }
   D1=sqrt(sum(Y_P^2)/length(Y_P))
-  D2=sqrt(sum(Y_A^2)/length(Y_P))
+  D2=sqrt(sum(Y_A^2)/length(Y_A))
   Theil=RMSE/(D1+D2)
   
   MSE=RMSE^2
@@ -55,7 +76,43 @@ corr_res <- function(residuos, lags = 12) {
 # Carga de datos
 # ============================================================
 
-ruta <- "C:/Users/julla/Downloads/1. Series de Tiempo/TP1/Datos TP1.xlsx"
+ruta <- file.path(
+  "box-jenkins-forecasting",
+  "data",
+  "macroeconomic_quarterly_series.xlsx"
+)
+
+if (!file.exists(ruta)) {
+  stop("Input data file not found: ", ruta)
+}
+
+figures_dir <- file.path("box-jenkins-forecasting", "figures")
+if (!dir.exists(figures_dir)) {
+  dir.create(figures_dir, recursive = TRUE)
+}
+
+running_interactively <- interactive()
+
+if (!running_interactively) {
+  pdf(
+    file = file.path(figures_dir, "box_jenkins_forecasting_analysis_plots.pdf"),
+    width = 8,
+    height = 6,
+    onefile = TRUE
+  )
+}
+
+new_plot_device <- function(width = 7, height = 6) {
+  if (running_interactively) {
+    dev.new(width = width, height = height)
+  }
+}
+
+close_plot_device <- function() {
+  if (running_interactively && !is.null(dev.list())) {
+    dev.off()
+  }
+}
 
 df <- read_excel(ruta, sheet = "Series TP1")
 
@@ -476,7 +533,7 @@ expo_test  <- window(expo_ts, start = c(2024, 1))
 
 plot(expo_ts, main = "DL_EXPO", ylab = "Dif. log", xlab = "Tiempo")
 
-dev.off()
+close_plot_device()
 acf(expo_train, main = "")
 title(main = "ACF - DL_EXPO", line = 2)
 
@@ -540,7 +597,7 @@ corr_res(residuals(modelo_expo_m2), 12)
 
 
 # Cerrar dispositivos gráficos (sin romper si no hay)
-if (!is.null(dev.list())) dev.off()
+close_plot_device()
 
 h <- length(expo_test)
 
@@ -558,7 +615,7 @@ pron_m2   <- forecast(modelo_expo_m2, h = h)
 # -------------------------------
 
 # Abrir nuevo dispositivo (clave)
-dev.new(width = 7, height = 10)
+new_plot_device(width = 7, height = 10)
 
 par(mfrow = c(3,1), mar = c(2,2,2,2), oma = c(0,0,2,0))
 
@@ -635,7 +692,7 @@ plot(expo_sa,
 # -------------------------------
 
 # ACF
-dev.new(width = 7, height = 6)
+new_plot_device(width = 7, height = 6)
 
 par(mfrow = c(1,1), mar = c(5,4,4,2))
 
@@ -645,7 +702,7 @@ acf(expo_sa,
 
 
 # PACF
-dev.new(width = 7, height = 6)
+new_plot_device(width = 7, height = 6)
 
 par(mfrow = c(1,1), mar = c(5,4,4,2))
 
@@ -1064,7 +1121,7 @@ corr_res(residuals(modelo_ibf_m2), 12)
 
 
 # Cerrar dispositivos gráficos (sin romper si no hay)
-if (!is.null(dev.list())) dev.off()
+close_plot_device()
 
 h <- length(ibf_test)
 
@@ -1083,7 +1140,7 @@ pron_ibf_m2   <- forecast(modelo_ibf_m2,   h = h)
 # -------------------------------
 
 # Abrir nuevo dispositivo
-dev.new(width = 7, height = 10)
+new_plot_device(width = 7, height = 10)
 
 par(mfrow = c(3,1), mar = c(2,2,2,2), oma = c(0,0,2,0))
 
@@ -1168,14 +1225,14 @@ plot(ibf_sa,
 # c.5.3 Identificación
 # -------------------------------
 
-dev.new(width = 7, height = 5)
+new_plot_device(width = 7, height = 5)
 
 acf(ibf_sa,
     lag.max = 20,
     main = "ACF - DL_IBF desestacionalizada")
 
 
-dev.new(width = 7, height = 5)
+new_plot_device(width = 7, height = 5)
 
 pacf(ibf_sa,
      lag.max = 20,
@@ -1541,7 +1598,7 @@ corr_res(residuals(modelo_pib_m2), 12)
 
 
 # Cerrar dispositivos gráficos (sin romper si no hay)
-if (!is.null(dev.list())) dev.off()
+close_plot_device()
 
 h <- length(pib_test)
 
@@ -1559,7 +1616,7 @@ pron_pib_m2   <- forecast(modelo_pib_m2,   h = h)
 # -------------------------------
 
 # Abrir nuevo dispositivo
-dev.new(width = 7, height = 10)
+new_plot_device(width = 7, height = 10)
 
 par(mfrow = c(3,1), mar = c(2,2,2,2), oma = c(0,0,2,0))
 
@@ -1647,7 +1704,7 @@ pib_sa <- final(pib_x13)
 # -------------------------------
 
 # Gráfico 1
-dev.new(width = 7, height = 5)
+new_plot_device(width = 7, height = 5)
 
 plot(pib_train,
      main = "DL_PIB original",
@@ -1656,7 +1713,7 @@ plot(pib_train,
 
 
 # Gráfico 2
-dev.new(width = 7, height = 5)
+new_plot_device(width = 7, height = 5)
 
 plot(pib_sa,
      main = "DL_PIB desestacionalizada",
@@ -1669,7 +1726,7 @@ plot(pib_sa,
 # -------------------------------
 
 # --- ACF ---
-dev.new(width = 7, height = 6)
+new_plot_device(width = 7, height = 6)
 
 Acf(pib_sa,
     lag.max = 20,
@@ -1678,7 +1735,7 @@ title("ACF - DL_PIB desestacionalizada")
 
 
 # --- PACF ---
-dev.new(width = 7, height = 6)
+new_plot_device(width = 7, height = 6)
 
 Pacf(pib_sa,
      lag.max = 20,
@@ -1784,7 +1841,7 @@ ylim_comun <- range(c(pib_train, pib_test,
                       pron_auto_ts, pron_wn_ts, pron_m1_ts))
 
 # Un solo device
-dev.new(width = 8, height = 12)
+new_plot_device(width = 8, height = 12)
 
 par(mfrow = c(3,1), mar = c(3,4,3,1))
 
@@ -1928,7 +1985,9 @@ tabla_mark
 
 stopifnot(
   length(pib_test) == length(pron_pib_auto$mean),
-  length(pib_test) == length(pron_final_pib_ts)
+  length(pib_test) == length(pron_auto_ts),
+  length(pib_test) == length(pron_m1_ts),
+  length(pib_test) == length(pron_wn_ts)
 )
 
 tiempo_labels <- paste(
@@ -1945,7 +2004,9 @@ anexo <- data.frame(
   SARIMA_MA   = as.numeric(pron_pib_m1$mean),
   SARIMA_AR   = as.numeric(pron_pib_m2$mean),
   
-  SA_WN       = as.numeric(pron_final_pib_ts)
+  SA_Auto     = as.numeric(pron_auto_ts),
+  SA_WN       = as.numeric(pron_wn_ts),
+  SA_MA1      = as.numeric(pron_m1_ts)
 )
 
 anexo
@@ -1977,4 +2038,8 @@ anexo
 # En consecuencia, para la serie DL_PIB se concluye que el mejor método de pronóstico
 # es el modelo SARIMA_AR, ya que ofrece un balance óptimo entre precisión y capacidad
 # de capturar la dinámica temporal de la serie.
+
+if (!running_interactively && dev.cur() > 1) {
+  dev.off()
+}
 
