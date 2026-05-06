@@ -107,6 +107,32 @@ box-jenkins-forecasting/
     └── box_jenkins_methodology_guidelines.pdf
 ```
 
+---
+
+## How to Run the Analysis
+
+The main analysis script is:
+
+```text
+box-jenkins-forecasting/scripts/box_jenkins_forecasting_analysis.R
+```
+
+The script should be executed from the root of the repository:
+
+```bash
+cd applied-time-series-econometrics
+Rscript box-jenkins-forecasting/scripts/box_jenkins_forecasting_analysis.R
+```
+
+The input dataset is included in the repository:
+
+```text
+box-jenkins-forecasting/data/macroeconomic_quarterly_series.xlsx
+```
+
+The script uses this relative path, so it does not depend on a local `Downloads`
+folder or any machine-specific file path.
+
 ## Tools and Libraries
 
 ### Language
@@ -118,9 +144,33 @@ box-jenkins-forecasting/
 - forecast
 - seasonal
 - tseries
-- ggplot2
 - readxl
-- dplyr
+
+Install the required packages in your local R environment before running the script:
+
+```r
+install.packages(c("readxl", "forecast", "tseries", "seasonal"))
+```
+
+The `seasonal` package uses X-13ARIMA-SEATS through the `x13binary` dependency on
+standard installations.
+
+---
+
+## Figures and Generated Outputs
+
+The `figures/` folder contains manually saved figures used for documentation and
+reporting.
+
+When the script is executed non-interactively with `Rscript`, it writes diagnostic and
+forecast plots to a generated PDF:
+
+```text
+box-jenkins-forecasting/figures/box_jenkins_forecasting_analysis_plots.pdf
+```
+
+This PDF is treated as a reproducible generated output and is ignored by Git. It can be
+recreated at any time by running the analysis script.
 
 ---
 
