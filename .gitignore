@@ -40,6 +40,15 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.synctex.gz
+
+# Office temporary lock files
+~$*
+
 # R Environment Variables
 .Renviron
 
