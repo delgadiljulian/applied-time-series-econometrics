@@ -1,0 +1,149 @@
+\documentclass[11pt]{article}
+
+% -------------------------------
+% Paquetes
+% -------------------------------
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage[hypertexnames=false]{hyperref}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{fancyhdr}
+
+\renewcommand{\thesubfigure}{\thefigure.\arabic{subfigure}}
+\makeatletter
+\renewcommand\p@subfigure{}
+\makeatother
+\DeclareCaptionLabelFormat{figurasub}{Figura~#2}
+\captionsetup[subfigure]{labelformat=figurasub,labelsep=period}
+\captionsetup[figure]{labelsep=period}
+
+\graphicspath{{figures/}}
+
+\geometry{margin=2.5cm}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\setlength{\headheight}{42pt}
+\setlength{\headsep}{18pt}
+
+\newcommand{\reportheader}{%
+\begin{minipage}{\textwidth}
+\vspace{6pt}
+\makebox[\textwidth][s]{Trabajo Práctico N.º~2\hfill Series de Tiempo}
+\vspace{6pt}
+\hrule height 0.4pt
+\end{minipage}%
+}
+
+\fancypagestyle{prismstyle}{%
+  \fancyhf{}
+  \fancyhead[C]{\reportheader}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyhead[C]{\reportheader}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+\pagestyle{prismstyle}
+
+% -------------------------------
+% Título
+% -------------------------------
+\title{%
+\textbf{Nombre del Trabajo} \\
+\large Trabajo Práctico N° 2 - Series de Tiempo
+}
+
+\author{
+Maestría en Economía Aplicada \\
+Facultad de Ciencias Económicas - UBA \\
+\\
+Integrantes: \\
+Christian Arias \\
+Leonardo Ávila \\
+Andrea Chasi \\
+Julián Delgadillo \\
+\\
+Docente: \\
+Julio Eduardo Fabris
+}
+
+\date{Fecha de entrega: 26 de mayo de 2026}
+
+\begin{document}
+
+\maketitle
+
+% -------------------------------
+% Resumen
+% -------------------------------
+\begin{abstract}
+resumen del trabajo abstract
+\end{abstract}
+
+% -------------------------------
+% 1. Introducción
+% -------------------------------
+\section{Introducción}
+
+
+
+% -------------------------------
+% 2. Marco metodológico
+% -------------------------------
+\section{Marco metodológico}
+
+
+
+% -------------------------------
+% 3. Datos
+% -------------------------------
+\section{Datos}
+
+
+
+% -------------------------------
+% 4. Resultados
+% -------------------------------
+\section{Resultados}
+
+
+
+% -------------------------------
+% 6. Comparación de métodos
+% -------------------------------
+\section{Comparación de métodos}
+
+
+
+% -------------------------------
+% 7. Conclusiones
+% -------------------------------
+\section{Conclusiones}
+
+
+
+% -------------------------------
+% Bibliografía
+% -------------------------------
+\begin{thebibliography}{9}
+
+
+
+\end{thebibliography}
+
+
+
+\end{document}
