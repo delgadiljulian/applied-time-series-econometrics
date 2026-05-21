@@ -1,0 +1,3 @@
+country,source_variable,original_weight,normalized_weight,source,weighting_period_start,weighting_period_end,weighting_period_note
+Brasil,brasil,32.19124902363224,0.7107354455740819,BCRA ITCRM - hoja Ponderadores,2004-01-01,2025-12-01,Promedio simple del ponderador disponible en la hoja Ponderadores; los ponderadores de Brasil y Estados Unidos se normalizan para sumar 1 dentro de la proxy PIBSOCIOS.
+Estados Unidos,estados_unidos,13.101622218536392,0.2892645544259182,BCRA ITCRM - hoja Ponderadores,2004-01-01,2025-12-01,Promedio simple del ponderador disponible en la hoja Ponderadores; los ponderadores de Brasil y Estados Unidos se normalizan para sumar 1 dentro de la proxy PIBSOCIOS.
