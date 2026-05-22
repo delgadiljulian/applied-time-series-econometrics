@@ -1155,7 +1155,7 @@ trade_elasticities_panel_transformed_dta <- read_dta(
 #
 # Graficos sugeridos:
 # - Logs de importaciones, PIB argentino e ITCRM.
-# - Logs de exportaciones, PIBSOCIOS e ITCRM.
+# - Logs de exportaciones, PIBSOCIOS y commodities.
 # - Diferencias de logs para observar crecimiento trimestral.
 # - ITCRM y commodity price index como variables externas.
 #
@@ -1217,7 +1217,6 @@ plot_imports_logs <- trade_elasticities_panel_transformed %>%
   facet_wrap(~ variable, scales = "free_y", ncol = 1) +
   scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
   labs(
-    title = "Ecuacion de importaciones: series en logaritmos",
     x = NULL,
     y = "Log natural"
   ) +
@@ -1228,15 +1227,15 @@ save_exploratory_plot(
   "section_08_imports_logs.png"
 )
 
-# comparar exportaciones con PIB socios, ITCRM y
-# commodities en logs antes de definir la ecuacion de largo plazo.
+# comparar exportaciones con PIB socios y commodities en logs antes
+# de definir la ecuacion de largo plazo; el ITCRM ya se muestra en
+# la figura de importaciones para evitar repetir la misma serie.
 # Logs para la ecuacion de exportaciones.
 plot_exports_logs <- trade_elasticities_panel_transformed %>%
   select(
     quarter_date,
     ln_exports_real,
     ln_pib_socios,
-    ln_itcrm,
     ln_commodity_price_index
   ) %>%
   pivot_longer(
@@ -1250,7 +1249,6 @@ plot_exports_logs <- trade_elasticities_panel_transformed %>%
       variable,
       ln_exports_real = "Exportaciones reales",
       ln_pib_socios = "PIB socios",
-      ln_itcrm = "ITCRM",
       ln_commodity_price_index = "Commodity price index"
     )
   ) %>%
@@ -1259,7 +1257,6 @@ plot_exports_logs <- trade_elasticities_panel_transformed %>%
   facet_wrap(~ variable, scales = "free_y", ncol = 1) +
   scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
   labs(
-    title = "Ecuacion de exportaciones: series en logaritmos",
     x = NULL,
     y = "Log natural"
   ) +
@@ -1299,7 +1296,6 @@ plot_trade_growth <- trade_elasticities_panel_transformed %>%
   geom_line(linewidth = 0.7) +
   scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
   labs(
-    title = "Crecimiento trimestral aproximado",
     x = NULL,
     y = "Variacion trimestral aproximada (%)",
     color = NULL
@@ -1340,7 +1336,6 @@ plot_external_growth <- trade_elasticities_panel_transformed %>%
   geom_line(linewidth = 0.7) +
   scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
   labs(
-    title = "Crecimiento trimestral aproximado de variables externas",
     x = NULL,
     y = "Variacion trimestral aproximada (%)",
     color = NULL
@@ -1377,7 +1372,6 @@ plot_data_coverage <- trade_elasticities_panel_transformed %>%
     labels = c(`TRUE` = "Disponible", `FALSE` = "Faltante")
   ) +
   labs(
-    title = "Cobertura temporal de las series principales",
     x = NULL,
     y = NULL,
     fill = NULL
@@ -3772,7 +3766,6 @@ plot_cointegration_residuals <- plot_cointegration_residuals_data %>%
   facet_wrap(~ model_label, scales = "free_y", ncol = 1) +
   scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
   labs(
-    title = "Residuos de cointegracion Engle-Granger",
     x = NULL,
     y = "Residuo"
   ) +
@@ -3816,7 +3809,6 @@ plot_model_residuals <- final_model_residuals_long %>%
   geom_line(color = "#7030a0", linewidth = 0.7) +
   facet_wrap(~ model_label, scales = "free_y", ncol = 1) +
   labs(
-    title = "Residuos de los modelos econometricos finales",
     x = "Observacion efectiva",
     y = "Residuo"
   ) +
@@ -3828,10 +3820,39 @@ save_econometric_plot(
   height = 7
 )
 
-plot_fitted_vs_residuals <- final_model_residuals_long %>%
+final_model_residuals_exports <- final_model_residuals_long %>%
+  filter(trade_flow == "exports")
+
+final_model_residuals_imports <- final_model_residuals_long %>%
+  filter(trade_flow == "imports")
+
+plot_fitted_vs_residuals_exports <- final_model_residuals_exports %>%
   ggplot(aes(x = fitted, y = residual)) +
   geom_hline(
-    data = distinct(final_model_residuals_long, model_label),
+    data = distinct(final_model_residuals_exports, model_label),
+    aes(yintercept = 0),
+    color = "grey55",
+    linewidth = 0.4
+  ) +
+  geom_point(color = "#548235", alpha = 0.75, size = 1.8) +
+  facet_wrap(~ model_label, scales = "free", ncol = 1) +
+  labs(
+    x = "Valor ajustado",
+    y = "Residuo"
+  ) +
+  exploratory_theme
+
+save_econometric_plot(
+  plot_fitted_vs_residuals_exports,
+  "section_12_fitted_vs_residuals_exports.png",
+  width = 7,
+  height = 4.2
+)
+
+plot_fitted_vs_residuals_imports <- final_model_residuals_imports %>%
+  ggplot(aes(x = fitted, y = residual)) +
+  geom_hline(
+    data = distinct(final_model_residuals_imports, model_label),
     aes(yintercept = 0),
     color = "grey55",
     linewidth = 0.4
@@ -3839,16 +3860,16 @@ plot_fitted_vs_residuals <- final_model_residuals_long %>%
   geom_point(color = "#548235", alpha = 0.75, size = 1.8) +
   facet_wrap(~ model_label, scales = "free", ncol = 2) +
   labs(
-    title = "Valores ajustados vs residuos",
     x = "Valor ajustado",
     y = "Residuo"
   ) +
   exploratory_theme
 
 save_econometric_plot(
-  plot_fitted_vs_residuals,
-  "section_12_fitted_vs_residuals.png",
-  height = 6
+  plot_fitted_vs_residuals_imports,
+  "section_12_fitted_vs_residuals_imports.png",
+  width = 9,
+  height = 4.8
 )
 
 # graficar la magnitud del ajuste usando exactamente los coeficientes ECM
@@ -3865,19 +3886,6 @@ ecm_adjustment_plot_data <- ecm_adjustment_summary %>%
     model_label = fct_reorder(model_label, adjustment_speed_pct, .desc = TRUE)
   )
 
-ecm_adjustment_difference <- diff(
-  range(ecm_adjustment_plot_data$adjustment_speed_pct, na.rm = TRUE)
-)
-
-ecm_adjustment_reading <- if_else(
-  ecm_adjustment_difference < 5,
-  "Las velocidades estimadas son muy similares entre ambos ECM.",
-  paste0(
-    as.character(ecm_adjustment_plot_data$model_label[which.max(ecm_adjustment_plot_data$adjustment_speed_pct)]),
-    " presenta la mayor velocidad de convergencia."
-  )
-)
-
 plot_ecm_adjustment <- ecm_adjustment_plot_data %>%
   ggplot(aes(x = model_label, y = adjustment_speed_pct)) +
   geom_col(fill = "#2f5597", width = 0.55) +
@@ -3892,16 +3900,12 @@ plot_ecm_adjustment <- ecm_adjustment_plot_data %>%
     expand = expansion(mult = c(0, 0.22))
   ) +
   labs(
-    title = "Velocidad de ajuste hacia el equilibrio de largo plazo (ECM)",
-    subtitle = ecm_adjustment_reading,
     x = NULL,
-    y = "Velocidad de ajuste trimestral (%)",
-    caption = "Nota: las barras representan el valor absoluto del coeficiente ECM; el signo negativo del ECT indica convergencia."
+    y = "Velocidad de ajuste trimestral (%)"
   ) +
   exploratory_theme +
   theme(
-    axis.text.x = element_text(angle = 15, hjust = 1),
-    plot.caption = element_text(hjust = 0, size = 8.5)
+    axis.text.x = element_text(angle = 15, hjust = 1)
   )
 
 save_econometric_plot(
@@ -3922,7 +3926,7 @@ save_econometric_plot(
 final_outputs_catalog <- tibble(
   output_group = c(
     rep("base", 5),
-    rep("figura", 9),
+    rep("figura", 10),
     rep("tabla econometrica", 4),
     rep("trazabilidad", 5),
     rep("entrega", 3)
@@ -3940,7 +3944,8 @@ final_outputs_catalog <- tibble(
     "section_08_data_coverage.png",
     "section_12_cointegration_residuals.png",
     "section_12_model_residuals.png",
-    "section_12_fitted_vs_residuals.png",
+    "section_12_fitted_vs_residuals_exports.png",
+    "section_12_fitted_vs_residuals_imports.png",
     "section_12_ecm_adjustment_speed.png",
     "section_09_stationarity_results.xlsx",
     "section_10_cointegration_results.xlsx",
@@ -3957,7 +3962,7 @@ final_outputs_catalog <- tibble(
   ),
   directory = c(
     rep(processed_data_dir, 5),
-    rep(figures_dir, 9),
+    rep(figures_dir, 10),
     rep(output_dir, 9),
     report_dir,
     report_dir,
@@ -3969,7 +3974,7 @@ final_outputs_catalog <- tibble(
     "dta",
     "csv",
     "dta",
-    rep("png", 9),
+    rep("png", 10),
     rep("xlsx", 4),
     "csv",
     "csv",
@@ -3994,6 +3999,7 @@ final_outputs_catalog <- tibble(
     "figura principal o anexo",
     "anexo econometrico",
     "anexo econometrico",
+    "anexo econometrico",
     "figura principal o anexo",
     "anexo econometrico",
     "anexo econometrico",
@@ -4015,13 +4021,14 @@ final_outputs_catalog <- tibble(
     "copia CSV del panel transformado",
     "panel de modelacion con residuos Engle-Granger al final",
     "logs de importaciones, PIB argentino e ITCRM",
-    "logs de exportaciones, PIB socios, ITCRM y commodities",
+    "logs de exportaciones, PIB socios y commodities",
     "crecimiento trimestral de comercio y PIB argentino",
     "crecimiento trimestral de variables externas",
     "cobertura temporal y faltantes por fuente",
     "residuos de cointegracion Engle-Granger",
     "residuos de modelos finales",
-    "valores ajustados vs residuos",
+    "valores ajustados vs residuos de exportaciones",
+    "valores ajustados vs residuos de importaciones",
     "velocidad de ajuste ECM",
     "pruebas ADF, PP, KPSS y orden de integracion",
     "Engle-Granger, Gregory-Hansen y residuos de cointegracion",
