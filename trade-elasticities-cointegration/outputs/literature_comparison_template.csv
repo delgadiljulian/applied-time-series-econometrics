@@ -1,0 +1,10 @@
+source,horizon,trade_flow,variable,estimate,reference_period,note
+Este trabajo,largo plazo,imports,ln_gdp_real,1.5184084309945753,2004 Q1-2022 Q4,coeficiente de la ecuacion de cointegracion Engle-Granger
+Este trabajo,largo plazo,imports,ln_itcrm,-0.3991932036902151,2004 Q1-2022 Q4,coeficiente de la ecuacion de cointegracion Engle-Granger
+Este trabajo,largo plazo,exports,ln_pib_socios,0.7203209712546355,2004 Q1-2022 Q4,coeficiente de la ecuacion de cointegracion Engle-Granger
+Este trabajo,largo plazo,exports,ln_itcrm,0.15938853991654256,2004 Q1-2022 Q4,coeficiente de la ecuacion de cointegracion Engle-Granger
+Este trabajo,corto plazo,imports,d_ln_gdp_real,1.41976235359121,2004 Q1-2022 Q4,Un aumento del PIB real argentino deberia elevar la demanda de importaciones.
+Este trabajo,corto plazo,imports,d_ln_itcrm,-0.10674265843713328,2004 Q1-2022 Q4,La interpretacion del signo requiere confirmar si un aumento del ITCRM implica depreciacion real.
+Berrettoni y Castresana (2008),NA,NA,NA,NA,NA,Completar manualmente desde el paper antes de cerrar el informe; la consigna pide comparar resultados con la literatura sugerida.
+Bus y Nicolini-Llosa (2007),NA,NA,NA,NA,NA,Completar manualmente desde el paper antes de cerrar el informe; la consigna pide comparar resultados con la literatura sugerida.
+Zack y Sotelsek (2016),NA,NA,NA,NA,NA,Completar manualmente desde el paper antes de cerrar el informe; la consigna pide comparar resultados con la literatura sugerida.

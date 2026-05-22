@@ -8,6 +8,15 @@ Master's Program in Applied Economics at the University of Buenos Aires.
 
 ---
 
+## Team Members
+
+- Andrea Chasi
+- Julián Delgadillo Marín
+- Christian Arias
+- Leonardo Ávila
+
+---
+
 ## Overview
 
 This project studies the long-run and short-run relationships between Argentina's

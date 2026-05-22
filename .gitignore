@@ -49,6 +49,9 @@ vignettes/*.pdf
 # Office temporary lock files
 ~$*
 
+# Local temporary course material not intended for public sync
+local_clases_teorico_practicas/
+
 # R Environment Variables
 .Renviron
 

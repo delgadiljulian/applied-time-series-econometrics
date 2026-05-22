@@ -11,9 +11,10 @@
 # (Largo y Corto Plazo)
 #
 # Integrantes:
-# - Crhistian
-# - Andrea
+# - Andrea Chasi
 # - Julián Delgadillo Marín
+# - Christian Arias
+# - Leonardo Ávila
 #
 # Período de análisis:
 # 2004Q1 – 2025Q4
@@ -402,10 +403,6 @@ arg_trade_dta <- read_dta(
   file.path(processed_data_dir, "arg_trade_data_2004_2025.dta")
 )
 
-# Abrir en visor de RStudio.
-View(arg_trade_dta)
-
-
 # ---------------------------------------------------------
 # 5.2 Tipo de Cambio Real Multilateral (ITCRM)
 # ---------------------------------------------------------
@@ -507,10 +504,6 @@ itcrm_dta <- read_dta(
   file.path(processed_data_dir, "arg_itcrm_quarterly_2004_2025.dta")
 )
 
-# Abrir en visor de RStudio.
-View(itcrm_dta)
-
-
 # ---------------------------------------------------------
 # 5.3 PIB real de Estados Unidos
 # ---------------------------------------------------------
@@ -595,10 +588,6 @@ usa_gdp_dta <- read_dta(
   file.path(processed_data_dir, "usa_real_gdp_quarterly_2004_2025.dta")
 )
 
-# Abrir en visor de RStudio.
-View(usa_gdp_dta)
-
-
 # ---------------------------------------------------------
 # 5.4 PIB real de Brasil
 # ---------------------------------------------------------
@@ -682,10 +671,6 @@ write_csv(
 brazil_gdp_dta <- read_dta(
   file.path(processed_data_dir, "brazil_real_gdp_quarterly_2004_2025.dta")
 )
-
-# Abrir en visor de RStudio.
-View(brazil_gdp_dta)
-
 
 # ---------------------------------------------------------
 # 5.5 Commodity Price Index
@@ -794,10 +779,6 @@ write_csv(
 commodity_dta <- read_dta(
   file.path(processed_data_dir, "world_bank_commodity_index_quarterly_2004_2025.dta")
 )
-
-# Abrir en visor de RStudio.
-View(commodity_dta)
-
 
 # =========================================================
 # 6. CONSTRUCCIÓN DEL PANEL FINAL
@@ -968,10 +949,6 @@ write_csv(
 trade_elasticities_panel_dta <- read_dta(
   file.path(processed_data_dir, "trade_elasticities_panel_2004_2025.dta")
 )
-
-# Abrir en visor de RStudio.
-View(trade_elasticities_panel_dta)
-
 
 # =========================================================
 # 7. TRANSFORMACIONES DE VARIABLES
@@ -1162,10 +1139,6 @@ write_csv(
 trade_elasticities_panel_transformed_dta <- read_dta(
   file.path(processed_data_dir, "trade_elasticities_panel_transformed_2004_2025.dta")
 )
-
-# Abrir en visor de RStudio.
-View(trade_elasticities_panel_transformed_dta)
-
 
 # =========================================================
 # 8. VISUALIZACIÓN EXPLORATORIA
@@ -1840,6 +1813,7 @@ write_xlsx(
 # - Estimar ecuaciones de cointegracion en niveles.
 # - Guardar residuos de cada ecuacion.
 # - Testear estacionariedad de residuos para Engle-Granger.
+# - Comparar el ADF residual con valores criticos Engle-Granger del curso.
 # - Aplicar Gregory-Hansen para permitir quiebre estructural.
 # - Decidir si corresponde ECM o modelo solo en diferencias.
 
@@ -2028,6 +2002,59 @@ engle_granger_tests <- map_dfr(
   "engle_granger_test"
 )
 
+# incorporar la tabla critica de Engle-Granger usada en clase para que la
+# decision no dependa solamente del p-value aproximado del ADF estandar.
+engle_granger_critical_values <- tribble(
+  ~q_series, ~reference_n_obs, ~critical_value_1pct, ~critical_value_5pct, ~critical_value_10pct,
+  2L, 50L, -4.32, -3.67, -3.28,
+  2L, 100L, -4.07, -3.37, -3.03,
+  2L, 200L, -4.00, -3.37, -3.02,
+  3L, 50L, -4.84, -4.11, -3.73,
+  3L, 100L, -4.45, -3.93, -3.59,
+  3L, 200L, -4.35, -3.78, -3.47
+) %>%
+  mutate(
+    critical_value_source = "Tabla_EG.R usada en clases",
+    critical_value_note = paste(
+      "q_series cuenta la variable dependiente y los regresores de la",
+      "relacion de cointegracion; se selecciona la fila con N mas cercano."
+    )
+  )
+
+engle_granger_critical_comparison <- engle_granger_tests %>%
+  left_join(
+    cointegration_specs %>%
+      transmute(
+        model_key,
+        q_series = map_int(regressors, length) + 1L
+      ),
+    by = "model_key"
+  ) %>%
+  rowwise() %>%
+  mutate(
+    reference_n_obs = engle_granger_critical_values$reference_n_obs[
+      which.min(abs(engle_granger_critical_values$reference_n_obs - n_obs))
+    ]
+  ) %>%
+  ungroup() %>%
+  left_join(
+    engle_granger_critical_values,
+    by = c("q_series", "reference_n_obs")
+  ) %>%
+  mutate(
+    rejects_unit_root_5pct_eg = statistic < critical_value_5pct,
+    engle_granger_table_conclusion_5pct = case_when(
+      is.na(statistic) | is.na(critical_value_5pct) ~ "no evaluable",
+      rejects_unit_root_5pct_eg ~
+        "rechaza raiz unitaria en residuos; cointegracion por tabla EG",
+      TRUE ~ "no rechaza raiz unitaria en residuos por tabla EG"
+    ),
+    comparison_note = paste(
+      "Comparacion formal contra valores criticos Engle-Granger del curso;",
+      "el p-value ADF estandar se mantiene solo como referencia aproximada."
+    )
+  )
+
 engle_granger_residuals_long <- map_dfr(
   engle_granger_results,
   "residuals"
@@ -2167,8 +2194,21 @@ cointegration_decision_summary <- engle_granger_tests %>%
   transmute(
     model_key,
     model_label,
-    engle_granger_cointegration = p_value < 0.05,
+    engle_granger_p_value_approx = p_value,
     engle_granger_conclusion = conclusion_5pct
+  ) %>%
+  left_join(
+    engle_granger_critical_comparison %>%
+      select(
+        model_key,
+        q_series,
+        reference_n_obs,
+        engle_granger_statistic = statistic,
+        engle_granger_critical_value_5pct = critical_value_5pct,
+        engle_granger_cointegration = rejects_unit_root_5pct_eg,
+        engle_granger_table_conclusion_5pct
+      ),
+    by = "model_key"
   ) %>%
   left_join(
     gregory_hansen_tests %>%
@@ -2195,7 +2235,8 @@ cointegration_decision_summary <- engle_granger_tests %>%
       TRUE ~ "sin evidencia de cointegracion"
     ),
     next_step = if_else(
-      engle_granger_cointegration | gregory_hansen_cointegration,
+      coalesce(engle_granger_cointegration, FALSE) |
+        coalesce(gregory_hansen_cointegration, FALSE),
       "estimar ECM con termino de correccion del error",
       "estimar modelo en primeras diferencias sin ECM"
     )
@@ -2204,6 +2245,7 @@ cointegration_decision_summary <- engle_granger_tests %>%
 print(cointegration_equation_summary)
 print(cointegration_long_run_coefficients)
 print(engle_granger_tests)
+print(engle_granger_critical_comparison)
 print(gregory_hansen_tests)
 print(cointegration_decision_summary)
 
@@ -2239,15 +2281,14 @@ write_xlsx(
     equations = cointegration_equation_summary,
     long_run_coefficients = cointegration_long_run_coefficients,
     engle_granger = engle_granger_tests,
+    eg_critical_values = engle_granger_critical_values,
+    eg_critical_comparison = engle_granger_critical_comparison,
     gregory_hansen = gregory_hansen_tests,
     decision_summary = cointegration_decision_summary,
     residuals = engle_granger_residuals_long
   ),
   file.path(output_dir, "section_10_cointegration_results.xlsx")
 )
-
-# Abrir en visor de RStudio.
-View(trade_elasticities_panel_modeling_dta)
 
 # Vista reducida de chequeo para evitar buscarlas al final del visor.
 trade_elasticities_residuals_view <- trade_elasticities_panel_modeling_dta %>%
@@ -2260,7 +2301,7 @@ trade_elasticities_residuals_view <- trade_elasticities_panel_modeling_dta %>%
     l1_resid_exports_eg
   )
 
-View(trade_elasticities_residuals_view)
+print(head(trade_elasticities_residuals_view, 10))
 tail(names(trade_elasticities_panel_modeling_dta), 10)
 
 # =========================================================
@@ -4141,7 +4182,7 @@ final_methodological_notes <- tibble(
     "Wickens-Breusch"
   ),
   note = c(
-    "El ADF sobre residuos se reporta con p-values aproximados; la inferencia formal usa valores criticos especificos de cointegracion.",
+    "El ADF sobre residuos se compara contra la tabla critica Engle-Granger del curso; el p-value estandar queda solo como referencia aproximada.",
     "Se usa como evidencia complementaria de cointegracion con quiebre; los valores criticos son aproximados y deben validarse contra bibliografia o material del curso.",
     "La interpretacion del signo asume convencion BCRA: aumento del ITCRM implica depreciacion real multilateral.",
     "Se usa lag 4 por datos trimestrales; los errores HAC corrigen inferencia ante heterocedasticidad y autocorrelacion.",
