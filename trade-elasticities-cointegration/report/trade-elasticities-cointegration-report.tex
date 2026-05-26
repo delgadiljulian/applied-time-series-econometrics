@@ -92,7 +92,44 @@ Julio Eduardo Fabris
 % -------------------------------
 \begin{abstract}
 \label{sec:abstract}
-resumen del trabajo abstract
+Este trabajo estima elasticidades de comercio exterior para Argentina durante
+el período 2004Q1--2022Q4, distinguiendo entre importaciones y exportaciones.
+La estrategia empírica combina pruebas de raíz unitaria, contrastes de
+cointegración de Engle-Granger, pruebas con quiebres estructurales de
+Gregory-Hansen y modelos dinámicos. Los resultados muestran una diferencia
+importante entre ambos flujos comerciales. Para importaciones, existe evidencia
+de cointegración y se estima un modelo con término de corrección del error. La
+elasticidad ingreso de largo plazo es positiva y mayor que la unidad, mientras
+que la elasticidad frente al tipo de cambio real multilateral es negativa y de
+menor magnitud. Además, el coeficiente de ajuste indica que cerca del 32.9\% del
+desequilibrio se corrige en cada trimestre. Para exportaciones, en cambio, la
+evidencia de cointegración no resulta robusta, por lo que la especificación
+final se estima en primeras diferencias. En ese caso, el índice de commodities
+aparece como el principal determinante significativo de corto plazo. La
+comparación con la literatura confirma que los resultados de importaciones se
+ubican dentro del patrón esperado para Argentina, mientras que las exportaciones
+requieren una interpretación más cautelosa.
+
+\vspace{0.8em}
+\begin{center}
+\textbf{Abstract}
+\end{center}
+
+This paper estimates foreign trade elasticities for Argentina
+over the period 2004Q1--2022Q4, distinguishing between imports and exports. The
+empirical strategy combines unit root tests, Engle-Granger cointegration tests,
+Gregory-Hansen structural break tests, and dynamic models. The results show an
+important difference between the two trade flows. For imports, there is evidence
+of cointegration, so an error correction model is estimated. The long-run income
+elasticity is positive and greater than one, while the elasticity with respect
+to the multilateral real exchange rate is negative and smaller in magnitude.
+The adjustment coefficient indicates that about 32.9\% of the disequilibrium is
+corrected each quarter. For exports, by contrast, cointegration evidence is not
+robust; therefore, the final specification is estimated in first differences.
+In this case, the commodity price index emerges as the main significant
+short-run determinant. The comparison with the literature confirms that the
+import results are consistent with the expected pattern for Argentina, whereas
+export elasticities require a more cautious interpretation.
 \end{abstract}
 
 % -------------------------------
@@ -100,6 +137,70 @@ resumen del trabajo abstract
 % -------------------------------
 \section{Introducción}
 \label{sec:introduccion}
+
+El comportamiento del comercio exterior es una dimensión central para analizar
+las posibilidades de crecimiento de la economía argentina. En economías con
+restricciones externas recurrentes, la expansión de la actividad suele aumentar
+la demanda de importaciones, mientras que la capacidad de generar divisas
+depende de la evolución de las exportaciones, de la demanda externa y de los
+precios relativos. En este contexto, las elasticidades ingreso y tipo de cambio
+del comercio exterior permiten evaluar hasta qué punto el crecimiento doméstico,
+el dinamismo de los socios comerciales y las variaciones del tipo de cambio real
+se traducen en cambios en las cantidades importadas y exportadas.
+
+La literatura aplicada para Argentina muestra que estas elasticidades son
+relevantes tanto para la discusión macroeconómica como para la evaluación de
+políticas. Berrettoni y Castresana \cite{berrettoni_castresana_2008} estiman
+elasticidades de importaciones y exportaciones para el período 1993--2008 y
+encuentran una respuesta importante de las cantidades comerciadas al ingreso.
+Duarte, Nicolini-Llosa y Payá \cite{duarte_nicolini_llosa_paya_2007} se
+concentran en las importaciones argentinas y reportan elasticidades ingreso
+elevadas junto con una respuesta negativa al tipo de cambio real. Zack y
+Sotelsek \cite{zack_sotelsek_2016} amplían la discusión al estimar
+elasticidades agregadas y bilaterales para 1996--2013, mostrando que la
+elasticidad ingreso de las importaciones tiende a superar a la de las
+exportaciones. En conjunto, estos trabajos sugieren que el comercio exterior
+argentino responde de manera asimétrica al nivel de actividad y que el tipo de
+cambio real tiene un efecto más acotado que el ingreso.
+
+Esta asimetría se vincula directamente con la discusión sobre restricción
+externa. Si las importaciones reaccionan con fuerza al crecimiento del producto
+interno y las exportaciones responden con menor intensidad a la demanda externa
+o al tipo de cambio real, la expansión económica puede generar una demanda de
+divisas superior a la capacidad de generarlas por el lado exportador. En ese
+marco, estimar elasticidades no es solo un ejercicio de medición: permite
+evaluar si el crecimiento enfrenta límites asociados a la estructura productiva,
+al contenido importado de la actividad y a la capacidad exportadora de la
+economía. Por ello, la interpretación de los coeficientes debe articularse con
+la validación econométrica de las relaciones estimadas.
+
+El objetivo de este informe es estimar elasticidades de comercio exterior para
+Argentina en el período 2004Q1--2022Q4, distinguiendo entre importaciones y
+exportaciones. Para ello se trabaja con series trimestrales en logaritmos y se
+evalúa si las relaciones entre comercio, actividad, demanda externa y tipo de
+cambio real pueden interpretarse como vínculos de largo plazo o si deben
+analizarse únicamente en términos de dinámica de corto plazo. Esta distinción es
+importante porque una regresión en niveles solo tiene interpretación
+econométrica como relación de equilibrio si existe evidencia de cointegración.
+
+La estrategia metodológica sigue el enfoque de series de tiempo integrado por
+pruebas de raíz unitaria, contrastes de cointegración, modelos dinámicos y
+modelos con término de corrección del error, de acuerdo con Enders
+\cite{enders_2014}, Pfaff \cite{pfaff_2008}, Pindyck y Rubinfeld
+\cite{pindyck_rubinfeld_1998} y las notas de clase \cite{fabris_2025}. Además,
+Song, Witt y Li \cite{song_witt_li_2008} se utilizan como referencia
+metodológica para la interpretación de funciones de demanda, elasticidades,
+cointegración y modelos de corrección del error en aplicaciones empíricas.
+
+El aporte del trabajo consiste en no imponer una misma especificación para ambos
+flujos comerciales. Los resultados muestran que las importaciones presentan una
+relación de largo plazo con la actividad doméstica y el índice de tipo de cambio
+real multilateral (ITCRM), por lo que se estima un modelo de corrección del
+error. En cambio, para las exportaciones la
+evidencia de cointegración no resulta robusta, de modo que la especificación
+final se concentra en primeras diferencias. Esta diferencia metodológica permite
+interpretar con mayor cautela las elasticidades y evita atribuir relaciones de
+equilibrio allí donde los datos no las respaldan.
 
 
 
@@ -118,6 +219,13 @@ como elasticidades. Las variaciones trimestrales se aproximan mediante primeras
 diferencias logarítmicas, definidas en la ecuación
 \eqref{eq:primera-diferencia-logaritmica}.
 
+La estrategia metodológica sigue la presentación de series integradas,
+cointegración y modelos con término de corrección del error desarrollada en
+Enders \cite{enders_2014}, Pfaff \cite{pfaff_2008}, Pindyck y Rubinfeld
+\cite{pindyck_rubinfeld_1998} y las notas de clase \cite{fabris_2025}. Para la
+implementación aplicada y el trabajo reproducible en R se toma además como
+referencia a Kleiber y Zeileis \cite{kleiber_zeileis_2008}.
+
 \begin{equation}
 z_t = \ln(Z_t)
 \label{eq:transformacion-logaritmica}
@@ -129,11 +237,12 @@ z_t = \ln(Z_t)
 \end{equation}
 
 Para representar la demanda externa relevante de las exportaciones argentinas,
-se construye un indicador de PIB de socios comerciales a partir de los PIB de
-Brasil y Estados Unidos. La agregación se realiza como combinación ponderada en
-logaritmos, de acuerdo con la ecuación \eqref{eq:pib-socios}, donde los pesos
-\(w_{BR}\) y \(w_{US}\) provienen de la estructura de ponderadores utilizada en
-el índice de tipo de cambio real multilateral.
+se construye un indicador de producto interno bruto (PIB) de socios comerciales
+a partir de los PIB de Brasil y Estados Unidos. La agregación se realiza como
+combinación ponderada en logaritmos, de acuerdo con la ecuación
+\eqref{eq:pib-socios}, donde los pesos \(w_{BR}\) y \(w_{US}\) provienen de la
+estructura de ponderadores utilizada en el índice de tipo de cambio real
+multilateral (ITCRM).
 
 \begin{equation}
 \ln(PIBSOCIOS_t)
@@ -142,10 +251,10 @@ el índice de tipo de cambio real multilateral.
 \end{equation}
 
 La especificación de largo plazo para importaciones relaciona las importaciones
-reales con el nivel de actividad local y el tipo de cambio real multilateral,
-como se muestra en la ecuación \eqref{eq:largo-plazo-importaciones}. En esta
-ecuación, \(\alpha_1\) mide la elasticidad ingreso de las importaciones y
-\(\alpha_2\) mide la elasticidad frente al ITCRM.
+reales con el nivel de actividad local y el ITCRM, como se muestra en la
+ecuación \eqref{eq:largo-plazo-importaciones}. En esta ecuación, \(\alpha_1\)
+mide la elasticidad ingreso de las importaciones y \(\alpha_2\) mide la
+elasticidad frente al ITCRM.
 
 \begin{equation}
 \ln(M_t)
@@ -166,8 +275,9 @@ tipo de cambio real.
 \end{equation}
 
 Antes de estimar modelos dinámicos, se evalúa el orden de integración de las
-series mediante pruebas ADF, Phillips-Perron y KPSS. Luego se aplican pruebas
-de cointegración de Engle-Granger sobre las relaciones de largo plazo. Para la
+series mediante pruebas Dickey-Fuller aumentada (ADF), Phillips-Perron (PP) y
+Kwiatkowski-Phillips-Schmidt-Shin (KPSS). Luego se aplican pruebas de
+cointegración de Engle-Granger sobre las relaciones de largo plazo. Para la
 ecuación de importaciones, el residuo estimado se define en
 \eqref{eq:residuo-engle-granger-importaciones}. Si este residuo es
 estacionario, las variables comparten una relación de equilibrio de largo
@@ -182,10 +292,13 @@ plazo.
 \end{equation}
 
 Cuando existe evidencia de cointegración, se estima un modelo de corrección del
-error. Para importaciones, el modelo utilizado se resume en la ecuación
+error (Error Correction Model, ECM). Para importaciones, el modelo utilizado se
+resume en la ecuación
 \eqref{eq:ecm-importaciones}. El término \(\widehat{u}_{t-1}\) representa el
 desvío rezagado respecto del equilibrio de largo plazo, mientras que
-\(\lambda\) mide la velocidad con la que el sistema corrige dicho desequilibrio.
+\(\lambda\) es el coeficiente de ajuste del ECM. De acuerdo con la convención
+utilizada en clase, este coeficiente debe ser negativo y significativo para
+indicar corrección hacia el equilibrio.
 
 \begin{equation}
 \Delta \ln(M_t)
@@ -198,11 +311,11 @@ desvío rezagado respecto del equilibrio de largo plazo, mientras que
 \label{eq:ecm-importaciones}
 \end{equation}
 
-La velocidad trimestral de ajuste se calcula como el valor absoluto del
-coeficiente del término de corrección del error, multiplicado por cien, según
-\eqref{eq:velocidad-ajuste}. En la estimación final de importaciones, el
-coeficiente estimado implica una velocidad de ajuste de 32.9\%, como se muestra
-en \eqref{eq:velocidad-ajuste-estimada}.
+La velocidad trimestral de ajuste se obtiene a partir del valor absoluto del
+coeficiente de ajuste, multiplicado por cien, según
+\eqref{eq:velocidad-ajuste}. En la estimación final de importaciones, dicho
+coeficiente implica una velocidad de ajuste de 32.9\%, como se muestra en
+\eqref{eq:velocidad-ajuste-estimada}.
 
 \begin{equation}
 \text{Velocidad de ajuste trimestral}
@@ -218,7 +331,7 @@ en \eqref{eq:velocidad-ajuste-estimada}.
 Cuando no se encuentra evidencia suficiente de cointegración, la especificación
 se estima en primeras diferencias. Este es el caso de exportaciones, cuyo
 modelo de corto plazo incorpora el crecimiento del PIB de socios, el ITCRM y el
-índice de commodities, como se presenta en la ecuación
+índice de precios de commodities, como se presenta en la ecuación
 \eqref{eq:diferencias-exportaciones}.
 
 \begin{equation}
@@ -233,9 +346,9 @@ modelo de corto plazo incorpora el crecimiento del PIB de socios, el ITCRM y el
 \end{equation}
 
 La cantidad de rezagos de los modelos dinámicos se selecciona mediante el
-criterio de información bayesiano, definido en la ecuación \eqref{eq:bic}. Este
-criterio penaliza la complejidad del modelo a través del número de parámetros
-\(k_p\) y favorece especificaciones parsimoniosas.
+criterio de información bayesiano (BIC), definido en la ecuación \eqref{eq:bic}.
+Este criterio penaliza la complejidad del modelo a través del número de
+parámetros \(k_p\) y favorece especificaciones parsimoniosas.
 
 \begin{equation}
 BIC(p) = -2\ln(\widehat{L}_p) + k_p \ln(T)
@@ -275,15 +388,16 @@ tiempo, documentar la cobertura disponible de cada fuente.
 \label{subsec:fuentes-construccion-variables}
 
 Las variables de comercio exterior y el PIB de Argentina provienen de fuentes
-oficiales nacionales, mientras que las variables externas se construyen a
-partir de información internacional y del BCRA. Todas las series se expresan en
-frecuencia trimestral y se transforman a logaritmos naturales y primeras
-diferencias logarítmicas para el análisis econométrico. El Cuadro
-\ref{tab:variables-fuentes-transformaciones} resume las fuentes, la cobertura
-disponible y las transformaciones aplicadas.
+oficiales nacionales, en particular del Instituto Nacional de Estadística y
+Censos (INDEC), mientras que las variables externas se construyen a partir de
+información internacional y del Banco Central de la República Argentina (BCRA).
+Todas las series se expresan en frecuencia trimestral y se transforman a
+logaritmos naturales y primeras diferencias logarítmicas para el análisis
+econométrico. El Cuadro \ref{tab:variables-fuentes-transformaciones} resume las
+fuentes, la cobertura disponible y las transformaciones aplicadas.
 
-El índice de commodities se incorpora como variable externa adicional para
-capturar shocks de precios internacionales relevantes para las exportaciones
+El índice de precios de commodities se incorpora como variable externa adicional
+para capturar choques de precios internacionales relevantes para las exportaciones
 argentinas. En la especificación final no se utiliza como determinante de la
 relación de largo plazo, sino como regresor de corto plazo en el modelo en
 primeras diferencias de exportaciones.
@@ -291,7 +405,8 @@ primeras diferencias de exportaciones.
 El PIB de socios comerciales se construye como un índice ponderado de Brasil y
 Estados Unidos. Los ponderadores provienen de la estructura utilizada por el
 BCRA para el ITCRM, por lo que reflejan la importancia relativa de cada socio en
-el comercio argentino. Como el indicador se limita a estos dos países, los pesos
+el comercio argentino. La serie de Estados Unidos se toma de Federal Reserve
+Economic Data (FRED). Como el indicador se limita a estos dos países, los pesos
 originales se normalizan para que sumen 100\%. Así, Brasil recibe una
 participación mayor por su peso relativo dentro del comercio argentino, mientras
 que Estados Unidos completa el índice como segundo socio considerado. El Cuadro
@@ -364,7 +479,7 @@ en logaritmos asociadas a la demanda externa y a los precios internacionales.
 Las exportaciones reales muestran una trayectoria menos regular que las
 importaciones, mientras que el PIB de socios mantiene una tendencia creciente
 más suave. El índice de commodities registra ciclos marcados, lo que respalda
-su inclusión como variable externa para capturar shocks de precios
+su inclusión como variable externa para capturar choques de precios
 internacionales en el modelo de corto plazo.
 
 \begin{figure}[H]
@@ -466,7 +581,7 @@ modelos estimados.
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lrrll}
 \toprule
-Serie & p-value & Evidencia al 5\% & Serie afectada & Decisión metodológica \\
+Serie & Valor p & Evidencia al 5\% & Serie afectada & Decisión metodológica \\
 \midrule
 Importaciones reales & $<0,001^{***}$ & Posible patrón estacional & Sí & No se ajusta; se controla con diferencias y rezagos \\
 Exportaciones reales & $<0,001^{***}$ & Posible patrón estacional & Sí & No se ajusta; se controla con diferencias y rezagos \\
@@ -499,9 +614,9 @@ importaciones presenta evidencia suficiente de cointegración. El estadístico d
 Engle-Granger es menor que el valor crítico al 5\% y la prueba de
 Gregory-Hansen también respalda la existencia de una relación de largo plazo
 con quiebre. Por este motivo, la especificación de importaciones se estima
-luego mediante un modelo de corrección del error. En cambio, para
+luego mediante un ECM. En cambio, para
 exportaciones la evidencia no resulta suficientemente robusta: aunque el
-p-value aproximado de Engle-Granger es bajo, la comparación con los valores
+valor p aproximado de Engle-Granger es bajo, la comparación con los valores
 críticos de la prueba y el contraste con quiebre no sostienen una decisión de
 cointegración. Por ello, la ecuación de exportaciones se trata como un modelo
 en primeras diferencias.
@@ -514,10 +629,10 @@ en primeras diferencias.
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lcccccccl}
 \toprule
-Ecuación & EG estad. & EG VC 5\% & EG p-val. & EG decisión & GH modelo/quiebre & GH estad. & GH VC 5\% & Decisión final \\
+Ecuación & EG estad. & EG VC 5\% & EG valor p & EG decisión & GH modelo/quiebre & GH estad. & GH VC 5\% & Decisión final \\
 \midrule
-Importaciones & -4.483 & -3.930 & 0.010 & Cointegra & Level shift, 2009Q1 & -5.168 & -4.950 & ECM \\
-Exportaciones & -3.771 & -3.930 & 0.025 & No cointegra & Regime shift, 2018Q4 & -4.509 & -5.500 & Primeras diferencias \\
+Importaciones & -4.483 & -3.930 & 0.010 & Cointegra & Quiebre en nivel, 2009Q1 & -5.168 & -4.950 & ECM \\
+Exportaciones & -3.771 & -3.930 & 0.025 & No cointegra & Quiebre de régimen, 2018Q4 & -4.509 & -5.500 & Primeras diferencias \\
 \bottomrule
 \end{tabular}%
 }
@@ -548,7 +663,7 @@ decisión econométrica final.
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{llrrlll}
 \toprule
-Ecuación & Elasticidad & Coeficiente & p-value & Signo esperado & Signo observado & Validez econométrica \\
+Ecuación & Elasticidad & Coeficiente & Valor p & Signo esperado & Signo observado & Validez econométrica \\
 \midrule
 Importaciones & Ingreso interno & 1.518 & $<0,001^{***}$ & Positivo & Positivo & Validada por cointegración \\
 Importaciones & ITCRM & -0.399 & $<0,001^{***}$ & Negativo & Negativo & Validada por cointegración \\
@@ -616,16 +731,17 @@ umbral convencional del 5\%. Esta señal es consistente con la interpretación
 económica de que una depreciación real encarece las importaciones y tiende a
 reducir su crecimiento.
 
-El término de corrección del error rezagado es negativo y significativo. Este
-resultado es central: confirma que, cuando las importaciones se desvían de la
-relación de largo plazo estimada, existe un mecanismo de ajuste que empuja al
-sistema nuevamente hacia el equilibrio. El signo negativo del ECT es coherente
-con convergencia y permite interpretar el modelo de importaciones como un ECM
-económicamente consistente.
+El coeficiente de ajuste asociado al término de corrección del error rezagado
+es negativo y significativo. Este resultado es central: confirma que, cuando
+las importaciones se desvían de la relación de largo plazo estimada, existe un
+mecanismo de ajuste que empuja al sistema nuevamente hacia el equilibrio. El
+signo negativo del término de corrección del error (Error Correction Term, ECT)
+es coherente con convergencia y permite interpretar el modelo de importaciones
+como un ECM económicamente consistente.
 
 Para exportaciones, el modelo final se estima en primeras diferencias. En esta
 especificación, el crecimiento del índice de commodities presenta un efecto
-positivo y estadísticamente significativo, lo que sugiere que los shocks de
+positivo y estadísticamente significativo, lo que sugiere que los choques de
 precios internacionales tienen un papel relevante en la dinámica de corto plazo
 de las exportaciones argentinas. En cambio, el crecimiento del PIB de socios y
 del ITCRM no resulta significativo en la especificación final, por lo que su
@@ -640,7 +756,7 @@ muestra.
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{llrrrr}
 \toprule
-Modelo & Variable & Coeficiente & Error HAC & Estadístico t & p-value \\
+Modelo & Variable & Coeficiente & Error HAC & Estadístico t & Valor p \\
 \midrule
 Importaciones - ECM & $\Delta \log(PIB)$ & 1.420 & 0.088 & 16.158 & $<0,001^{***}$ \\
 Importaciones - ECM & $\Delta \log(ITCRM)$ & -0.107 & 0.054 & -1.977 & $0,053^{*}$ \\
@@ -654,11 +770,11 @@ Exportaciones - primeras diferencias & $\Delta \log(commodities)$ & 0.214 & 0.06
 \vspace{1mm}
 
 \begin{minipage}{0.96\textwidth}
-\footnotesize \textit{Nota:} Errores estándar HAC/Newey-West. *, ** y *** indican significancia estadística al 10\%, 5\% y 1\%, respectivamente.
+\footnotesize \textit{Nota:} Errores estándar robustos a heterocedasticidad y autocorrelación (HAC/Newey-West). *, ** y *** indican significancia estadística al 10\%, 5\% y 1\%, respectivamente.
 \end{minipage}
 \end{table}
 
-La velocidad de ajuste del ECM se presenta en el Cuadro
+El coeficiente de ajuste y la velocidad implícita del ECM se presentan en el Cuadro
 \ref{tab:velocidad-ajuste-ecm}. El coeficiente del ECT para importaciones es
 \(-0.329\), lo que implica que aproximadamente el 32.9\% del desequilibrio de
 largo plazo se corrige en cada trimestre. En otras palabras, ante una brecha
@@ -675,7 +791,7 @@ velocidad de ajuste.
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{llrrrrl}
 \toprule
-Modelo & Término & Coeficiente ECT & Error HAC & p-value & Velocidad trimestral & Interpretación económica \\
+Modelo & Término & Coeficiente de ajuste & Error HAC & Valor p & Velocidad trimestral & Interpretación económica \\
 \midrule
 Importaciones - ECM & ECT rezagado & -0.329 & 0.052 & $<0,001^{***}$ & 32.9\% & Corrige 32.9\% del desequilibrio por trimestre \\
 Exportaciones - ECM & -- & -- & -- & -- & -- & No estimado: sin evidencia suficiente de cointegración \\
@@ -685,7 +801,7 @@ Exportaciones - ECM & -- & -- & -- & -- & -- & No estimado: sin evidencia sufici
 \vspace{1mm}
 
 \begin{minipage}{0.96\textwidth}
-\footnotesize \textit{Nota:} Error estándar HAC/Newey-West. *, ** y *** indican significancia estadística al 10\%, 5\% y 1\%, respectivamente.
+\footnotesize \textit{Nota:} Error estándar robusto a heterocedasticidad y autocorrelación (HAC/Newey-West). *, ** y *** indican significancia estadística al 10\%, 5\% y 1\%, respectivamente.
 \end{minipage}
 \end{table}
 
@@ -698,6 +814,15 @@ Exportaciones - ECM & -- & -- & -- & -- & -- & No estimado: sin evidencia sufici
 
 \subsection{Diagnósticos post-estimación}
 \label{subsec:diagnosticos-post-estimacion}
+
+La validación de los modelos finales se completa con diagnósticos sobre los
+residuos. El objetivo es verificar si las especificaciones elegidas presentan
+problemas de autocorrelación, heterocedasticidad, no normalidad o inestabilidad
+paramétrica que puedan afectar la lectura econométrica. Para ello se consideran
+las pruebas Breusch-Godfrey (BG) y Ljung-Box para autocorrelación,
+Breusch-Pagan para heterocedasticidad, Jarque-Bera para normalidad y suma
+acumulada de residuos recursivos (CUSUM) para estabilidad. En todos los casos,
+un valor p menor al 5\% se interpreta como evidencia de una alerta diagnóstica.
 
 \begin{table}[H]
 \centering
@@ -716,6 +841,35 @@ Importaciones - ECM & 0.141 & 0.847 & 0.411 & 0.281 & 0.490 & Sin alertas al 5\%
 \end{tabular}%
 }
 \end{table}
+
+El Cuadro \ref{tab:diagnosticos-modelos} muestra que ninguno de los modelos
+finales presenta alertas al 5\%. En el modelo de exportaciones en primeras
+diferencias, los valores p de Breusch-Godfrey y Ljung-Box no rechazan la ausencia
+de autocorrelación serial, mientras que Breusch-Pagan, Jarque-Bera y CUSUM no
+indican problemas de heterocedasticidad, normalidad o estabilidad. Por lo tanto,
+la especificación en diferencias resulta adecuada para interpretar la dinámica
+de corto plazo de las exportaciones, especialmente el efecto positivo del índice
+de commodities.
+
+En importaciones, tanto el modelo en primeras diferencias como el ECM superan
+los diagnósticos considerados. El resultado más relevante es el del ECM, porque
+es la especificación final utilizada para combinar la relación de largo plazo
+con la dinámica de corto plazo. La ausencia de alertas en autocorrelación,
+heterocedasticidad, normalidad y estabilidad refuerza la interpretación del
+término de corrección del error: el ajuste estimado hacia el equilibrio no
+parece estar explicado por un problema residual evidente. Además, aunque la
+inferencia se reporta con errores estándar HAC/Newey-West, los diagnósticos no
+sugieren una fragilidad importante de la especificación.
+
+Las Figuras \ref{fig:residuos-modelos-finales},
+\ref{fig:ajustados-vs-residuos-exportaciones} y
+\ref{fig:ajustados-vs-residuos-importaciones} complementan esta lectura. Los
+residuos se distribuyen alrededor de cero y no muestran patrones sistemáticos
+persistentes frente a los valores ajustados. Esto es consistente con la
+conclusión del cuadro: las especificaciones finales pueden utilizarse como base
+para comparar métodos y discutir las elasticidades estimadas, manteniendo la
+cautela habitual asociada al tamaño muestral y al carácter trimestral de la
+información.
 
 \begin{figure}[H]
 \centering
@@ -744,9 +898,175 @@ Importaciones - ECM & 0.141 & 0.847 & 0.411 & 0.281 & 0.490 & Sin alertas al 5\%
 \section{Comparación de métodos}
 \label{sec:comparacion-metodos}
 
+La estrategia empírica se apoya en una secuencia común en la literatura
+revisada: primero se analiza el orden de integración de las series, luego se
+evalúa si existe una relación de largo plazo y, finalmente, se estima un modelo
+dinámico compatible con esa evidencia. Berrettoni y Castresana (2008), Duarte,
+Nicolini-Llosa y Payá (2007) y Zack y Sotelsek (2016) siguen esta lógica para
+obtener elasticidades de comercio exterior. Song, Witt y Li (2008) no aporta
+elasticidades comparables para Argentina, pero resulta útil como referencia
+metodológica sobre funciones de demanda, cointegración y modelos con término de
+corrección del error.
+
+El Cuadro \ref{tab:comparacion-metodos} resume cómo se traduce esa secuencia en
+este informe. La principal diferencia frente a parte de la literatura es que no
+se impone una misma especificación para importaciones y exportaciones. En
+importaciones, la evidencia de cointegración permite utilizar un modelo con
+término de corrección del error y leer las elasticidades de largo plazo como
+parámetros econométricamente respaldados. En exportaciones, en cambio, la
+cointegración no resulta robusta; por eso, el modelo final se mantiene en
+primeras diferencias y los coeficientes en niveles se interpretan solo como una
+referencia descriptiva.
+
 \begin{table}[H]
 \centering
-\caption{Comparación preliminar con la literatura.}
+\caption{Comparación de métodos aplicados en la estimación.}
+\label{tab:comparacion-metodos}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{p{2.7cm}p{4.4cm}p{4.1cm}p{4.1cm}}
+\toprule
+Método & Uso en la literatura revisada & Resultado en este trabajo & Decisión metodológica \\
+\midrule
+Raíz unitaria & Paso previo para evitar regresiones espurias en series persistentes. & Las variables principales se tratan como I(1). & Trabajar con cointegración si los residuos son estacionarios; usar diferencias si no lo son. \\
+Cointegración & Berrettoni y Castresana, Duarte, Nicolini-Llosa y Payá, y Zack y Sotelsek estiman relaciones de largo plazo antes del ajuste dinámico. & Hay evidencia para importaciones, pero no para exportaciones bajo los contrastes aplicados. & Validar elasticidades de largo plazo solo para importaciones. \\
+Quiebres estructurales & Zack y Sotelsek evalúan cambios desde 2002; este informe contrasta quiebres con Gregory-Hansen. & El quiebre refuerza la cointegración en importaciones y no la sostiene en exportaciones. & No forzar una relación de equilibrio común para ambos flujos. \\
+ECM & La literatura lo utiliza para combinar elasticidades de largo plazo y ajuste de corto plazo. & En importaciones, el coeficiente de ajuste es negativo y significativo. & Usar el ECM como especificación final de importaciones. \\
+Primeras diferencias & Permiten describir respuestas de corto plazo cuando la relación de largo plazo no está respaldada. & En exportaciones, la evidencia de cointegración es insuficiente. & Usar primeras diferencias como especificación final de exportaciones. \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\subsection{Discusión metodológica: método e interpretación económica}
+\label{subsec:discusion-metodologica-metodo-interpretacion}
+
+La comparación de métodos permite desarrollar una idea central del informe: la
+elección del método modifica la interpretación económica. En series de tiempo,
+un coeficiente estadísticamente significativo no es suficiente para afirmar que
+existe una relación económica estable entre variables. Antes de interpretar el
+signo, la magnitud o la significancia de un parámetro, es necesario establecer
+la naturaleza estadística de la relación que lo genera. Esto exige distinguir si
+las series son estacionarias, si presentan raíces unitarias, si comparten una
+tendencia común de largo plazo o si solo se mueven conjuntamente durante ciertos
+episodios de corto plazo.
+
+El problema econométrico de fondo es el de las regresiones espurias. Muchas
+variables macroeconómicas, como el producto, el comercio, los precios relativos
+o los índices de actividad externa, presentan persistencia, tendencias
+determinísticas o estocásticas y cambios de nivel. Si dos series no
+estacionarias se regresan en niveles, la estimación puede producir coeficientes
+significativos, altos \(R^2\) y residuos aparentemente ordenados aun cuando no
+exista una relación económica de equilibrio entre ellas. En ese caso, la
+significancia estadística no identifica una conexión estructural, sino que puede
+reflejar únicamente que ambas variables comparten una evolución persistente en
+el tiempo. La inferencia usual pierde entonces su interpretación, porque los
+supuestos que justifican las pruebas tradicionales no se cumplen.
+
+Por esta razón, el primer paso no consiste en elegir la especificación con mejor
+ajuste, sino en evaluar el orden de integración de las series. Si las variables
+son integradas de orden uno, trabajar en niveles solo es econométricamente
+legítimo si existe cointegración. El procedimiento de Engle-Granger formaliza
+esta idea: primero estima una relación de largo plazo entre variables no
+estacionarias y luego evalúa si el residuo de esa relación es estacionario. Si
+el residuo es estacionario, los desvíos respecto de la relación estimada son
+transitorios. Esto permite interpretar la ecuación en niveles como una relación
+de equilibrio de largo plazo. Si el residuo no es estacionario, la relación en
+niveles no tiene ese respaldo y debe evitarse una lectura estructural de sus
+coeficientes.
+
+La cointegración, por tanto, no significa simplemente que dos variables estén
+correlacionadas. Significa que, aunque cada serie pueda tener una tendencia
+estocástica propia, existe una combinación lineal entre ellas que no se aleja
+indefinidamente. En términos económicos, esto equivale a sostener que las
+variables comparten una trayectoria de equilibrio: pueden desviarse en el corto
+plazo, pero esos desvíos contienen información sobre un proceso de corrección.
+La diferencia conceptual es importante. La correlación describe comovimientos;
+la dinámica de corto plazo describe respuestas en variaciones; la cointegración
+identifica una relación de largo plazo entre niveles; y el ajuste hacia el
+equilibrio describe el mecanismo mediante el cual los desvíos pasados afectan
+los cambios presentes.
+
+El modelo de corrección del error (ECM) cambia, por ello, la interpretación
+económica del modelo. En un ECM, las diferencias capturan la dinámica de corto
+plazo, mientras que el término de corrección del error (ECT) incorpora la
+información del desequilibrio de largo plazo. Un ECT negativo y significativo
+indica que, cuando la variable dependiente se ubica por encima de lo que
+sugiere la relación de equilibrio, el cambio posterior tiende a reducir ese
+desvío; y cuando se ubica por debajo, el ajuste opera en sentido contrario. El
+coeficiente del ECT no es solo un parámetro estadístico adicional: es la prueba
+de que existe un mecanismo de convergencia. Su magnitud permite cuantificar la
+velocidad con la que el sistema corrige los desequilibrios acumulados.
+
+Esta distinción ordena la interpretación de los resultados del informe. En
+importaciones, las pruebas de Engle-Granger y Gregory-Hansen respaldan una
+relación de cointegración entre importaciones reales, actividad interna e
+ITCRM. Por eso, las elasticidades de largo plazo pueden leerse como parámetros
+económicamente interpretables: no son solo coeficientes significativos en una
+regresión en niveles, sino parte de una relación de equilibrio cuya desviación
+es estacionaria. Además, el ECM estimado muestra un coeficiente de ajuste
+negativo y significativo, lo que permite afirmar que las importaciones corrigen
+una fracción del desequilibrio cada trimestre. En ese caso, la metodología
+habilita una lectura estructural de largo plazo y una lectura dinámica de corto
+plazo dentro de un mismo marco.
+
+En exportaciones, la situación es distinta. Aunque las elasticidades estimadas
+en niveles tienen signos plausibles, la evidencia de cointegración no resulta
+robusta. Por ello, forzar un ECM para exportaciones habría producido una
+interpretación más fuerte que la permitida por los datos. La decisión de estimar
+el modelo final en primeras diferencias no es una renuncia metodológica, sino
+una restricción epistemológica: el informe limita sus afirmaciones a aquello que
+la evidencia estadística permite sostener. En este caso, es legítimo hablar de
+dinámica de corto plazo y del efecto contemporáneo o rezagado de los precios de
+commodities, pero no de una relación de equilibrio estable entre exportaciones,
+demanda externa e ITCRM.
+
+Esta precaución es especialmente relevante para la macroeconomía argentina. La
+muestra incluye crisis, cambios de régimen, episodios de volatilidad cambiaria,
+modificaciones en precios relativos, restricciones externas y choques
+internacionales. En un contexto así, asumir estabilidad de largo plazo sin
+contrastarla puede ser problemático. Una relación estimada en niveles podría
+estar capturando un episodio histórico particular, un quiebre estructural o una
+tendencia común transitoria, en lugar de una regularidad económica persistente.
+Por eso se incorporan pruebas con quiebres estructurales y se evita imponer una
+misma estructura sobre ambos flujos comerciales.
+
+En síntesis, la metodología econométrica determina qué afirmaciones económicas
+son legítimas. Si hay integración sin cointegración, la interpretación debe
+concentrarse en diferencias y en dinámica de corto plazo. Si hay cointegración,
+puede hablarse de equilibrio de largo plazo y de mecanismos de ajuste. Si,
+además, el ECT es negativo y significativo, el modelo no solo describe una
+relación de largo plazo, sino también la forma en que el sistema corrige sus
+desvíos. Esta es la razón por la cual el informe no interpreta simétricamente
+importaciones y exportaciones: la diferencia no surge de una preferencia
+arbitraria por un método, sino de los límites que las propiedades estadísticas
+de cada relación imponen sobre la interpretación económica.
+
+La comparación muestra que los métodos no son sustitutos mecánicos, sino etapas
+complementarias de decisión. En importaciones, nuestros resultados se alinean
+con la literatura en dos puntos: la elasticidad ingreso es positiva y mayor que
+la unidad, y la elasticidad frente al tipo de cambio real es negativa pero de
+menor magnitud. Además, el ECM permite cuantificar la corrección hacia el
+equilibrio: el coeficiente de ajuste implica una reducción trimestral de
+aproximadamente 32.9\% del desequilibrio. En exportaciones, la evidencia es más
+débil. Aunque el signo de las elasticidades de largo plazo es consistente con
+Berrettoni y Castresana (2008) y Zack y Sotelsek (2016), la falta de
+cointegración robusta impide tratarlas como elasticidades finales del modelo.
+
+La comparación con la literatura debe leerse con la misma cautela. El Cuadro
+\ref{tab:comparacion-literatura} ubica los resultados de este trabajo frente a
+las referencias sugeridas en la consigna. Los valores propios muestran una
+elasticidad ingreso de importaciones positiva y mayor que la unidad, junto con
+una elasticidad frente al ITCRM negativa. Este patrón coincide con la literatura
+en dos aspectos: las importaciones suelen responder con fuerza al nivel de
+actividad doméstico y la respuesta al tipo de cambio real es más reducida que la
+respuesta al ingreso. En exportaciones, los coeficientes en niveles tienen signo
+positivo, pero en este informe se mantienen como indicativos porque la
+cointegración no resulta robusta.
+
+\begin{table}[H]
+\centering
+\caption{Comparación con la literatura empírica.}
 \label{tab:comparacion-literatura}
 \small
 \resizebox{\textwidth}{!}{%
@@ -756,12 +1076,25 @@ Fuente & Período & Flujo & Horizonte & Elasticidad ingreso & Elasticidad tipo d
 \midrule
 Este trabajo & 2004Q1--2022Q4 & Importaciones & Largo plazo & 1.518 & -0.399 \\
 Este trabajo & 2004Q1--2022Q4 & Exportaciones & Largo plazo & 0.720 & 0.159 \\
-Berrettoni y Castresana (2008) & Pendiente & Pendiente & Pendiente & Pendiente & Pendiente \\
-Bus y Nicolini-Llosa (2007) & Pendiente & Pendiente & Pendiente & Pendiente & Pendiente \\
-Zack y Sotelsek (2016) & Pendiente & Pendiente & Pendiente & Pendiente & Pendiente \\
+Berrettoni y Castresana (2008) & 1993--2008 & Importaciones & Largo plazo & 2.76 & -0.34 \\
+Berrettoni y Castresana (2008) & 1993--2008 & Importaciones & Corto plazo & 2.88 & -0.21 \\
+Berrettoni y Castresana (2008) & 1993--2008 & Exportaciones & Largo plazo & 1.84 & 0.30 \\
+Berrettoni y Castresana (2008) & 1993--2008 & Exportaciones & Corto plazo & 1.56 & 0.08 \\
+Duarte, Nicolini-Llosa y Payá (2007) & 1970Q1--2005Q4 & Importaciones & Largo plazo EG-OLS & 3.52 & -0.36 \\
+Duarte, Nicolini-Llosa y Payá (2007) & 1970Q1--2005Q4 & Importaciones & Largo plazo Johansen & 3.29 & -0.56 \\
+Duarte, Nicolini-Llosa y Payá (2007) & 1970Q1--2005Q4 & Importaciones & Corto plazo ECM & 2.375 & -0.15 \\
+Zack y Sotelsek (2016) & 1996--2013 & Importaciones & Largo plazo agregado & 1.72 & -0.30 \\
+Zack y Sotelsek (2016) & 1996--2013 & Exportaciones & Largo plazo agregado & 0.85 & 0.07 \\
+Zack y Sotelsek (2016) & 1996--2013 & Importaciones & Largo plazo bilateral & 1.23--6.17 & -0.80-- -0.27 \\
+Zack y Sotelsek (2016) & 1996--2013 & Exportaciones & Largo plazo bilateral & 0.30--2.71 & 0.21--0.48 \\
 \bottomrule
 \end{tabular}%
 }
+\vspace{1mm}
+
+\begin{minipage}{0.96\textwidth}
+\footnotesize \textit{Nota:} Para importaciones, las elasticidades frente al tipo de cambio real se presentan con signo negativo para mantener la convención del informe: una depreciación real encarece las compras externas y reduce las cantidades importadas. Berrettoni y Castresana (2008) estiman un modelo con término de corrección del error y reportan elasticidades de largo y corto plazo. El PDF local asociado a Bus y Nicolini-Llosa (2007) figura como Duarte, Nicolini-Llosa y Payá (2007); se reportan sus estimaciones por mínimos cuadrados ordinarios de Engle-Granger (EG-OLS), máxima verosimilitud con información completa (FIML) y ECM lineal. En Zack y Sotelsek (2016), los rangos corresponden a estimaciones bilaterales de largo plazo por socio comercial; el artículo también evalúa quiebres a partir de 2002.
+\end{minipage}
 \end{table}
 
 
@@ -772,12 +1105,173 @@ Zack y Sotelsek (2016) & Pendiente & Pendiente & Pendiente & Pendiente & Pendien
 \section{Conclusiones}
 \label{sec:conclusiones}
 
+Este trabajo estimó elasticidades de comercio exterior para Argentina a partir
+de una estrategia econométrica que distingue explícitamente entre relaciones de
+largo plazo y dinámicas de corto plazo. La decisión metodológica central fue no
+imponer una misma especificación para importaciones y exportaciones, sino dejar
+que las propiedades de las series y las pruebas de cointegración definieran el
+modelo final de cada flujo comercial. Esta distinción resulta importante porque
+los datos muestran comportamientos diferentes: las importaciones presentan una
+relación de equilibrio más estable con la actividad económica local y el ITCRM,
+mientras que las exportaciones responden de manera más limitada y menos robusta
+a una relación de largo plazo con la demanda externa y el tipo de cambio real.
+
+En importaciones, los resultados respaldan la existencia de una relación de
+largo plazo. Las pruebas de Engle-Granger y Gregory-Hansen ofrecen evidencia de
+cointegración, por lo que la especificación final se estima mediante un modelo
+de corrección del error (ECM). La elasticidad ingreso de largo plazo es positiva
+y mayor que la unidad, lo que indica que las importaciones reales reaccionan con
+fuerza ante cambios en el nivel de actividad argentino. La elasticidad frente al
+ITCRM es negativa, en línea con la interpretación de que una depreciación real
+encarece las importaciones y reduce su demanda. En el corto plazo, el PIB
+mantiene un efecto positivo y estadísticamente significativo, mientras que el
+ITCRM conserva el signo esperado aunque con una significancia más cercana al
+umbral convencional.
+
+El resultado más relevante del ECM de importaciones es el coeficiente de ajuste
+asociado al término de corrección del error. Este coeficiente es negativo y
+significativo, lo que confirma la presencia de un mecanismo de ajuste hacia el
+equilibrio de largo plazo. La velocidad implícita indica que aproximadamente el
+32.9\% del desequilibrio se corrige en cada trimestre. En términos económicos,
+esto significa que los desvíos de las importaciones respecto de la relación
+estimada con el PIB y el ITCRM no son permanentes: una parte importante de la
+brecha se corrige durante el trimestre siguiente. Los diagnósticos
+post-estimación no muestran alertas al 5\%, por lo que la especificación final
+de importaciones puede interpretarse como consistente tanto desde el punto de
+vista económico como econométrico.
+
+En exportaciones, la conclusión es distinta. Aunque la ecuación en niveles
+presenta coeficientes con signos razonables, la evidencia de cointegración no
+es suficientemente robusta cuando se utilizan los valores críticos específicos
+de Engle-Granger y se considera la posibilidad de quiebres estructurales con
+Gregory-Hansen. Por ese motivo, no se estima un ECM para exportaciones y el
+modelo final se define en primeras diferencias. Esta decisión evita atribuir
+una relación de equilibrio de largo plazo a un conjunto de variables que no la
+sostiene de manera clara en la muestra analizada.
+
+El modelo de exportaciones en primeras diferencias muestra que el índice de
+precios de commodities tiene un efecto positivo y estadísticamente significativo sobre el
+crecimiento de las exportaciones. Este resultado sugiere que los choques de
+precios internacionales son relevantes para explicar la dinámica exportadora
+argentina en el corto plazo. En cambio, el crecimiento del PIB de socios y del
+ITCRM no resulta significativo en la especificación final. La lectura económica
+es que, para esta muestra, las exportaciones parecen estar más asociadas a
+condiciones externas de precios que a una respuesta estable frente al nivel de
+actividad de los socios o al tipo de cambio real multilateral.
+
+En conjunto, los resultados muestran una asimetría importante entre
+importaciones y exportaciones. Las importaciones aparecen fuertemente
+vinculadas al ciclo económico interno y presentan un mecanismo de corrección de
+largo plazo. Las exportaciones, en cambio, muestran una dinámica más dependiente
+de choques externos y no permiten sostener una relación de cointegración robusta.
+Esta diferencia es relevante para la interpretación de las elasticidades: en
+importaciones, las elasticidades de largo plazo pueden leerse como parámetros
+econométricamente validados; en exportaciones, los coeficientes en niveles
+deben considerarse solamente indicativos, mientras que la evidencia principal
+proviene del modelo de corto plazo.
+
+El análisis también deja algunas cautelas. Primero, la muestra econométrica
+común cubre 2004Q1--2022Q4, por lo que los resultados deben interpretarse
+dentro de ese período y no como parámetros invariantes para cualquier régimen
+macroeconómico. Segundo, las series trimestrales contienen episodios de crisis,
+cambios de régimen y choques extraordinarios, lo que justifica el uso de rezagos,
+variables de control y pruebas con quiebres, pero también limita la precisión de
+algunas estimaciones. Tercero, el PIB de socios se construye a partir de Brasil
+y Estados Unidos como aproximación de demanda externa relevante; esta variable
+captura una parte importante del vínculo comercial argentino, pero no agota la
+heterogeneidad de destinos ni la composición sectorial de las exportaciones.
+Cuarto, el análisis trabaja con flujos agregados. Esta decisión permite una
+lectura macroeconómica general, aunque puede ocultar diferencias entre bienes
+primarios, manufacturas, energía, bienes intermedios y bienes de capital.
+
+Estas limitaciones son especialmente importantes en el caso argentino, donde los
+flujos comerciales están afectados por regulaciones cambiarias, restricciones
+cuantitativas, derechos de exportación, disponibilidad de financiamiento,
+condiciones climáticas, cambios de precios internacionales y episodios de
+inestabilidad macroeconómica. Esos factores no se modelan de manera directa y
+pueden alterar la velocidad y la forma de respuesta de importaciones y
+exportaciones. Por ello, los resultados deben leerse como evidencia agregada
+dentro de una especificación de series de tiempo, no como una caracterización
+completa de todos los determinantes del comercio exterior argentino.
+
+La comparación con la literatura muestra que los resultados de importaciones
+están dentro del patrón esperado para Argentina: Berrettoni y Castresana (2008),
+Duarte, Nicolini-Llosa y Payá (2007) y Zack y Sotelsek (2016) también
+encuentran una elasticidad ingreso positiva y relevante, junto con una respuesta
+al tipo de cambio real de menor magnitud. Para exportaciones, en cambio, la
+comparación debe leerse con mayor cautela. Aunque los signos estimados son
+compatibles con la evidencia previa, en este informe no hay cointegración
+robusta para tratarlos como parámetros finales de largo plazo.
+
+La principal contribución metodológica del ejercicio es mostrar que la
+metodología econométrica determina qué afirmaciones económicas son legítimas. Si
+se estimaran todas las ecuaciones en niveles sin evaluar integración y
+cointegración, se correría el riesgo de confundir correlaciones persistentes con
+relaciones de equilibrio. Si, por el contrario, se trabajara únicamente en
+diferencias, se perdería la información de largo plazo que sí está presente en
+importaciones. La estrategia utilizada permite mantener ambas dimensiones: un
+ECM para importaciones, donde la cointegración y el coeficiente de ajuste lo
+justifican, y un modelo de corto plazo para exportaciones, donde la evidencia no
+respalda una corrección hacia equilibrio. En ese sentido, la credibilidad del
+informe proviene tanto de los resultados obtenidos como de las restricciones que
+se imponen a su interpretación. El trabajo concluye que la demanda de
+importaciones argentinas presenta una relación de largo plazo económicamente
+interpretable, mientras que la dinámica exportadora del período analizado se
+explica mejor por ajustes de corto plazo y por el comportamiento de los precios
+internacionales de commodities.
+
 
 
 % -------------------------------
 % Bibliografía
 % -------------------------------
 \begin{thebibliography}{9}
+
+\bibitem{berrettoni_castresana_2008}
+Berrettoni, D. y Castresana, S. (2008).
+\textit{Elasticidades de comercio de la Argentina para el período 1993--2008}.
+Revista del CEI: Comercio Exterior e Integración, Nro. 16, 85--97.
+
+\bibitem{duarte_nicolini_llosa_paya_2007}
+Duarte, A., Nicolini-Llosa, J. L. y Payá, I. (2007).
+\textit{Estimating Argentina's imports elasticities}.
+Lancaster University Management School Working Paper 2007/009.
+
+\bibitem{enders_2014}
+Enders, W. (2014).
+\textit{Applied Econometric Time Series}.
+4ta ed. Wiley.
+
+\bibitem{fabris_2025}
+Fabris, J. (2025).
+\textit{Modelos Econométricos Aplicados: Series de Tiempo}.
+Notas de clase, Universidad de Buenos Aires, Facultad de Ciencias Económicas.
+
+\bibitem{kleiber_zeileis_2008}
+Kleiber, C. y Zeileis, A. (2008).
+\textit{Applied Econometrics with R}.
+Springer.
+
+\bibitem{pfaff_2008}
+Pfaff, B. (2008).
+\textit{Analysis of Integrated and Cointegrated Time Series with R}.
+2da ed. Springer.
+
+\bibitem{pindyck_rubinfeld_1998}
+Pindyck, R. S. y Rubinfeld, D. L. (1998).
+\textit{Econometric Models and Economic Forecasts}.
+4ta ed. McGraw-Hill.
+
+\bibitem{song_witt_li_2008}
+Song, H., Witt, S. F. y Li, G. (2008).
+\textit{The advanced econometrics of tourism demand}.
+Routledge.
+
+\bibitem{zack_sotelsek_2016}
+Zack, G. y Sotelsek, D. (2016).
+\textit{Las posibilidades de crecimiento de la Argentina a partir de una estimación de sus elasticidades de comercio exterior}.
+Revista de Economía Política de Buenos Aires, Universidad de Buenos Aires,
+Facultad de Ciencias Económicas.
 
 
 
@@ -791,12 +1285,20 @@ Zack y Sotelsek (2016) & Pendiente & Pendiente & Pendiente & Pendiente & Pendien
 \section{Anexos}
 \label{sec:anexos}
 
+Los anexos reúnen información de respaldo para evaluar la reproducibilidad del
+trabajo. En particular, se documenta el cumplimiento de los principales pasos
+del código, la disponibilidad de las salidas generadas y la trazabilidad de los
+insumos utilizados en la construcción de las variables. Estos elementos no
+modifican la interpretación económica de los resultados, pero permiten verificar
+que las estimaciones, figuras y tablas reportadas en el cuerpo del informe
+provienen de un flujo de trabajo ordenado y replicable.
+
 \subsection{Trazabilidad y reproducibilidad}
 \label{subsec:trazabilidad-reproducibilidad}
 
 \begin{table}[H]
 \centering
-\caption{Checklist de reproducibilidad del script.}
+\caption{Lista de verificación de reproducibilidad del código.}
 \label{tab:checklist-reproducibilidad}
 \footnotesize
 \begin{tabular}{p{10.5cm}c}
@@ -812,15 +1314,20 @@ Cointegración evaluada para importaciones y exportaciones & Sí \\
 Residuos Engle-Granger incorporados al panel de modelación & Sí \\
 Modelos ECM/diferencias estimados y exportados & Sí \\
 Diagnósticos post-estimación sin alertas al 5\% & Sí \\
-Outputs finales esperados disponibles & Sí \\
+Salidas finales esperadas disponibles & Sí \\
 Trazabilidad de PIBSOCIOS disponible & Sí \\
 \bottomrule
 \end{tabular}
 \end{table}
 
+El Cuadro \ref{tab:indice-salidas} resume los archivos generados por el código y
+su estado de disponibilidad. Esta tabla funciona como control final de entrega:
+permite identificar qué productos corresponden a bases procesadas, figuras,
+tablas econométricas, trazabilidad metodológica y archivos finales del informe.
+
 \begin{table}[H]
 \centering
-\caption{Índice final de salidas generadas por el script.}
+\caption{Índice final de salidas generadas por el código.}
 \label{tab:indice-salidas}
 \small
 \begin{tabular}{lcc}
@@ -831,7 +1338,7 @@ Base & Disponible & 5 \\
 Figura & Disponible & 9 \\
 Tabla econométrica & Disponible & 4 \\
 Trazabilidad & Disponible / generada por sección & 5 \\
-Entrega & Disponible / pendiente externa al script & 3 \\
+Entrega & Disponible / pendiente externa al código & 3 \\
 \bottomrule
 \end{tabular}
 \end{table}
