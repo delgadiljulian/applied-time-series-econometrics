@@ -44,6 +44,7 @@ vignettes/*.pdf
 *.aux
 *.log
 *.out
+*.toc
 *.synctex.gz
 
 # Office temporary lock files
@@ -51,6 +52,12 @@ vignettes/*.pdf
 
 # Local temporary course material not intended for public sync
 local_clases_teorico_practicas/
+
+# Project-local R package libraries
+**/r_libs/
+
+# TP3 work area kept local until explicitly published
+trade-elasticities-var-vec/
 
 # R Environment Variables
 .Renviron
