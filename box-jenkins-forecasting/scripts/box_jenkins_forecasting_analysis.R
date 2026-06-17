@@ -11,6 +11,7 @@
 # Librerías
 # ============================================================
 
+# se cargan los paquetes requeridos para importar datos, modelar series y generar pronosticos.
 library(readxl)
 library(forecast)
 library(tseries)
@@ -20,24 +21,30 @@ library(seasonal)
 # Función: Eval_Pron
 # ============================================================
 
+# se define la funcion que calcula metricas de precision para comparar pronosticos contra valores observados.
 Eval_Pron=function(Y_P,Y_A,Nombre="Pron_1"){
   Y_P <- as.numeric(Y_P)
   Y_A <- as.numeric(Y_A)
   
+  # se evalua esta condicion antes de continuar con el flujo.
   if (length(Y_P) != length(Y_A)) {
     stop("Y_P and Y_A must have the same length.")
   }
   
+  # se evalua esta condicion antes de continuar con el flujo.
   if (anyNA(Y_P) || anyNA(Y_A)) {
     stop("Y_P and Y_A must not contain NA values.")
   }
   
+  # se evalua esta condicion antes de continuar con el flujo.
   if (length(Y_P) == 0) {
     stop("Y_P and Y_A must contain at least one observation.")
   }
   
+  # se calcula nonzero_actual para usarlo en el paso siguiente.
   nonzero_actual <- Y_A != 0
   
+  # se construye RMSE mediante un bloque de calculo extendido.
   RMSE=sqrt(sum((Y_P-Y_A)^2)/length(Y_P))
   MAE=sum(abs(Y_P-Y_A)/length(Y_P))
   MAPE=if (any(nonzero_actual)) {
@@ -49,6 +56,7 @@ Eval_Pron=function(Y_P,Y_A,Nombre="Pron_1"){
   D2=sqrt(sum(Y_A^2)/length(Y_A))
   Theil=RMSE/(D1+D2)
   
+  # se construye MSE con las instrucciones de este minibloque.
   MSE=RMSE^2
   U1=(1/MSE)*(mean(Y_P)- mean(Y_A))^2
   sd_Y_P=sqrt(var(Y_P)*(length(Y_P)-1)/length(Y_P))
@@ -56,6 +64,7 @@ Eval_Pron=function(Y_P,Y_A,Nombre="Pron_1"){
   U2=(1/MSE)*((sd_Y_P)-sd_Y_A)^2
   U3=1-U1-U2
   
+  # se construye Pron_1 con las instrucciones de este minibloque.
   Pron_1=matrix(c(RMSE,MAE,MAPE,Theil,U1,U2,U3),ncol=1)
   rownames(Pron_1)=c("RMSE","MAE","MAPE","U_Theil","U_sesgo","U_varianza","U_covarianza")
   colnames(Pron_1)=c(Nombre)
@@ -66,6 +75,7 @@ Eval_Pron=function(Y_P,Y_A,Nombre="Pron_1"){
 # Función: corr_res
 # ============================================================
 
+# se define la funcion que grafica la autocorrelacion residual y aplica la prueba Ljung-Box.
 corr_res <- function(residuos, lags = 12) {
   Acf(residuos, lag.max = lags, main = "ACF de residuos")
   print(Box.test(residuos, lag = lags, type = "Ljung-Box"))
@@ -76,23 +86,28 @@ corr_res <- function(residuos, lags = 12) {
 # Carga de datos
 # ============================================================
 
+# se construye la ruta ruta sin escribir separadores manualmente.
 ruta <- file.path(
   "box-jenkins-forecasting",
   "data",
   "macroeconomic_quarterly_series.xlsx"
 )
 
+# se evalua esta condicion antes de continuar con el flujo.
 if (!file.exists(ruta)) {
   stop("Input data file not found: ", ruta)
 }
 
+# se construye la ruta figures_dir sin escribir separadores manualmente.
 figures_dir <- file.path("box-jenkins-forecasting", "figures")
 if (!dir.exists(figures_dir)) {
   dir.create(figures_dir, recursive = TRUE)
 }
 
+# se calcula running_interactively para usarlo en el paso siguiente.
 running_interactively <- interactive()
 
+# se evalua esta condicion antes de continuar con el flujo.
 if (!running_interactively) {
   pdf(
     file = file.path(figures_dir, "box_jenkins_forecasting_analysis_plots.pdf"),
@@ -102,22 +117,27 @@ if (!running_interactively) {
   )
 }
 
+# se define la funcion auxiliar new_plot_device.
 new_plot_device <- function(width = 7, height = 6) {
   if (running_interactively) {
     dev.new(width = width, height = height)
   }
 }
 
+# se define la funcion auxiliar close_plot_device.
 close_plot_device <- function() {
   if (running_interactively && !is.null(dev.list())) {
     dev.off()
   }
 }
 
+# se importa la base que alimenta el objeto df.
 df <- read_excel(ruta, sheet = "Series TP1")
 
+# se ajustan nombres para que la salida sea legible.
 colnames(df) <- c("fecha", "DL_CPRIV", "DL_EXPO", "DL_IBF", "DL_PIB")
 
+# se ejecuta este minibloque del procedimiento.
 str(df)
 summary(df)
 colSums(is.na(df))
@@ -136,12 +156,14 @@ colSums(is.na(df))
 # a.3.1 Serie temporal
 # -------------------------------
 
+# se convierte la variable en una serie temporal trimestral para aplicar la metodologia Box-Jenkins.
 cpriv_ts <- ts(df$DL_CPRIV, start = c(2004, 2), frequency = 4)
 
 # -------------------------------
 # a.3.2 Split train / test
 # -------------------------------
 
+# se separa la serie en muestra de entrenamiento y muestra de prueba para evaluar pronosticos fuera de muestra.
 cpriv_train <- window(cpriv_ts, end = c(2023, 4))
 cpriv_test  <- window(cpriv_ts, start = c(2024, 1))
 
@@ -149,11 +171,14 @@ cpriv_test  <- window(cpriv_ts, start = c(2024, 1))
 # a.3.3 Exploración
 # -------------------------------
 
+# se grafica la serie para observar tendencia, estacionalidad, volatilidad y posibles quiebres.
 plot(cpriv_train, main = "DL_CPRIV")
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 Acf(cpriv_train)
 title(main = "ACF - DL_CPRIV")
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 Pacf(cpriv_train)
 title(main = "PACF - DL_CPRIV")
 
@@ -193,16 +218,19 @@ title(main = "PACF - DL_CPRIV")
 
 
 # Modelo automático
+# se construye modelo_auto con las instrucciones de este minibloque.
 modelo_auto <- auto.arima(cpriv_train, seasonal = TRUE)
 summary(modelo_auto)
 
 # Modelo manual MA
+# se construye modelo_m1 con las instrucciones de este minibloque.
 modelo_m1 <- Arima(cpriv_train,
                    order = c(0,0,1),
                    seasonal = list(order = c(0,1,1), period = 4))
 summary(modelo_m1)
 
 # Modelo manual AR
+# se construye modelo_m2 con las instrucciones de este minibloque.
 modelo_m2 <- Arima(cpriv_train,
                    order = c(1,0,0),
                    seasonal = list(order = c(0,1,1), period = 4))
@@ -213,12 +241,15 @@ summary(modelo_m2)
 # a.3.5 Diagnóstico
 # -------------------------------
 
+# se revisan los residuos del modelo para evaluar si queda autocorrelacion no explicada.
 checkresiduals(modelo_auto)
 corr_res(residuals(modelo_auto))
 
+# se ejecuta este minibloque del procedimiento.
 checkresiduals(modelo_m1)
 corr_res(residuals(modelo_m1))
 
+# se ejecuta este minibloque del procedimiento.
 checkresiduals(modelo_m2)
 corr_res(residuals(modelo_m2))
 
@@ -230,6 +261,7 @@ corr_res(residuals(modelo_m2))
 # a.4.1 Pronósticos
 # -------------------------------
 
+# se calcula fc_auto como pronostico del modelo correspondiente.
 fc_auto <- forecast(modelo_auto, h = 8)
 fc_m1   <- forecast(modelo_m1, h = 8)
 fc_m2   <- forecast(modelo_m2, h = 8)
@@ -238,6 +270,7 @@ fc_m2   <- forecast(modelo_m2, h = 8)
 # a.4.2 Evaluación con Eval_Pron
 # -------------------------------
 
+# se calcula eval_auto con metricas de error del pronostico.
 eval_auto <- Eval_Pron(fc_auto$mean, cpriv_test, "Auto")
 eval_m1   <- Eval_Pron(fc_m1$mean, cpriv_test, "Manual_MA")
 eval_m2   <- Eval_Pron(fc_m2$mean, cpriv_test, "Manual_AR")
@@ -252,6 +285,7 @@ eval_m2
 # a.4.3 Comparación conjunta
 # -------------------------------
 
+# se comparan los resultados de los modelos en una misma tabla.
 cbind(eval_auto, eval_m1, eval_m2)
 
 # ============================================================
@@ -273,6 +307,7 @@ cpriv_x13 <- seas(
 )
 
 # Serie desestacionalizada
+# se calcula cpriv_sa para usarlo en el paso siguiente.
 cpriv_sa <- final(cpriv_x13)
 
 # Visualización
@@ -284,6 +319,7 @@ plot(cpriv_sa, main = "Serie desestacionalizada DL_CPRIV")
 Acf(cpriv_sa)
 title(main = "ACF - DL_CPRIV desestacionalizada")
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 Pacf(cpriv_sa)
 title(main = "PACF - DL_CPRIV desestacionalizada")
 
@@ -292,14 +328,17 @@ title(main = "PACF - DL_CPRIV desestacionalizada")
 # -------------------------------
 
 # Modelo automático (benchmark)
+# se construye modelo_sa_auto con las instrucciones de este minibloque.
 modelo_sa_auto <- auto.arima(cpriv_sa, seasonal = FALSE)
 summary(modelo_sa_auto)
 
 # Modelo manual (por formalidad): ARMA(1,1)
+# se construye modelo_sa_m1 con las instrucciones de este minibloque.
 modelo_sa_m1 <- Arima(cpriv_sa, order = c(1,0,1))
 summary(modelo_sa_m1)
 
 # Modelo teórico correcto: ruido blanco
+# se construye modelo_sa_wn con las instrucciones de este minibloque.
 modelo_sa_wn <- Arima(cpriv_sa, order = c(0,0,0))
 summary(modelo_sa_wn)
 
@@ -308,6 +347,7 @@ summary(modelo_sa_wn)
 # -------------------------------
 
 # Auto
+# se revisan los residuos del modelo para evaluar si queda autocorrelacion no explicada.
 checkresiduals(modelo_sa_auto)
 corr_res(residuals(modelo_sa_auto))
 
@@ -324,8 +364,10 @@ corr_res(residuals(modelo_sa_wn))
 # a.5.4 Pronóstico
 # -------------------------------
 
+# se calcula h para usarlo en el paso siguiente.
 h <- 8  # 2024Q1 - 2025Q4
 
+# se construye forecast_sa_auto con las instrucciones de este minibloque.
 forecast_sa_auto <- forecast(modelo_sa_auto, h = h)
 forecast_sa_m1   <- forecast(modelo_sa_m1, h = h)
 forecast_sa_wn   <- forecast(modelo_sa_wn, h = h)
@@ -336,6 +378,7 @@ forecast_sa_wn   <- forecast(modelo_sa_wn, h = h)
 # -------------------------------
 
 # Componente estacional
+# se calcula seasonal_component para usarlo en el paso siguiente.
 seasonal_component <- cpriv_train - cpriv_sa
 
 # Promedio por trimestre
@@ -359,6 +402,7 @@ forecast_final_wn   <- forecast_sa_wn$mean + seasonal_future
 # -------------------------------
 
 # Serie real (hold-out)
+# se calcula cpriv_test para usarlo en el paso siguiente.
 cpriv_test <- window(cpriv_ts, start = c(2024,1))
 
 # Evaluación
@@ -368,12 +412,14 @@ eval_sa_auto <- Eval_Pron(
   Nombre = "SA_Auto"
 )
 
+# se construye eval_sa_m1 con las instrucciones de este minibloque.
 eval_sa_m1 <- Eval_Pron(
   Y_P = as.numeric(forecast_final_m1),
   Y_A = as.numeric(cpriv_test),
   Nombre = "SA_ARMA11"
 )
 
+# se construye eval_sa_wn con las instrucciones de este minibloque.
 eval_sa_wn <- Eval_Pron(
   Y_P = as.numeric(forecast_final_wn),
   Y_A = as.numeric(cpriv_test),
@@ -402,6 +448,7 @@ cbind(eval_sa_auto, eval_sa_m1, eval_sa_wn)
 # a.9.1 Cuadro comparativo global
 # -------------------------------
 
+# se arma tabla_comp para comparar modelos lado a lado.
 tabla_comp <- cbind(
   eval_auto,
   eval_m1,
@@ -415,19 +462,24 @@ tabla_comp <- cbind(
 # a.9.2 Función para marcar el mejor
 # -------------------------------
 
+# se define la funcion auxiliar marcar_mejor.
 marcar_mejor <- function(tabla) {
   tabla_out <- tabla
   
+  # se recorre cada elemento necesario para completar este paso.
   for (i in 1:nrow(tabla)) {
     
+    # se calcula fila para usarlo en el paso siguiente.
     fila <- as.numeric(tabla[i, ])
     
+    # se evalua esta condicion antes de continuar con el flujo.
     if (rownames(tabla)[i] == "U_covarianza") {
       mejor <- which.max(fila)
     } else {
       mejor <- which.min(fila)
     }
     
+    # se recorre cada elemento necesario para completar este paso.
     for (j in 1:ncol(tabla)) {
       if (j == mejor) {
         tabla_out[i, j] <- paste0(round(fila[j], 5), " *")
@@ -437,6 +489,7 @@ marcar_mejor <- function(tabla) {
     }
   }
   
+  # se devuelve el resultado calculado por esta funcion.
   return(tabla_out)
 }
 
@@ -444,8 +497,10 @@ marcar_mejor <- function(tabla) {
 # a.9.3 Mostrar tabla final
 # -------------------------------
 
+# se calcula tabla_final para usarlo en el paso siguiente.
 tabla_final <- marcar_mejor(tabla_comp)
 
+# se informa en consola el estado o resultado de la corrida.
 cat("\n==============================\n")
 cat("CUADRO COMPARATIVO DE PRONÓSTICOS\n")
 cat("==============================\n\n")
@@ -456,19 +511,23 @@ print(tabla_final)
 # a.9.4 Anexo: valores reales vs pronósticos
 # -------------------------------
 
+# se arma la tabla anexo con informacion de este paso.
 anexo <- data.frame(
   Fecha = time(cpriv_test),
   Real = as.numeric(cpriv_test),
   
+  # se construye SARIMA_Auto con las instrucciones de este minibloque.
   SARIMA_Auto = as.numeric(fc_auto$mean),
   SARIMA_MA   = as.numeric(fc_m1$mean),
   SARIMA_AR   = as.numeric(fc_m2$mean),
   
+  # se construye SA_Auto con las instrucciones de este minibloque.
   SA_Auto = as.numeric(forecast_final_auto),
   SA_ARMA = as.numeric(forecast_final_m1),
   SA_WN   = as.numeric(forecast_final_wn)
 )
 
+# se informa en consola el estado o resultado de la corrida.
 cat("\n==============================\n")
 cat("ANEXO: VALORES REALES VS PRONÓSTICOS\n")
 cat("==============================\n\n")
@@ -518,12 +577,14 @@ print(anexo)
 # b.1.1 Serie temporal
 # -------------------------------
 
+# se convierte la variable en una serie temporal trimestral para aplicar la metodologia Box-Jenkins.
 expo_ts <- ts(df$DL_EXPO, start = c(2004, 2), frequency = 4)
 
 # -------------------------------
 # b.1.2 Split train / test
 # -------------------------------
 
+# se separa la serie en muestra de entrenamiento y muestra de prueba para evaluar pronosticos fuera de muestra.
 expo_train <- window(expo_ts, end = c(2023, 4))
 expo_test  <- window(expo_ts, start = c(2024, 1))
 
@@ -531,12 +592,15 @@ expo_test  <- window(expo_ts, start = c(2024, 1))
 # b.1.3 Exploración
 # -------------------------------
 
+# se grafica la serie para observar tendencia, estacionalidad, volatilidad y posibles quiebres.
 plot(expo_ts, main = "DL_EXPO", ylab = "Dif. log", xlab = "Tiempo")
 
+# se ejecuta este minibloque del procedimiento.
 close_plot_device()
 acf(expo_train, main = "")
 title(main = "ACF - DL_EXPO", line = 2)
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 pacf(expo_train, main = "")
 title(main = "PACF - DL_EXPO", line = 2)
 
@@ -562,10 +626,12 @@ title(main = "PACF - DL_EXPO", line = 2)
 # el modelo final en función de criterios de información y diagnóstico de residuos.
 
 # Modelo automático
+# se construye modelo_expo_auto con las instrucciones de este minibloque.
 modelo_expo_auto <- auto.arima(expo_train, seasonal = TRUE)
 summary(modelo_expo_auto)
 
 # Modelo manual 1 (ARMA)
+# se construye modelo_expo_m1 con las instrucciones de este minibloque.
 modelo_expo_m1 <- Arima(
   expo_train,
   order = c(1,0,1),
@@ -574,6 +640,7 @@ modelo_expo_m1 <- Arima(
 summary(modelo_expo_m1)
 
 # Modelo manual 2 (AR)
+# se construye modelo_expo_m2 con las instrucciones de este minibloque.
 modelo_expo_m2 <- Arima(
   expo_train,
   order = c(2,0,0),
@@ -586,12 +653,15 @@ summary(modelo_expo_m2)
 # b.2.5 Diagnóstico
 # -------------------------------
 
+# se revisan los residuos del modelo para evaluar si queda autocorrelacion no explicada.
 checkresiduals(modelo_expo_auto)
 corr_res(residuals(modelo_expo_auto), 12)
 
+# se ejecuta este minibloque del procedimiento.
 checkresiduals(modelo_expo_m1)
 corr_res(residuals(modelo_expo_m1), 12)
 
+# se ejecuta este minibloque del procedimiento.
 checkresiduals(modelo_expo_m2)
 corr_res(residuals(modelo_expo_m2), 12)
 
@@ -599,12 +669,14 @@ corr_res(residuals(modelo_expo_m2), 12)
 # Cerrar dispositivos gráficos (sin romper si no hay)
 close_plot_device()
 
+# se calcula h para usarlo en el paso siguiente.
 h <- length(expo_test)
 
 # -------------------------------
 # b.3.1 Pronósticos
 # -------------------------------
 
+# se calcula pron_auto como pronostico del modelo correspondiente.
 pron_auto <- forecast(modelo_expo_auto, h = h)
 pron_m1   <- forecast(modelo_expo_m1, h = h)
 pron_m2   <- forecast(modelo_expo_m2, h = h)
@@ -617,12 +689,15 @@ pron_m2   <- forecast(modelo_expo_m2, h = h)
 # Abrir nuevo dispositivo (clave)
 new_plot_device(width = 7, height = 10)
 
+# se ejecuta esta instruccion puntual del procedimiento.
 par(mfrow = c(3,1), mar = c(2,2,2,2), oma = c(0,0,2,0))
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 plot(pron_auto, main = "Auto.arima - DL_EXPO")
 plot(pron_m1,   main = "MA manual - DL_EXPO")
 plot(pron_m2,   main = "AR manual - DL_EXPO")
 
+# se ejecuta esta instruccion puntual del procedimiento.
 par(mfrow = c(1,1))
 
 
@@ -630,12 +705,15 @@ par(mfrow = c(1,1))
 # b.4.1 Evaluación individual
 # -------------------------------
 
+# se imprime una etiqueta para ordenar la salida de evaluacion en consola.
 cat("Modelo Automático\n")
 eval_expo_auto <- Eval_Pron(pron_auto$mean, expo_test)
 
+# se informa en consola el estado o resultado de la corrida.
 cat("\nModelo MA\n")
 eval_expo_m1 <- Eval_Pron(pron_m1$mean, expo_test)
 
+# se informa en consola el estado o resultado de la corrida.
 cat("\nModelo AR\n")
 eval_expo_m2 <- Eval_Pron(pron_m2$mean, expo_test)
 
@@ -644,6 +722,7 @@ eval_expo_m2 <- Eval_Pron(pron_m2$mean, expo_test)
 # b.4.2 Comparación conjunta
 # -------------------------------
 
+# se comparan los resultados de los modelos en una misma tabla.
 cbind(eval_expo_auto, eval_expo_m1, eval_expo_m2)
 
 # -------------------------------
@@ -654,6 +733,7 @@ cbind(eval_expo_auto, eval_expo_m1, eval_expo_m2)
 # b.5.1 Desestacionalización
 # -------------------------------
 
+# se construye expo_x13 mediante un bloque de calculo extendido.
 expo_x13 <- seas(
   x = expo_train,
   x11 = "",
@@ -664,6 +744,7 @@ expo_x13 <- seas(
 )
 
 # Serie desestacionalizada
+# se calcula expo_sa para usarlo en el paso siguiente.
 expo_sa <- final(expo_x13)
 
 
@@ -692,20 +773,26 @@ plot(expo_sa,
 # -------------------------------
 
 # ACF
+# se abre una ventana grafica limpia para visualizar resultados.
 new_plot_device(width = 7, height = 6)
 
+# se ejecuta esta instruccion puntual del procedimiento.
 par(mfrow = c(1,1), mar = c(5,4,4,2))
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 acf(expo_sa,
     lag.max = 20,
     main = "ACF - DL_EXPO desestacionalizada")
 
 
 # PACF
+# se abre una ventana grafica limpia para visualizar resultados.
 new_plot_device(width = 7, height = 6)
 
+# se ejecuta esta instruccion puntual del procedimiento.
 par(mfrow = c(1,1), mar = c(5,4,4,2))
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 pacf(expo_sa,
      lag.max = 20,
      main = "PACF - DL_EXPO desestacionalizada")
@@ -719,6 +806,7 @@ pacf(expo_sa,
 # b.6.1 Serie temporal
 # -------------------------------
 
+# se calcula expo_sa_ts para usarlo en el paso siguiente.
 expo_sa_ts <- expo_sa
 
 
@@ -727,16 +815,19 @@ expo_sa_ts <- expo_sa
 # -------------------------------
 
 # Modelo automático
+# se construye modelo_sa_auto con las instrucciones de este minibloque.
 modelo_sa_auto <- auto.arima(expo_sa_ts, seasonal = FALSE)
 summary(modelo_sa_auto)
 
 # Modelo manual 1: MA(1) sin media
+# se construye modelo_sa_m1 con las instrucciones de este minibloque.
 modelo_sa_m1 <- Arima(expo_sa_ts,
                       order = c(0,0,1),
                       include.mean = FALSE)
 summary(modelo_sa_m1)
 
 # Modelo manual 2: MA(1) con media
+# se construye modelo_sa_m2 con las instrucciones de este minibloque.
 modelo_sa_m2 <- Arima(expo_sa_ts,
                       order = c(0,0,1),
                       include.mean = TRUE)
@@ -747,12 +838,15 @@ summary(modelo_sa_m2)
 # b.6.3 Diagnóstico
 # -------------------------------
 
+# se revisan los residuos del modelo para evaluar si queda autocorrelacion no explicada.
 checkresiduals(modelo_sa_auto)
 corr_res(residuals(modelo_sa_auto))
 
+# se ejecuta este minibloque del procedimiento.
 checkresiduals(modelo_sa_m1)
 corr_res(residuals(modelo_sa_m1))
 
+# se ejecuta este minibloque del procedimiento.
 checkresiduals(modelo_sa_m2)
 corr_res(residuals(modelo_sa_m2))
 
@@ -761,12 +855,14 @@ corr_res(residuals(modelo_sa_m2))
 # b.7 Pronóstico y re-estacionalización - DL_EXPO
 # -------------------------------
 
+# se calcula h para usarlo en el paso siguiente.
 h <- length(expo_test)
 
 # -------------------------------
 # b.7.1 Pronósticos sobre la serie desestacionalizada
 # -------------------------------
 
+# se calcula pron_sa_auto como pronostico del modelo correspondiente.
 pron_sa_auto <- forecast(modelo_sa_auto, h = h)
 pron_sa_m1   <- forecast(modelo_sa_m1, h = h)
 pron_sa_m2   <- forecast(modelo_sa_m2, h = h)
@@ -776,6 +872,7 @@ pron_sa_m2   <- forecast(modelo_sa_m2, h = h)
 # b.7.2 Componente estacional aditiva
 # -------------------------------
 
+# se calcula comp_sa para usarlo en el paso siguiente.
 comp_sa <- expo_train - expo_sa
 
 
@@ -783,6 +880,7 @@ comp_sa <- expo_train - expo_sa
 # b.7.3 Promedios estacionales por trimestre
 # -------------------------------
 
+# se calcula coef_est para usarlo en el paso siguiente.
 coef_est <- tapply(comp_sa, cycle(expo_train), mean)
 
 
@@ -790,6 +888,7 @@ coef_est <- tapply(comp_sa, cycle(expo_train), mean)
 # b.7.4 Normalización (que sumen cero)
 # -------------------------------
 
+# se calcula coef_est para usarlo en el paso siguiente.
 coef_est <- coef_est - mean(coef_est)
 
 
@@ -797,6 +896,7 @@ coef_est <- coef_est - mean(coef_est)
 # b.7.5 Extensión al horizonte de pronóstico
 # -------------------------------
 
+# se calcula coef_est_fut para usarlo en el paso siguiente.
 coef_est_fut <- rep(coef_est, length.out = h)
 
 
@@ -804,6 +904,7 @@ coef_est_fut <- rep(coef_est, length.out = h)
 # b.7.6 Pronósticos re-estacionalizados
 # -------------------------------
 
+# se construye pron_final_auto con las instrucciones de este minibloque.
 pron_final_auto <- pron_sa_auto$mean + coef_est_fut
 pron_final_m1   <- pron_sa_m1$mean + coef_est_fut
 pron_final_m2   <- pron_sa_m2$mean + coef_est_fut
@@ -818,10 +919,12 @@ pron_final_auto_ts <- ts(pron_final_auto,
                          start = start(expo_test),
                          frequency = frequency(expo_test))
 
+# se construye pron_final_m1_ts con las instrucciones de este minibloque.
 pron_final_m1_ts <- ts(pron_final_m1,
                        start = start(expo_test),
                        frequency = frequency(expo_test))
 
+# se construye pron_final_m2_ts con las instrucciones de este minibloque.
 pron_final_m2_ts <- ts(pron_final_m2,
                        start = start(expo_test),
                        frequency = frequency(expo_test))
@@ -830,6 +933,7 @@ pron_final_m2_ts <- ts(pron_final_m2,
 # Configuración: 3 gráficos en una sola ventana
 # -------------------------------
 
+# se ajusta la disposicion grafica antes de dibujar la figura.
 par(mfrow = c(3,1), mar = c(3,4,3,1))
 
 
@@ -837,6 +941,7 @@ par(mfrow = c(3,1), mar = c(3,4,3,1))
 # Configurar layout: 3 filas, 1 columna
 # -------------------------------
 
+# se ajusta la disposicion grafica antes de dibujar la figura.
 par(mfrow = c(3,1), mar = c(3,4,3,1))
 
 
@@ -844,15 +949,18 @@ par(mfrow = c(3,1), mar = c(3,4,3,1))
 # Modelo automático
 # -------------------------------
 
+# se grafica la serie para observar tendencia, estacionalidad, volatilidad y posibles quiebres.
 plot(expo_train,
      xlim = c(time(expo_train)[1], time(expo_test)[length(expo_test)]),
      ylim = range(c(expo_train, expo_test, pron_final_auto_ts)),
      main = "Modelo Auto (MA(1))",
      ylab = "")
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 lines(expo_test, col = "black", lwd = 2)
 lines(pron_final_auto_ts, col = "blue", lwd = 2)
 
+# se ejecuta esta instruccion puntual del procedimiento.
 abline(v = time(expo_test)[1], lty = 2)
 
 
@@ -860,15 +968,18 @@ abline(v = time(expo_test)[1], lty = 2)
 # Modelo MA(1) sin media
 # -------------------------------
 
+# se grafica la serie para observar tendencia, estacionalidad, volatilidad y posibles quiebres.
 plot(expo_train,
      xlim = c(time(expo_train)[1], time(expo_test)[length(expo_test)]),
      ylim = range(c(expo_train, expo_test, pron_final_m1_ts)),
      main = "MA(1) sin media",
      ylab = "")
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 lines(expo_test, col = "black", lwd = 2)
 lines(pron_final_m1_ts, col = "red", lwd = 2)
 
+# se ejecuta esta instruccion puntual del procedimiento.
 abline(v = time(expo_test)[1], lty = 2)
 
 
@@ -876,15 +987,18 @@ abline(v = time(expo_test)[1], lty = 2)
 # Modelo MA(1) con media
 # -------------------------------
 
+# se grafica la serie para observar tendencia, estacionalidad, volatilidad y posibles quiebres.
 plot(expo_train,
      xlim = c(time(expo_train)[1], time(expo_test)[length(expo_test)]),
      ylim = range(c(expo_train, expo_test, pron_final_m2_ts)),
      main = "MA(1) con media",
      ylab = "")
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 lines(expo_test, col = "black", lwd = 2)
 lines(pron_final_m2_ts, col = "green", lwd = 2)
 
+# se ejecuta esta instruccion puntual del procedimiento.
 abline(v = time(expo_test)[1], lty = 2)
 
 
@@ -892,6 +1006,7 @@ abline(v = time(expo_test)[1], lty = 2)
 # Reset gráfico
 # -------------------------------
 
+# se ajusta la disposicion grafica antes de dibujar la figura.
 par(mfrow = c(1,1))
 
 
@@ -899,6 +1014,7 @@ par(mfrow = c(1,1))
 # b.8.1 Evaluación de pronósticos
 # -------------------------------
 
+# se calcula eval_auto con metricas de error del pronostico.
 eval_auto <- Eval_Pron(pron_final_auto_ts, expo_test, "Auto")
 eval_m1   <- Eval_Pron(pron_final_m1_ts, expo_test, "MA1")
 eval_m2   <- Eval_Pron(pron_final_m2_ts, expo_test, "MA1_media")
@@ -912,12 +1028,14 @@ eval_m2
 # b.8.2 Tabla comparativa
 # -------------------------------
 
+# se comparan los resultados de los modelos en una misma tabla.
 cbind(eval_auto, eval_m1, eval_m2)
 
 # -------------------------------
 # b.9 Cuadro comparativo global
 # -------------------------------
 
+# se arma tabla_total para comparar modelos lado a lado.
 tabla_total <- cbind(
   eval_expo_auto,
   eval_expo_m1,
@@ -945,6 +1063,7 @@ tabla_total <- matrix(as.numeric(tabla_total),
                         colnames(tabla_total)
                       ))
 
+# se ejecuta esta instruccion puntual del procedimiento.
 tabla_total
 
 
@@ -952,18 +1071,24 @@ tabla_total
 # b.9.1 Marcar mejores valores (*)
 # -------------------------------
 
+# se construye tabla_mark con las instrucciones de este minibloque.
 tabla_mark <- matrix("", nrow = nrow(tabla_total), ncol = ncol(tabla_total),
                      dimnames = dimnames(tabla_total))
 
+# se recorre cada elemento necesario para completar este paso.
 for(i in 1:nrow(tabla_total)){
   
+  # se construye fila con las instrucciones de este minibloque.
   fila <- tabla_total[i, ]
   min_val <- min(fila)
   
+  # se recorre cada elemento necesario para completar este paso.
   for(j in 1:ncol(tabla_total)){
     
+    # se calcula valor para usarlo en el paso siguiente.
     valor <- round(fila[j], 6)
     
+    # se evalua esta condicion antes de continuar con el flujo.
     if(fila[j] == min_val){
       tabla_mark[i, j] <- paste0(valor, " *")
     } else {
@@ -973,6 +1098,7 @@ for(i in 1:nrow(tabla_total)){
   }
 }
 
+# se ejecuta esta instruccion puntual del procedimiento.
 tabla_mark
 
 # -------------------------------
@@ -991,15 +1117,18 @@ anexo <- data.frame(
   Tiempo = tiempo_labels,
   Real = as.numeric(expo_test),
   
+  # se construye SARIMA_auto con las instrucciones de este minibloque.
   SARIMA_auto = as.numeric(pron_auto$mean),
   SARIMA_MA   = as.numeric(pron_m1$mean),
   SARIMA_AR   = as.numeric(pron_m2$mean),
   
+  # se construye SA_Auto con las instrucciones de este minibloque.
   SA_Auto     = as.numeric(pron_final_auto_ts),
   SA_MA1      = as.numeric(pron_final_m1_ts),
   SA_MA1_media = as.numeric(pron_final_m2_ts)
 )
 
+# se ejecuta esta instruccion puntual del procedimiento.
 anexo
 
 # -------------------------------
@@ -1040,12 +1169,14 @@ anexo
 # c.1.1 Serie temporal
 # -------------------------------
 
+# se convierte la variable en una serie temporal trimestral para aplicar la metodologia Box-Jenkins.
 ibf_ts <- ts(df$DL_IBF, start = c(2004, 2), frequency = 4)
 
 # -------------------------------
 # c.1.2 Split train / test
 # -------------------------------
 
+# se separa la serie en muestra de entrenamiento y muestra de prueba para evaluar pronosticos fuera de muestra.
 ibf_train <- window(ibf_ts, end = c(2023, 4))
 ibf_test  <- window(ibf_ts, start = c(2024, 1))
 
@@ -1053,8 +1184,10 @@ ibf_test  <- window(ibf_ts, start = c(2024, 1))
 # c.1.3 Exploración
 # -------------------------------
 
+# se grafica la serie para observar tendencia, estacionalidad, volatilidad y posibles quiebres.
 plot(ibf_ts, main = "DL_IBF", ylab = "Dif. log", xlab = "Tiempo")
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 Acf(ibf_train, main = "ACF - DL_IBF")
 Pacf(ibf_train, main = "PACF - DL_IBF")
 
@@ -1086,10 +1219,12 @@ Pacf(ibf_train, main = "PACF - DL_IBF")
 # por la estacionalidad.
 
 # Modelo automático (baseline)
+# se construye modelo_ibf_auto con las instrucciones de este minibloque.
 modelo_ibf_auto <- auto.arima(ibf_train, seasonal = TRUE)
 summary(modelo_ibf_auto)
 
 # Modelo manual 1 (MA corto plazo)
+# se construye modelo_ibf_m1 con las instrucciones de este minibloque.
 modelo_ibf_m1 <- Arima(
   ibf_train,
   order = c(0,0,1),
@@ -1098,6 +1233,7 @@ modelo_ibf_m1 <- Arima(
 summary(modelo_ibf_m1)
 
 # Modelo manual 2 (AR corto plazo)
+# se construye modelo_ibf_m2 con las instrucciones de este minibloque.
 modelo_ibf_m2 <- Arima(
   ibf_train,
   order = c(1,0,0),
@@ -1110,12 +1246,15 @@ summary(modelo_ibf_m2)
 # c.2.5 Diagnóstico
 # -------------------------------
 
+# se revisan los residuos del modelo para evaluar si queda autocorrelacion no explicada.
 checkresiduals(modelo_ibf_auto)
 corr_res(residuals(modelo_ibf_auto), 12)
 
+# se ejecuta este minibloque del procedimiento.
 checkresiduals(modelo_ibf_m1)
 corr_res(residuals(modelo_ibf_m1), 12)
 
+# se ejecuta este minibloque del procedimiento.
 checkresiduals(modelo_ibf_m2)
 corr_res(residuals(modelo_ibf_m2), 12)
 
@@ -1123,6 +1262,7 @@ corr_res(residuals(modelo_ibf_m2), 12)
 # Cerrar dispositivos gráficos (sin romper si no hay)
 close_plot_device()
 
+# se calcula h para usarlo en el paso siguiente.
 h <- length(ibf_test)
 
 
@@ -1130,6 +1270,7 @@ h <- length(ibf_test)
 # c.3.1 Pronósticos
 # -------------------------------
 
+# se calcula pron_ibf_auto como pronostico del modelo correspondiente.
 pron_ibf_auto <- forecast(modelo_ibf_auto, h = h)
 pron_ibf_m1   <- forecast(modelo_ibf_m1,   h = h)
 pron_ibf_m2   <- forecast(modelo_ibf_m2,   h = h)
@@ -1142,24 +1283,30 @@ pron_ibf_m2   <- forecast(modelo_ibf_m2,   h = h)
 # Abrir nuevo dispositivo
 new_plot_device(width = 7, height = 10)
 
+# se ejecuta esta instruccion puntual del procedimiento.
 par(mfrow = c(3,1), mar = c(2,2,2,2), oma = c(0,0,2,0))
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 plot(pron_ibf_auto, main = "Auto.arima - DL_IBF")
 plot(pron_ibf_m1,   main = "MA corto plazo - DL_IBF")
 plot(pron_ibf_m2,   main = "AR corto plazo - DL_IBF")
 
+# se ejecuta esta instruccion puntual del procedimiento.
 par(mfrow = c(1,1))
 
 # -------------------------------
 # c.4.1 Evaluación individual
 # -------------------------------
 
+# se imprime una etiqueta para ordenar la salida de evaluacion en consola.
 cat("Modelo Automático\n")
 eval_ibf_auto <- Eval_Pron(pron_ibf_auto$mean, ibf_test)
 
+# se informa en consola el estado o resultado de la corrida.
 cat("\nModelo MA corto plazo\n")
 eval_ibf_m1 <- Eval_Pron(pron_ibf_m1$mean, ibf_test)
 
+# se informa en consola el estado o resultado de la corrida.
 cat("\nModelo AR corto plazo\n")
 eval_ibf_m2 <- Eval_Pron(pron_ibf_m2$mean, ibf_test)
 
@@ -1168,6 +1315,7 @@ eval_ibf_m2 <- Eval_Pron(pron_ibf_m2$mean, ibf_test)
 # c.4.2 Comparación conjunta
 # -------------------------------
 
+# se comparan los resultados de los modelos en una misma tabla.
 cbind(
   Auto = eval_ibf_auto,
   MA    = eval_ibf_m1,
@@ -1194,6 +1342,7 @@ cbind(
 # c.5.1 Desestacionalización
 # -------------------------------
 
+# se construye ibf_x13 mediante un bloque de calculo extendido.
 ibf_x13 <- seas(
   x = ibf_train,
   x11 = "",
@@ -1204,6 +1353,7 @@ ibf_x13 <- seas(
 )
 
 # Serie desestacionalizada
+# se calcula ibf_sa para usarlo en el paso siguiente.
 ibf_sa <- final(ibf_x13)
 
 
@@ -1211,11 +1361,13 @@ ibf_sa <- final(ibf_x13)
 # c.5.2 Visualización
 # -------------------------------
 
+# se grafica la serie para observar tendencia, estacionalidad, volatilidad y posibles quiebres.
 plot(ibf_train,
      main = "DL_IBF original",
      ylab = "Dif. log",
      xlab = "Tiempo")
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 plot(ibf_sa,
      main = "DL_IBF desestacionalizada",
      ylab = "Dif. log",
@@ -1225,15 +1377,19 @@ plot(ibf_sa,
 # c.5.3 Identificación
 # -------------------------------
 
+# se abre una ventana grafica limpia para visualizar resultados.
 new_plot_device(width = 7, height = 5)
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 acf(ibf_sa,
     lag.max = 20,
     main = "ACF - DL_IBF desestacionalizada")
 
 
+# se ejecuta esta instruccion puntual del procedimiento.
 new_plot_device(width = 7, height = 5)
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 pacf(ibf_sa,
      lag.max = 20,
      main = "PACF - DL_IBF desestacionalizada")
@@ -1246,6 +1402,7 @@ pacf(ibf_sa,
 # c.6.1 Serie temporal
 # -------------------------------
 
+# se calcula ibf_sa_ts para usarlo en el paso siguiente.
 ibf_sa_ts <- ibf_sa
 
 
@@ -1254,16 +1411,19 @@ ibf_sa_ts <- ibf_sa
 # -------------------------------
 
 # Modelo automático
+# se construye modelo_ibf_sa_auto con las instrucciones de este minibloque.
 modelo_ibf_sa_auto <- auto.arima(ibf_sa_ts, seasonal = FALSE)
 summary(modelo_ibf_sa_auto)
 
 # Modelo base correcto: ruido blanco con media
+# se construye modelo_ibf_sa_wn con las instrucciones de este minibloque.
 modelo_ibf_sa_wn <- Arima(ibf_sa_ts,
                           order = c(0,0,0),
                           include.mean = TRUE)
 summary(modelo_ibf_sa_wn)
 
 # Modelo alternativo (solo para contraste)
+# se construye modelo_ibf_sa_m1 con las instrucciones de este minibloque.
 modelo_ibf_sa_m1 <- Arima(ibf_sa_ts,
                           order = c(0,0,1),
                           include.mean = TRUE)
@@ -1274,12 +1434,15 @@ summary(modelo_ibf_sa_m1)
 # c.6.3 Diagnóstico
 # -------------------------------
 
+# se revisan los residuos del modelo para evaluar si queda autocorrelacion no explicada.
 checkresiduals(modelo_ibf_sa_auto)
 corr_res(residuals(modelo_ibf_sa_auto), 12)
 
+# se ejecuta este minibloque del procedimiento.
 checkresiduals(modelo_ibf_sa_wn)
 corr_res(residuals(modelo_ibf_sa_wn), 12)
 
+# se ejecuta este minibloque del procedimiento.
 checkresiduals(modelo_ibf_sa_m1)
 corr_res(residuals(modelo_ibf_sa_m1), 12)
 
@@ -1287,6 +1450,7 @@ corr_res(residuals(modelo_ibf_sa_m1), 12)
 # c.7 Pronóstico y re-estacionalización - DL_IBF
 # -------------------------------
 
+# se calcula h para usarlo en el paso siguiente.
 h <- length(ibf_test)
 
 # -------------------------------
@@ -1294,9 +1458,11 @@ h <- length(ibf_test)
 # -------------------------------
 
 # Modelo automático
+# se calcula pron_ibf_sa_auto para usarlo en el paso siguiente.
 pron_ibf_sa_auto <- forecast(modelo_ibf_sa_auto, h = h)
 
 # Modelo seleccionado (MA(1))
+# se calcula pron_ibf_sa_m1 para usarlo en el paso siguiente.
 pron_ibf_sa_m1   <- forecast(modelo_ibf_sa_m1, h = h)
 
 
@@ -1304,6 +1470,7 @@ pron_ibf_sa_m1   <- forecast(modelo_ibf_sa_m1, h = h)
 # c.7.2 Componente estacional aditiva
 # -------------------------------
 
+# se calcula comp_sa_ibf para usarlo en el paso siguiente.
 comp_sa_ibf <- ibf_train - ibf_sa
 
 
@@ -1311,6 +1478,7 @@ comp_sa_ibf <- ibf_train - ibf_sa
 # c.7.3 Promedios estacionales por trimestre
 # -------------------------------
 
+# se calcula coef_est_ibf para usarlo en el paso siguiente.
 coef_est_ibf <- tapply(comp_sa_ibf, cycle(ibf_train), mean)
 
 
@@ -1318,6 +1486,7 @@ coef_est_ibf <- tapply(comp_sa_ibf, cycle(ibf_train), mean)
 # c.7.4 Normalización (que sumen cero)
 # -------------------------------
 
+# se calcula coef_est_ibf para usarlo en el paso siguiente.
 coef_est_ibf <- coef_est_ibf - mean(coef_est_ibf)
 
 
@@ -1325,6 +1494,7 @@ coef_est_ibf <- coef_est_ibf - mean(coef_est_ibf)
 # c.7.5 Extensión al horizonte de pronóstico
 # -------------------------------
 
+# se calcula coef_est_fut_ibf para usarlo en el paso siguiente.
 coef_est_fut_ibf <- rep(coef_est_ibf, length.out = h)
 
 
@@ -1332,6 +1502,7 @@ coef_est_fut_ibf <- rep(coef_est_ibf, length.out = h)
 # c.7.6 Pronósticos re-estacionalizados
 # -------------------------------
 
+# se construye pron_final_ibf_auto con las instrucciones de este minibloque.
 pron_final_ibf_auto <- pron_ibf_sa_auto$mean + coef_est_fut_ibf
 pron_final_ibf_m1   <- pron_ibf_sa_m1$mean   + coef_est_fut_ibf
 
@@ -1340,10 +1511,12 @@ pron_final_ibf_m1   <- pron_ibf_sa_m1$mean   + coef_est_fut_ibf
 # c.7.7 Conversión a ts
 # -------------------------------
 
+# se construye pron_final_ibf_auto_ts con las instrucciones de este minibloque.
 pron_final_ibf_auto_ts <- ts(pron_final_ibf_auto,
                              start = start(ibf_test),
                              frequency = frequency(ibf_test))
 
+# se construye pron_final_ibf_m1_ts con las instrucciones de este minibloque.
 pron_final_ibf_m1_ts <- ts(pron_final_ibf_m1,
                            start = start(ibf_test),
                            frequency = frequency(ibf_test))
@@ -1352,6 +1525,7 @@ pron_final_ibf_m1_ts <- ts(pron_final_ibf_m1,
 # Modelo MA(1) (válido)
 # -------------------------------
 
+# se grafica la serie para observar tendencia, estacionalidad, volatilidad y posibles quiebres.
 plot(ibf_train,
      xlim = c(time(ibf_train)[1], time(ibf_test)[length(ibf_test)]),
      ylim = range(c(ibf_train, ibf_test, pron_final_ibf_m1_ts)),
@@ -1359,15 +1533,18 @@ plot(ibf_train,
      ylab = "",
      xlab = "Tiempo")
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 lines(ibf_test, col = "black", lwd = 2)
 lines(pron_final_ibf_m1_ts, col = "blue", lwd = 2)
 
+# se ejecuta esta instruccion puntual del procedimiento.
 abline(v = time(ibf_test)[1], lty = 2, col = "gray40")
 
 # -------------------------------
 # c.8.1 Evaluación de pronósticos - DL_IBF (SA)
 # -------------------------------
 
+# se calcula eval_ibf_sa_auto con metricas de error del pronostico.
 eval_ibf_sa_auto <- Eval_Pron(pron_final_ibf_auto_ts, ibf_test, "Auto")
 eval_ibf_sa_m1   <- Eval_Pron(pron_final_ibf_m1_ts,   ibf_test, "MA(1)")
 
@@ -1380,6 +1557,7 @@ eval_ibf_sa_m1
 # c.8.2 Tabla comparativa (SA)
 # -------------------------------
 
+# se comparan los resultados de los modelos en una misma tabla.
 cbind(
   Auto = eval_ibf_sa_auto,
   MA1  = eval_ibf_sa_m1
@@ -1389,6 +1567,7 @@ cbind(
 # c.9 Cuadro comparativo global - DL_IBF
 # -------------------------------
 
+# se arma tabla_total para comparar modelos lado a lado.
 tabla_total <- cbind(
   unname(eval_ibf_auto),
   unname(eval_ibf_m1),
@@ -1417,6 +1596,7 @@ rownames(tabla_total) <- c(
   "U_covarianza"
 )
 
+# se ejecuta esta instruccion puntual del procedimiento.
 tabla_total
 
 
@@ -1424,20 +1604,26 @@ tabla_total
 # c.9.1 Marcar mejores valores (*)
 # -------------------------------
 
+# se construye tabla_mark con las instrucciones de este minibloque.
 tabla_mark <- matrix("",
                      nrow = nrow(tabla_total),
                      ncol = ncol(tabla_total),
                      dimnames = dimnames(tabla_total))
 
+# se recorre cada elemento necesario para completar este paso.
 for(i in 1:nrow(tabla_total)){
   
+  # se construye fila con las instrucciones de este minibloque.
   fila <- tabla_total[i, ]
   min_val <- min(fila, na.rm = TRUE)
   
+  # se recorre cada elemento necesario para completar este paso.
   for(j in 1:ncol(tabla_total)){
     
+    # se calcula valor para usarlo en el paso siguiente.
     valor <- round(fila[j], 6)
     
+    # se evalua esta condicion antes de continuar con el flujo.
     if(fila[j] == min_val){
       tabla_mark[i, j] <- paste0(valor, " *")
     } else {
@@ -1447,6 +1633,7 @@ for(i in 1:nrow(tabla_total)){
   }
 }
 
+# se ejecuta esta instruccion puntual del procedimiento.
 tabla_mark
 
 
@@ -1472,14 +1659,17 @@ anexo <- data.frame(
   Tiempo = tiempo_labels,
   Real = as.numeric(ibf_test),
   
+  # se construye SARIMA_auto con las instrucciones de este minibloque.
   SARIMA_auto = as.numeric(pron_ibf_auto$mean),
   SARIMA_MA   = as.numeric(pron_ibf_m1$mean),
   SARIMA_AR   = as.numeric(pron_ibf_m2$mean),
   
+  # se construye SA_Auto con las instrucciones de este minibloque.
   SA_Auto     = as.numeric(pron_final_ibf_auto_ts),
   SA_MA1      = as.numeric(pron_final_ibf_m1_ts)
 )
 
+# se ejecuta esta instruccion puntual del procedimiento.
 anexo
 
 # -------------------------------
@@ -1518,12 +1708,14 @@ anexo
 # d.1.1 Serie temporal
 # -------------------------------
 
+# se convierte la variable en una serie temporal trimestral para aplicar la metodologia Box-Jenkins.
 pib_ts <- ts(df$DL_PIB, start = c(2004, 2), frequency = 4)
 
 # -------------------------------
 # d.1.2 Split train / test
 # -------------------------------
 
+# se separa la serie en muestra de entrenamiento y muestra de prueba para evaluar pronosticos fuera de muestra.
 pib_train <- window(pib_ts, end = c(2023, 4))
 pib_test  <- window(pib_ts, start = c(2024, 1))
 
@@ -1531,11 +1723,14 @@ pib_test  <- window(pib_ts, start = c(2024, 1))
 # d.1.3 Exploración
 # -------------------------------
 
+# se grafica la serie para observar tendencia, estacionalidad, volatilidad y posibles quiebres.
 plot(pib_ts, main = "DL_PIB", ylab = "Dif. log", xlab = "Tiempo")
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 Acf(pib_train, lag.max = 20)
 title(main = "ACF - DL_PIB")
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 Pacf(pib_train, lag.max = 20)
 title(main = "PACF - DL_PIB")
 
@@ -1563,10 +1758,12 @@ title(main = "PACF - DL_PIB")
 # evaluando su desempeño mediante criterios de información y diagnóstico de residuos.
 
 # Modelo automático (baseline)
+# se construye modelo_pib_auto con las instrucciones de este minibloque.
 modelo_pib_auto <- auto.arima(pib_train, seasonal = TRUE)
 summary(modelo_pib_auto)
 
 # Modelo manual 1 (MA corto plazo - principal)
+# se construye modelo_pib_m1 con las instrucciones de este minibloque.
 modelo_pib_m1 <- Arima(
   pib_train,
   order = c(0,0,1),
@@ -1575,6 +1772,7 @@ modelo_pib_m1 <- Arima(
 summary(modelo_pib_m1)
 
 # Modelo manual 2 (ARMA - alternativa)
+# se construye modelo_pib_m2 con las instrucciones de este minibloque.
 modelo_pib_m2 <- Arima(
   pib_train,
   order = c(1,0,1),
@@ -1587,12 +1785,15 @@ summary(modelo_pib_m2)
 # d.2.2 Diagnóstico
 # -------------------------------
 
+# se revisan los residuos del modelo para evaluar si queda autocorrelacion no explicada.
 checkresiduals(modelo_pib_auto)
 corr_res(residuals(modelo_pib_auto), 12)
 
+# se ejecuta este minibloque del procedimiento.
 checkresiduals(modelo_pib_m1)
 corr_res(residuals(modelo_pib_m1), 12)
 
+# se ejecuta este minibloque del procedimiento.
 checkresiduals(modelo_pib_m2)
 corr_res(residuals(modelo_pib_m2), 12)
 
@@ -1600,12 +1801,14 @@ corr_res(residuals(modelo_pib_m2), 12)
 # Cerrar dispositivos gráficos (sin romper si no hay)
 close_plot_device()
 
+# se calcula h para usarlo en el paso siguiente.
 h <- length(pib_test)
 
 # -------------------------------
 # d.3.1 Pronósticos
 # -------------------------------
 
+# se calcula pron_pib_auto como pronostico del modelo correspondiente.
 pron_pib_auto <- forecast(modelo_pib_auto, h = h)
 pron_pib_m1   <- forecast(modelo_pib_m1,   h = h)
 pron_pib_m2   <- forecast(modelo_pib_m2,   h = h)
@@ -1618,24 +1821,30 @@ pron_pib_m2   <- forecast(modelo_pib_m2,   h = h)
 # Abrir nuevo dispositivo
 new_plot_device(width = 7, height = 10)
 
+# se ejecuta esta instruccion puntual del procedimiento.
 par(mfrow = c(3,1), mar = c(2,2,2,2), oma = c(0,0,2,0))
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 plot(pron_pib_auto, main = "Auto.arima - DL_PIB")
 plot(pron_pib_m1,   main = "MA corto plazo - DL_PIB")
 plot(pron_pib_m2,   main = "ARMA corto plazo - DL_PIB")
 
+# se ejecuta esta instruccion puntual del procedimiento.
 par(mfrow = c(1,1))
 
 # -------------------------------
 # d.4.1 Evaluación individual
 # -------------------------------
 
+# se imprime una etiqueta para ordenar la salida de evaluacion en consola.
 cat("Modelo Automático\n")
 eval_pib_auto <- Eval_Pron(pron_pib_auto$mean, pib_test)
 
+# se informa en consola el estado o resultado de la corrida.
 cat("\nModelo MA corto plazo\n")
 eval_pib_m1 <- Eval_Pron(pron_pib_m1$mean, pib_test)
 
+# se informa en consola el estado o resultado de la corrida.
 cat("\nModelo ARMA corto plazo\n")
 eval_pib_m2 <- Eval_Pron(pron_pib_m2$mean, pib_test)
 
@@ -1644,6 +1853,7 @@ eval_pib_m2 <- Eval_Pron(pron_pib_m2$mean, pib_test)
 # d.4.2 Comparación conjunta
 # -------------------------------
 
+# se arma tabla_pib para comparar modelos lado a lado.
 tabla_pib <- cbind(
   eval_pib_auto,
   eval_pib_m1,
@@ -1657,6 +1867,7 @@ colnames(tabla_pib) <- c(
   "SARIMA_ARMA"
 )
 
+# se ejecuta esta instruccion puntual del procedimiento.
 tabla_pib
 
 # Los resultados de evaluación fuera de muestra muestran que los tres modelos
@@ -1686,6 +1897,7 @@ tabla_pib
 # d.5.1 Desestacionalización
 # -------------------------------
 
+# se construye pib_x13 mediante un bloque de calculo extendido.
 pib_x13 <- seas(
   x = pib_train,
   x11 = "",
@@ -1696,6 +1908,7 @@ pib_x13 <- seas(
 )
 
 # Serie desestacionalizada
+# se calcula pib_sa para usarlo en el paso siguiente.
 pib_sa <- final(pib_x13)
 
 
@@ -1706,6 +1919,7 @@ pib_sa <- final(pib_x13)
 # Gráfico 1
 new_plot_device(width = 7, height = 5)
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 plot(pib_train,
      main = "DL_PIB original",
      ylab = "Dif. log",
@@ -1715,6 +1929,7 @@ plot(pib_train,
 # Gráfico 2
 new_plot_device(width = 7, height = 5)
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 plot(pib_sa,
      main = "DL_PIB desestacionalizada",
      ylab = "Dif. log",
@@ -1726,8 +1941,10 @@ plot(pib_sa,
 # -------------------------------
 
 # --- ACF ---
+# se abre una ventana grafica limpia para visualizar resultados.
 new_plot_device(width = 7, height = 6)
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 Acf(pib_sa,
     lag.max = 20,
     main = "")
@@ -1735,8 +1952,10 @@ title("ACF - DL_PIB desestacionalizada")
 
 
 # --- PACF ---
+# se abre una ventana grafica limpia para visualizar resultados.
 new_plot_device(width = 7, height = 6)
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 Pacf(pib_sa,
      lag.max = 20,
      main = "")
@@ -1750,6 +1969,7 @@ title("PACF - DL_PIB desestacionalizada")
 # d.6.1 Serie temporal
 # -------------------------------
 
+# se calcula pib_sa_ts para usarlo en el paso siguiente.
 pib_sa_ts <- pib_sa
 
 
@@ -1758,10 +1978,12 @@ pib_sa_ts <- pib_sa
 # -------------------------------
 
 # Modelo automático
+# se construye modelo_pib_sa_auto con las instrucciones de este minibloque.
 modelo_pib_sa_auto <- auto.arima(pib_sa_ts, seasonal = FALSE)
 summary(modelo_pib_sa_auto)
 
 # Modelo base: ruido blanco con media
+# se construye modelo_pib_sa_wn con las instrucciones de este minibloque.
 modelo_pib_sa_wn <- Arima(
   pib_sa_ts,
   order = c(0,0,0),
@@ -1770,6 +1992,7 @@ modelo_pib_sa_wn <- Arima(
 summary(modelo_pib_sa_wn)
 
 # Modelo alternativo (solo para contraste)
+# se construye modelo_pib_sa_m1 con las instrucciones de este minibloque.
 modelo_pib_sa_m1 <- Arima(
   pib_sa_ts,
   order = c(0,0,1),
@@ -1782,12 +2005,15 @@ summary(modelo_pib_sa_m1)
 # d.6.3 Diagnóstico
 # -------------------------------
 
+# se revisan los residuos del modelo para evaluar si queda autocorrelacion no explicada.
 checkresiduals(modelo_pib_sa_auto)
 corr_res(residuals(modelo_pib_sa_auto), 12)
 
+# se ejecuta este minibloque del procedimiento.
 checkresiduals(modelo_pib_sa_wn)
 corr_res(residuals(modelo_pib_sa_wn), 12)
 
+# se ejecuta este minibloque del procedimiento.
 checkresiduals(modelo_pib_sa_m1)
 corr_res(residuals(modelo_pib_sa_m1), 12)
 
@@ -1795,6 +2021,7 @@ corr_res(residuals(modelo_pib_sa_m1), 12)
 # d.7 Pronóstico y re-estacionalización - DL_PIB
 # ===============================
 
+# se calcula h para usarlo en el paso siguiente.
 h <- length(pib_test)
 
 # Pronósticos sobre la serie desestacionalizada
@@ -1803,6 +2030,7 @@ pron_sa_wn   <- forecast(modelo_pib_sa_wn,   h = h)
 pron_sa_m1   <- forecast(modelo_pib_sa_m1,   h = h)
 
 # Componente estacional (aditivo)
+# se calcula comp_sa para usarlo en el paso siguiente.
 comp_sa <- pib_train - pib_sa
 
 # Promedios estacionales por trimestre
@@ -1824,10 +2052,12 @@ pron_auto_ts <- ts(pron_final_auto,
                    start = start(pib_test),
                    frequency = frequency(pib_test))
 
+# se construye pron_wn_ts con las instrucciones de este minibloque.
 pron_wn_ts <- ts(pron_final_wn,
                  start = start(pib_test),
                  frequency = frequency(pib_test))
 
+# se construye pron_m1_ts con las instrucciones de este minibloque.
 pron_m1_ts <- ts(pron_final_m1,
                  start = start(pib_test),
                  frequency = frequency(pib_test))
@@ -1843,31 +2073,37 @@ ylim_comun <- range(c(pib_train, pib_test,
 # Un solo device
 new_plot_device(width = 8, height = 12)
 
+# se ejecuta esta instruccion puntual del procedimiento.
 par(mfrow = c(3,1), mar = c(3,4,3,1))
 
 # --- Modelo Automático ---
+# se grafica la serie para observar tendencia, estacionalidad, volatilidad y posibles quiebres.
 plot(pib_train,
      xlim = c(time(pib_train)[1], time(pib_test)[length(pib_test)]),
      ylim = ylim_comun,
      main = "DL_PIB - Modelo SA Auto",
      ylab = "")
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 lines(pib_test, col = "black", lwd = 2)
 lines(pron_auto_ts, col = "blue", lwd = 2)
 abline(v = time(pib_test)[1], lty = 2)
 
 # --- Modelo Ruido Blanco ---
+# se grafica la serie para observar tendencia, estacionalidad, volatilidad y posibles quiebres.
 plot(pib_train,
      xlim = c(time(pib_train)[1], time(pib_test)[length(pib_test)]),
      ylim = ylim_comun,
      main = "DL_PIB - Modelo SA WN",
      ylab = "")
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 lines(pib_test, col = "black", lwd = 2)
 lines(pron_wn_ts, col = "red", lwd = 2)
 abline(v = time(pib_test)[1], lty = 2)
 
 # --- Modelo MA(1) ---
+# se grafica la serie para observar tendencia, estacionalidad, volatilidad y posibles quiebres.
 plot(pib_train,
      xlim = c(time(pib_train)[1], time(pib_test)[length(pib_test)]),
      ylim = ylim_comun,
@@ -1875,6 +2111,7 @@ plot(pib_train,
      ylab = "",
      xlab = "Tiempo")
 
+# se genera una visualizacion para inspeccionar la serie o sus residuos.
 lines(pib_test, col = "black", lwd = 2)
 lines(pron_m1_ts, col = "darkgreen", lwd = 2)
 abline(v = time(pib_test)[1], lty = 2)
@@ -1894,12 +2131,14 @@ eval_pib_sa_auto <- Eval_Pron(
   "Auto_SA"
 )
 
+# se construye eval_pib_sa_wn con las instrucciones de este minibloque.
 eval_pib_sa_wn <- Eval_Pron(
   pron_wn_ts,
   pib_test,
   "WN_SA"
 )
 
+# se construye eval_pib_sa_m1 con las instrucciones de este minibloque.
 eval_pib_sa_m1 <- Eval_Pron(
   pron_m1_ts,
   pib_test,
@@ -1916,18 +2155,21 @@ eval_pib_sa_m1
 # d.8.2 Tabla comparativa (SA)
 # -------------------------------
 
+# se arma tabla_pib_sa para comparar modelos lado a lado.
 tabla_pib_sa <- cbind(
   Auto = unname(eval_pib_sa_auto),
   WN   = unname(eval_pib_sa_wn),
   MA1  = unname(eval_pib_sa_m1)
 )
 
+# se ejecuta esta instruccion puntual del procedimiento.
 tabla_pib_sa
 
 # -------------------------------
 # d.9 Cuadro comparativo global - DL_PIB
 # -------------------------------
 
+# se arma tabla_total para comparar modelos lado a lado.
 tabla_total <- cbind(
   SARIMA_auto = unname(eval_pib_auto),
   SARIMA_MA   = unname(eval_pib_m1),
@@ -1948,26 +2190,33 @@ rownames(tabla_total) <- c(
   "U_covarianza"
 )
 
+# se ejecuta esta instruccion puntual del procedimiento.
 tabla_total
 
 # -------------------------------
 # d.9.1 Marcar mejores valores (*)
 # -------------------------------
 
+# se construye tabla_mark con las instrucciones de este minibloque.
 tabla_mark <- matrix("",
                      nrow = nrow(tabla_total),
                      ncol = ncol(tabla_total),
                      dimnames = dimnames(tabla_total))
 
+# se recorre cada elemento necesario para completar este paso.
 for(i in 1:nrow(tabla_total)){
   
+  # se construye fila con las instrucciones de este minibloque.
   fila <- tabla_total[i, ]
   min_val <- min(fila, na.rm = TRUE)
   
+  # se recorre cada elemento necesario para completar este paso.
   for(j in 1:ncol(tabla_total)){
     
+    # se calcula valor para usarlo en el paso siguiente.
     valor <- round(fila[j], 6)
     
+    # se evalua esta condicion antes de continuar con el flujo.
     if(fila[j] == min_val){
       tabla_mark[i, j] <- paste0(valor, " *")
     } else {
@@ -1977,12 +2226,14 @@ for(i in 1:nrow(tabla_total)){
   }
 }
 
+# se ejecuta esta instruccion puntual del procedimiento.
 tabla_mark
 
 # -------------------------------
 # d.9.2 Anexo: valores reales y pronósticos - DL_PIB
 # -------------------------------
 
+# se valida que las series comparadas tengan longitudes compatibles.
 stopifnot(
   length(pib_test) == length(pron_pib_auto$mean),
   length(pib_test) == length(pron_auto_ts),
@@ -1990,25 +2241,30 @@ stopifnot(
   length(pib_test) == length(pron_wn_ts)
 )
 
+# se construye tiempo_labels con las instrucciones de este minibloque.
 tiempo_labels <- paste(
   floor(time(pib_test)),
   paste0("T", cycle(pib_test)),
   sep = "-"
 )
 
+# se arma la tabla anexo con informacion de este paso.
 anexo <- data.frame(
   Tiempo = tiempo_labels,
   Real = as.numeric(pib_test),
   
+  # se construye SARIMA_auto con las instrucciones de este minibloque.
   SARIMA_auto = as.numeric(pron_pib_auto$mean),
   SARIMA_MA   = as.numeric(pron_pib_m1$mean),
   SARIMA_AR   = as.numeric(pron_pib_m2$mean),
   
+  # se construye SA_Auto con las instrucciones de este minibloque.
   SA_Auto     = as.numeric(pron_auto_ts),
   SA_WN       = as.numeric(pron_wn_ts),
   SA_MA1      = as.numeric(pron_m1_ts)
 )
 
+# se ejecuta esta instruccion puntual del procedimiento.
 anexo
 
 

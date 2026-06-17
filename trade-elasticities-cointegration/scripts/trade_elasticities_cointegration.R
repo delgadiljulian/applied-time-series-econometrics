@@ -126,13 +126,14 @@ walk(
 
 # concentrar los parametros econometricos principales en un solo bloque para
 # que las decisiones de muestra, rezagos, inferencia y parsimonia sean visibles.
-
 analysis_start_date <- as.Date("2004-01-01")
 analysis_end_date <- as.Date("2025-10-01")
 
+# se construye model_sample_start con las instrucciones de este minibloque.
 model_sample_start <- analysis_start_date
 model_sample_end_preferred <- analysis_end_date
 
+# se construye significance_level con las instrucciones de este minibloque.
 significance_level <- 0.05
 information_criterion <- "BIC"
 max_lags <- 4
@@ -140,9 +141,11 @@ max_lags <- 4
 # Se usa lag 4 en Newey-West porque la frecuencia es trimestral.
 newey_west_lag <- 4
 
+# se construye parsimonious_p_threshold con las instrucciones de este minibloque.
 parsimonious_p_threshold <- 0.10
 gregory_hansen_trim <- 0.15
 
+# se arma la tabla global_model_config con informacion de este paso.
 global_model_config <- tibble(
   parameter = c(
     "analysis_start_date",
@@ -316,9 +319,11 @@ clean_numeric <- function(x) {
     return(as.numeric(x))
   }
 
+  # se construye x_chr con las instrucciones de este minibloque.
   x_chr <- str_squish(as.character(x))
   x_chr[x_chr == ""] <- NA_character_
 
+  # se ejecuta este minibloque del procedimiento.
   parse_number(
     x_chr,
     locale = locale(grouping_mark = ",", decimal_mark = ".")
@@ -384,6 +389,7 @@ arg_trade_missing <- arg_trade_processed %>%
     values_to = "missing_values"
   )
 
+# se informa en consola el estado de la corrida.
 print(arg_trade_missing)
 
 # Exportar a Stata.
@@ -485,6 +491,7 @@ itcrm_missing <- itcrm_quarterly %>%
     values_to = "missing_values"
   )
 
+# se informa en consola el estado de la corrida.
 print(itcrm_missing)
 
 # Exportar a Stata.
@@ -569,6 +576,7 @@ usa_gdp_missing <- usa_gdp_quarterly %>%
     values_to = "missing_values"
   )
 
+# se informa en consola el estado de la corrida.
 print(usa_gdp_missing)
 
 # Exportar a Stata.
@@ -653,6 +661,7 @@ brazil_gdp_missing <- brazil_gdp_quarterly %>%
     values_to = "missing_values"
   )
 
+# se informa en consola el estado de la corrida.
 print(brazil_gdp_missing)
 
 # Exportar a Stata.
@@ -761,6 +770,7 @@ commodity_missing <- commodity_quarterly %>%
     values_to = "missing_values"
   )
 
+# se informa en consola el estado de la corrida.
 print(commodity_missing)
 
 # Exportar a Stata.
@@ -815,6 +825,7 @@ processed_files <- c(
   commodity_dta_file
 )
 
+# se evalua esta condicion antes de continuar con el flujo.
 if (any(!file.exists(processed_files))) {
   stop(
     "Faltan bases procesadas para construir el panel final: ",
@@ -853,6 +864,7 @@ arg_trade_panel <- read_dta(arg_trade_dta_file) %>%
     ln_exports_real
   )
 
+# se importa la base que alimenta el objeto itcrm_panel.
 itcrm_panel <- read_dta(itcrm_dta_file) %>%
   mutate(quarter_date = as.Date(quarter_date)) %>%
   select(
@@ -862,6 +874,7 @@ itcrm_panel <- read_dta(itcrm_dta_file) %>%
     itcrm_daily_obs
   )
 
+# se importa la base que alimenta el objeto usa_gdp_panel.
 usa_gdp_panel <- read_dta(usa_gdp_dta_file) %>%
   mutate(quarter_date = as.Date(quarter_date)) %>%
   select(
@@ -870,6 +883,7 @@ usa_gdp_panel <- read_dta(usa_gdp_dta_file) %>%
     ln_usa_gdp_real
   )
 
+# se importa la base que alimenta el objeto brazil_gdp_panel.
 brazil_gdp_panel <- read_dta(brazil_gdp_dta_file) %>%
   mutate(quarter_date = as.Date(quarter_date)) %>%
   select(
@@ -878,6 +892,7 @@ brazil_gdp_panel <- read_dta(brazil_gdp_dta_file) %>%
     ln_brazil_gdp_real
   )
 
+# se importa la base que alimenta el objeto commodity_panel.
 commodity_panel <- read_dta(commodity_dta_file) %>%
   mutate(quarter_date = as.Date(quarter_date)) %>%
   select(
@@ -907,6 +922,7 @@ panel_missing <- trade_elasticities_panel %>%
     values_to = "missing_values"
   )
 
+# se informa en consola el estado de la corrida.
 print(panel_missing)
 
 # Trimestres con algun faltante.
@@ -915,6 +931,7 @@ panel_missing_by_quarter <- trade_elasticities_panel %>%
   filter(missing_values > 0) %>%
   select(quarter, quarter_date, missing_values)
 
+# se informa en consola el estado de la corrida.
 print(panel_missing_by_quarter)
 
 # Base con casos completos para la etapa econometrica.
@@ -929,6 +946,7 @@ write_dta(
   file.path(processed_data_dir, "trade_elasticities_panel_2004_2025.dta")
 )
 
+# se exporta esta salida para documentar los resultados.
 write_csv(
   trade_elasticities_panel,
   file.path(processed_data_dir, "trade_elasticities_panel_2004_2025.csv")
@@ -940,6 +958,7 @@ write_dta(
   file.path(processed_data_dir, "trade_elasticities_panel_complete_cases.dta")
 )
 
+# se exporta esta salida para documentar los resultados.
 write_csv(
   trade_elasticities_panel_complete,
   file.path(processed_data_dir, "trade_elasticities_panel_complete_cases.csv")
@@ -1011,6 +1030,7 @@ pib_socios_weights <- read_excel(
     weight_usa_norm = weight_usa / weight_sum
   )
 
+# se arma la tabla pib_socios_traceability con informacion de este paso.
 pib_socios_traceability <- tibble(
   country = c("Brasil", "Estados Unidos"),
   source_variable = c("brasil", "estados_unidos"),
@@ -1032,6 +1052,7 @@ pib_socios_traceability <- tibble(
   )
 )
 
+# se construye weight_brazil_norm con las instrucciones de este minibloque.
 weight_brazil_norm <- pib_socios_weights$weight_brazil_norm
 weight_usa_norm <- pib_socios_weights$weight_usa_norm
 
@@ -1105,6 +1126,7 @@ transformed_missing <- trade_elasticities_panel_transformed %>%
     values_to = "missing_values"
   )
 
+# se informa en consola el estado de la corrida.
 print(transformed_missing)
 
 # Base transformada con casos completos.
@@ -1119,6 +1141,7 @@ write_dta(
   file.path(processed_data_dir, "trade_elasticities_panel_transformed_2004_2025.dta")
 )
 
+# se exporta esta salida para documentar los resultados.
 write_csv(
   trade_elasticities_panel_transformed,
   file.path(processed_data_dir, "trade_elasticities_panel_transformed_2004_2025.csv")
@@ -1130,6 +1153,7 @@ write_dta(
   file.path(processed_data_dir, "trade_elasticities_panel_transformed_complete_cases.dta")
 )
 
+# se exporta esta salida para documentar los resultados.
 write_csv(
   trade_elasticities_panel_transformed_complete,
   file.path(processed_data_dir, "trade_elasticities_panel_transformed_complete_cases.csv")
@@ -1222,6 +1246,7 @@ plot_imports_logs <- trade_elasticities_panel_transformed %>%
   ) +
   exploratory_theme
 
+# se ejecuta este minibloque del procedimiento.
 save_exploratory_plot(
   plot_imports_logs,
   "section_08_imports_logs.png"
@@ -1262,6 +1287,7 @@ plot_exports_logs <- trade_elasticities_panel_transformed %>%
   ) +
   exploratory_theme
 
+# se ejecuta este minibloque del procedimiento.
 save_exploratory_plot(
   plot_exports_logs,
   "section_08_exports_logs.png"
@@ -1302,6 +1328,7 @@ plot_trade_growth <- trade_elasticities_panel_transformed %>%
   ) +
   exploratory_theme
 
+# se ejecuta este minibloque del procedimiento.
 save_exploratory_plot(
   plot_trade_growth,
   "section_08_trade_growth.png"
@@ -1342,6 +1369,7 @@ plot_external_growth <- trade_elasticities_panel_transformed %>%
   ) +
   exploratory_theme
 
+# se ejecuta este minibloque del procedimiento.
 save_exploratory_plot(
   plot_external_growth,
   "section_08_external_growth.png"
@@ -1378,6 +1406,7 @@ plot_data_coverage <- trade_elasticities_panel_transformed %>%
   ) +
   exploratory_theme
 
+# se ejecuta este minibloque del procedimiento.
 save_exploratory_plot(
   plot_data_coverage,
   "section_08_data_coverage.png",
@@ -1426,8 +1455,10 @@ stationarity_sample_end <- trade_elasticities_panel_transformed %>%
   summarise(last_quarter_date = max(quarter_date)) %>%
   pull(last_quarter_date)
 
+# se calcula model_sample_end para usarlo en el paso siguiente.
 model_sample_end <- min(stationarity_sample_end, model_sample_end_preferred)
 
+# se arma la tabla model_sample_definition con informacion de este paso.
 model_sample_definition <- tibble(
   model_sample_start = model_sample_start,
   model_sample_end = model_sample_end,
@@ -1438,6 +1469,7 @@ model_sample_definition <- tibble(
   )
 )
 
+# se construye stationarity_data con las instrucciones de este minibloque.
 stationarity_data <- trade_elasticities_panel_transformed %>%
   filter(
     quarter_date >= model_sample_start,
@@ -1452,16 +1484,19 @@ safe_kruskal_p_value <- function(data, variable) {
     transmute(q = q, value = .data[[variable]]) %>%
     filter(!is.na(q), !is.na(value))
 
+  # se evalua esta condicion antes de continuar con el flujo.
   if (nrow(test_data) < 12 || n_distinct(test_data$q) < 4) {
     return(NA_real_)
   }
 
+  # se ejecuta el calculo capturando posibles errores.
   tryCatch(
     kruskal.test(value ~ factor(q), data = test_data)$p.value,
     error = function(e) NA_real_
   )
 }
 
+# se construye seasonality_diagnostics mediante un bloque de calculo extendido.
 seasonality_diagnostics <- tribble(
   ~series_key, ~series_label, ~diff_var,
   "imports", "Importaciones reales", "d_ln_imports_real",
@@ -1531,6 +1566,7 @@ stationarity_sample_summary <- stationarity_specs %>%
   ) %>%
   ungroup()
 
+# se informa en consola el estado de la corrida.
 print(stationarity_sample_summary)
 
 # Funcion auxiliar para capturar resultados de tests sin detener el script.
@@ -1549,6 +1585,7 @@ run_stationarity_tests <- function(data, variable, transformation, series_key,
   x <- as.numeric(x[!is.na(x)])
   n_obs <- length(x)
 
+  # se evalua esta condicion antes de continuar con el flujo.
   if (n_obs < 12) {
     return(tibble(
       series_key = series_key,
@@ -1568,6 +1605,7 @@ run_stationarity_tests <- function(data, variable, transformation, series_key,
     ))
   }
 
+  # se construye adf_lag con las instrucciones de este minibloque.
   adf_lag <- trunc((n_obs - 1)^(1 / 3))
   kpss_null <- if_else(
     transformation == "log_level",
@@ -1575,6 +1613,7 @@ run_stationarity_tests <- function(data, variable, transformation, series_key,
     kpss_diff_null
   )
 
+  # se construye adf_result mediante un bloque de calculo extendido.
   adf_result <- safe_stationarity_test(
     adf.test(x, alternative = "stationary", k = adf_lag)
   )
@@ -1585,6 +1624,7 @@ run_stationarity_tests <- function(data, variable, transformation, series_key,
     kpss.test(x, null = kpss_null)
   )
 
+  # se ejecuta este bloque amplio del procedimiento.
   tibble(
     series_key = series_key,
     series_label = series_label,
@@ -1664,6 +1704,7 @@ stationarity_tests <- stationarity_specs %>%
     }
   )
 
+# se informa en consola el estado de la corrida.
 print(stationarity_tests)
 print(seasonality_diagnostics)
 
@@ -1723,6 +1764,7 @@ stationarity_decisions_by_transform <- stationarity_tests %>%
     )
   )
 
+# se informa en consola el estado de la corrida.
 print(stationarity_decisions_by_transform)
 
 # resumir si cada serie parece I(0), I(1) o no
@@ -1768,6 +1810,7 @@ stationarity_order_summary <- stationarity_decisions_by_transform %>%
     )
   )
 
+# se informa en consola el estado de la corrida.
 print(stationarity_order_summary)
 
 # Exportar resultados en Excel para lectura rapida en informe/anexo.
@@ -1849,6 +1892,7 @@ tidy_lm_coefficients <- function(fit, model_key, model_label) {
   coef_table$term <- rownames(coef_table)
   rownames(coef_table) <- NULL
 
+  # se ejecuta este bloque amplio del procedimiento.
   coef_table %>%
     as_tibble() %>%
     transmute(
@@ -1868,26 +1912,31 @@ residual_adf_t_stat <- function(residuals, lag_order) {
   dy <- diff(residuals)
   y_lag <- residuals[-length(residuals)]
 
+  # se arma la tabla adf_data con informacion de este paso.
   adf_data <- tibble(
     dy = dy,
     y_lag = y_lag
   )
 
+  # se evalua esta condicion antes de continuar con el flujo.
   if (lag_order > 0) {
     for (lag_i in seq_len(lag_order)) {
       adf_data[[paste0("dy_lag", lag_i)]] <- lag(dy, lag_i)
     }
   }
 
+  # se construye adf_data con las instrucciones de este minibloque.
   adf_data <- adf_data %>%
     filter(if_all(everything(), ~ !is.na(.x)))
 
+  # se evalua esta condicion antes de continuar con el flujo.
   if (lag_order > 0) {
     rhs <- paste(c("y_lag", paste0("dy_lag", seq_len(lag_order))), collapse = " + ")
   } else {
     rhs <- "y_lag"
   }
 
+  # se construye adf_fit con las instrucciones de este minibloque.
   adf_fit <- lm(as.formula(paste0("dy ~ ", rhs, " - 1")), data = adf_data)
   unname(summary(adf_fit)$coefficients["y_lag", "t value"])
 }
@@ -1900,15 +1949,18 @@ estimate_engle_granger <- function(data, model_key, model_label, dependent_var,
     select(quarter, quarter_date, stata_qdate, all_of(model_vars)) %>%
     filter(if_all(all_of(model_vars), ~ !is.na(.x)))
 
+  # se construye fit con las instrucciones de este minibloque.
   fit <- lm(reformulate(regressors, response = dependent_var), data = model_data)
   residuals <- resid(fit)
   n_obs <- length(residuals)
   adf_lag <- trunc((n_obs - 1)^(1 / 3))
 
+  # se construye adf_result con las instrucciones de este minibloque.
   adf_result <- safe_stationarity_test(
     adf.test(residuals, alternative = "stationary", k = adf_lag)
   )
 
+  # se ejecuta este bloque amplio del procedimiento.
   list(
     fit = fit,
     equation_summary = tibble(
@@ -1981,16 +2033,19 @@ engle_granger_results <- pmap(
   }
 )
 
+# se construye cointegration_equation_summary con las instrucciones de este minibloque.
 cointegration_equation_summary <- map_dfr(
   engle_granger_results,
   "equation_summary"
 )
 
+# se construye cointegration_long_run_coefficients con las instrucciones de este minibloque.
 cointegration_long_run_coefficients <- map_dfr(
   engle_granger_results,
   "coefficients"
 )
 
+# se construye engle_granger_tests con las instrucciones de este minibloque.
 engle_granger_tests <- map_dfr(
   engle_granger_results,
   "engle_granger_test"
@@ -2015,6 +2070,7 @@ engle_granger_critical_values <- tribble(
     )
   )
 
+# se construye engle_granger_critical_comparison mediante un bloque de calculo extendido.
 engle_granger_critical_comparison <- engle_granger_tests %>%
   left_join(
     cointegration_specs %>%
@@ -2049,11 +2105,13 @@ engle_granger_critical_comparison <- engle_granger_tests %>%
     )
   )
 
+# se construye engle_granger_residuals_long con las instrucciones de este minibloque.
 engle_granger_residuals_long <- map_dfr(
   engle_granger_results,
   "residuals"
 )
 
+# se construye engle_granger_residuals_wide mediante un bloque de calculo extendido.
 engle_granger_residuals_wide <- engle_granger_residuals_long %>%
   mutate(
     residual_name = paste0("resid_", model_key, "_eg")
@@ -2081,6 +2139,7 @@ run_gregory_hansen_search <- function(data, model_key, model_label, dependent_va
     arrange(stata_qdate) %>%
     mutate(trend = row_number())
 
+  # se construye n_obs con las instrucciones de este minibloque.
   n_obs <- nrow(model_data)
   adf_lag <- trunc((n_obs - 1)^(1 / 3))
   break_candidates <- seq(
@@ -2088,6 +2147,7 @@ run_gregory_hansen_search <- function(data, model_key, model_label, dependent_va
     to = floor((1 - gregory_hansen_trim) * n_obs)
   )
 
+  # se construye gh_results con las instrucciones de este minibloque.
   gh_results <- map_dfr(
     break_candidates,
     function(break_index) {
@@ -2096,6 +2156,7 @@ run_gregory_hansen_search <- function(data, model_key, model_label, dependent_va
           break_dummy = as.integer(row_number() > break_index)
         )
 
+      # se construye gh_terms mediante un bloque de calculo extendido.
       gh_terms <- case_when(
         gh_model == "level_shift" ~
           paste(c(regressors, "break_dummy"), collapse = " + "),
@@ -2113,11 +2174,13 @@ run_gregory_hansen_search <- function(data, model_key, model_label, dependent_va
         TRUE ~ paste(c(regressors, "break_dummy"), collapse = " + ")
       )
 
+      # se construye gh_fit con las instrucciones de este minibloque.
       gh_fit <- lm(
         as.formula(paste(dependent_var, "~", gh_terms)),
         data = break_data
       )
 
+      # se ejecuta este bloque amplio del procedimiento.
       tibble(
         model_key = model_key,
         model_label = model_label,
@@ -2132,6 +2195,7 @@ run_gregory_hansen_search <- function(data, model_key, model_label, dependent_va
     }
   )
 
+  # se ejecuta este bloque amplio del procedimiento.
   gh_results %>%
     slice_min(statistic, n = 1, with_ties = FALSE) %>%
     mutate(
@@ -2236,6 +2300,7 @@ cointegration_decision_summary <- engle_granger_tests %>%
     )
   )
 
+# se informa en consola el estado de la corrida.
 print(cointegration_equation_summary)
 print(cointegration_long_run_coefficients)
 print(engle_granger_tests)
@@ -2295,6 +2360,7 @@ trade_elasticities_residuals_view <- trade_elasticities_panel_modeling_dta %>%
     l1_resid_exports_eg
   )
 
+# se informa en consola el estado de la corrida.
 print(head(trade_elasticities_residuals_view, 10))
 tail(names(trade_elasticities_panel_modeling_dta), 10)
 
@@ -2371,6 +2437,7 @@ lag_source_vars <- c(
   "d_ln_commodity_price_index"
 )
 
+# se recorre cada elemento necesario para completar este paso.
 for (lag_i in seq_len(max_lags)) {
   for (var_name in lag_source_vars) {
     modeling_data[[paste0("l", lag_i, "_", var_name)]] <-
@@ -2386,6 +2453,7 @@ structural_dummies <- c(
   "covid_dummy"
 )
 
+# se arma la tabla structural_dummies_summary con informacion de este paso.
 structural_dummies_summary <- tibble(
   dummy_name = structural_dummies,
   start_date = as.Date(c("2008-07-01", "2018-04-01", "2020-04-01")),
@@ -2438,10 +2506,12 @@ trade_flow_model_info <- tibble(
   ecm_term = c("l1_resid_imports_eg", "l1_resid_exports_eg")
 )
 
+# se define la funcion auxiliar make_lag_terms.
 make_lag_terms <- function(vars, lag_order) {
   as.vector(outer(paste0("l", seq_len(lag_order), "_"), vars, paste0))
 }
 
+# se define la funcion auxiliar make_model_terms.
 make_model_terms <- function(contemporaneous_vars, lagged_vars, lag_order,
                              ecm_term = NULL, include_ecm = FALSE) {
   c(
@@ -2452,10 +2522,12 @@ make_model_terms <- function(contemporaneous_vars, lagged_vars, lag_order,
   )
 }
 
+# se define la funcion auxiliar hq_criterion.
 hq_criterion <- function(fit) {
   -2 * as.numeric(logLik(fit)) + 2 * log(log(nobs(fit))) * length(coef(fit))
 }
 
+# se define la funcion auxiliar safe_test_value.
 safe_test_value <- function(expr, field) {
   result <- tryCatch(expr, error = function(e) e)
   if (inherits(result, "error")) {
@@ -2464,6 +2536,7 @@ safe_test_value <- function(expr, field) {
   unname(result[[field]])
 }
 
+# se define la funcion auxiliar safe_efp_p_value.
 safe_efp_p_value <- function(fit) {
   # CUSUM es opcional: si strucchange no esta instalado, el script sigue
   # corriendo y reporta NA en el diagnostico de estabilidad.
@@ -2471,6 +2544,7 @@ safe_efp_p_value <- function(fit) {
     return(NA_real_)
   }
 
+  # se construye result con las instrucciones de este minibloque.
   result <- tryCatch(
     {
       efp_fit <- strucchange::efp(formula(fit), data = model.frame(fit), type = "Rec-CUSUM")
@@ -2479,9 +2553,11 @@ safe_efp_p_value <- function(fit) {
     error = function(e) NA_real_
   )
 
+  # se ejecuta este minibloque del procedimiento.
   unname(result)
 }
 
+# se define la funcion auxiliar estimate_lm_on_common_sample.
 estimate_lm_on_common_sample <- function(data, dependent_var, regressors) {
   model_vars <- c(dependent_var, regressors)
   model_data <- data %>%
@@ -2489,9 +2565,11 @@ estimate_lm_on_common_sample <- function(data, dependent_var, regressors) {
     filter(if_all(all_of(model_vars), ~ !is.na(.x))) %>%
     arrange(stata_qdate)
 
+  # se ejecuta este minibloque del procedimiento.
   lm(reformulate(regressors, response = dependent_var), data = model_data)
 }
 
+# se define la funcion auxiliar get_common_modeling_sample.
 get_common_modeling_sample <- function(data, dependent_var, contemporaneous_vars,
                                        lagged_vars, ecm_term) {
   common_vars <- c(
@@ -2502,6 +2580,7 @@ get_common_modeling_sample <- function(data, dependent_var, contemporaneous_vars
     structural_dummies
   )
 
+  # se ejecuta este minibloque del procedimiento.
   data %>%
     select(quarter, quarter_date, stata_qdate, all_of(common_vars)) %>%
     filter(if_all(all_of(common_vars), ~ !is.na(.x))) %>%
@@ -2518,6 +2597,7 @@ lag_selection_results <- pmap_dfr(
       filter(model_key == trade_flow) %>%
       pull(use_ecm)
 
+    # se construye common_sample con las instrucciones de este minibloque.
     common_sample <- get_common_modeling_sample(
       modeling_data,
       dependent_var,
@@ -2526,6 +2606,7 @@ lag_selection_results <- pmap_dfr(
       ecm_term
     )
 
+    # se ejecuta este minibloque del procedimiento.
     map_dfr(
       seq_len(max_lags),
       function(lag_order) {
@@ -2534,6 +2615,7 @@ lag_selection_results <- pmap_dfr(
           function(include_ecm) {
             model_type <- if_else(include_ecm, "ecm", "diff")
 
+            # se evalua esta condicion antes de continuar con el flujo.
             if (include_ecm && !isTRUE(use_ecm)) {
               return(tibble(
                 trade_flow = trade_flow,
@@ -2547,6 +2629,7 @@ lag_selection_results <- pmap_dfr(
               ))
             }
 
+            # se construye regressors con las instrucciones de este minibloque.
             regressors <- make_model_terms(
               contemporaneous_vars,
               lagged_vars,
@@ -2555,12 +2638,14 @@ lag_selection_results <- pmap_dfr(
               include_ecm
             )
 
+            # se construye fit con las instrucciones de este minibloque.
             fit <- estimate_lm_on_common_sample(
               common_sample,
               dependent_var,
               regressors
             )
 
+            # se ejecuta este bloque amplio del procedimiento.
             tibble(
               trade_flow = trade_flow,
               model_type = model_type,
@@ -2630,6 +2715,7 @@ econometric_model_specs <- crossing(
     )
   )
 
+# se define la funcion auxiliar simplify_model_terms.
 simplify_model_terms <- function(data, dependent_var, regressors,
                                  protected_terms,
                                  p_threshold = parsimonious_p_threshold) {
@@ -2641,23 +2727,27 @@ simplify_model_terms <- function(data, dependent_var, regressors,
   simplification_steps <- tibble()
   step_id <- 0
 
+  # se ejecuta este minibloque del procedimiento.
   repeat {
     removable_terms <- setdiff(current_terms, protected_terms)
     if (length(removable_terms) == 0) {
       break
     }
 
+    # se construye coef_table con las instrucciones de este minibloque.
     coef_table <- summary(current_fit)$coefficients
     candidate_p_values <- coef_table[rownames(coef_table) %in% removable_terms, "Pr(>|t|)"]
     if (length(candidate_p_values) == 0 || max(candidate_p_values, na.rm = TRUE) <= p_threshold) {
       break
     }
 
+    # se construye remove_term con las instrucciones de este minibloque.
     remove_term <- names(which.max(candidate_p_values))
     candidate_terms <- setdiff(current_terms, remove_term)
     candidate_fit <- estimate_lm_on_common_sample(data, dependent_var, candidate_terms)
     candidate_bic <- BIC(candidate_fit)
 
+    # se construye step_id mediante un bloque de calculo extendido.
     step_id <- step_id + 1
     simplification_steps <- bind_rows(
       simplification_steps,
@@ -2671,6 +2761,7 @@ simplify_model_terms <- function(data, dependent_var, regressors,
       )
     )
 
+    # se evalua esta condicion antes de continuar con el flujo.
     if (candidate_bic <= current_bic) {
       current_terms <- candidate_terms
       current_fit <- candidate_fit
@@ -2680,6 +2771,7 @@ simplify_model_terms <- function(data, dependent_var, regressors,
     }
   }
 
+  # se ejecuta este minibloque del procedimiento.
   list(
     regressors = current_terms,
     fit = current_fit,
@@ -2687,6 +2779,7 @@ simplify_model_terms <- function(data, dependent_var, regressors,
   )
 }
 
+# se define la funcion auxiliar estimate_trade_model.
 estimate_trade_model <- function(data, model_key, trade_flow, model_type,
                                  model_label, dependent_var, regressors,
                                  contemporaneous_vars, lagged_vars, ecm_term,
@@ -2730,6 +2823,7 @@ estimate_trade_model <- function(data, model_key, trade_flow, model_type,
     ))
   }
 
+  # se define el vector protected_terms usado en este bloque.
   protected_terms <- c(
     contemporaneous_vars,
     if (include_ecm) ecm_term else character(0)
@@ -2745,6 +2839,7 @@ estimate_trade_model <- function(data, model_key, trade_flow, model_type,
     ecm_term
   )
 
+  # se construye simplified con las instrucciones de este minibloque.
   simplified <- simplify_model_terms(
     common_sample,
     dependent_var,
@@ -2752,6 +2847,7 @@ estimate_trade_model <- function(data, model_key, trade_flow, model_type,
     protected_terms
   )
 
+  # se construye fit con las instrucciones de este minibloque.
   fit <- simplified$fit
   model_vars <- c(dependent_var, simplified$regressors)
   model_sample_data <- common_sample %>%
@@ -2759,11 +2855,13 @@ estimate_trade_model <- function(data, model_key, trade_flow, model_type,
     filter(if_all(all_of(model_vars), ~ !is.na(.x))) %>%
     arrange(stata_qdate)
 
+  # se construye nw_test con las instrucciones de este minibloque.
   nw_test <- coeftest(
     fit,
     vcov. = NeweyWest(fit, lag = newey_west_lag, prewhite = FALSE)
   )
 
+  # se arma la tabla nw_table con informacion de este paso.
   nw_table <- tibble(
     term = rownames(nw_test),
     estimate = nw_test[, 1],
@@ -2772,10 +2870,12 @@ estimate_trade_model <- function(data, model_key, trade_flow, model_type,
     p_value = nw_test[, 4]
   )
 
+  # se construye fit_summary con las instrucciones de este minibloque.
   fit_summary <- summary(fit)
   residual_values <- residuals(fit)
   ljung_lag <- min(4, max(1, length(residual_values) - 1))
 
+  # se arma la tabla diagnostics con informacion de este paso.
   diagnostics <- tibble(
     model_key = model_key,
     trade_flow = trade_flow,
@@ -2820,6 +2920,7 @@ estimate_trade_model <- function(data, model_key, trade_flow, model_type,
     )
   )
 
+  # se ejecuta este bloque amplio del procedimiento.
   list(
     fit = fit,
     final_regressors = simplified$regressors,
@@ -2895,26 +2996,31 @@ econometric_model_fits <- set_names(
   econometric_model_specs$model_key
 )
 
+# se construye econometric_model_coefficients con las instrucciones de este minibloque.
 econometric_model_coefficients <- map_dfr(
   econometric_model_results,
   "coefficients"
 )
 
+# se construye econometric_model_summary con las instrucciones de este minibloque.
 econometric_model_summary <- map_dfr(
   econometric_model_results,
   "summary"
 )
 
+# se construye econometric_model_diagnostics con las instrucciones de este minibloque.
 econometric_model_diagnostics <- map_dfr(
   econometric_model_results,
   "diagnostics"
 )
 
+# se construye model_simplification_steps con las instrucciones de este minibloque.
 model_simplification_steps <- map_dfr(
   econometric_model_results,
   "simplification_steps"
 )
 
+# se evalua esta condicion antes de continuar con el flujo.
 if (ncol(model_simplification_steps) == 0) {
   model_simplification_steps <- tibble(
     model_key = character(),
@@ -2960,6 +3066,7 @@ exports_commodity_sensitivity_info <- tibble(
   ecm_term = "l1_resid_exports_eg"
 )
 
+# se construye exports_use_ecm con las instrucciones de este minibloque.
 exports_use_ecm <- modeling_cointegration_decision %>%
   filter(model_key == "exports") %>%
   pull(use_ecm)
@@ -2978,6 +3085,7 @@ exports_commodity_sensitivity_lag_selection <- pmap_dfr(
       ecm_term
     )
 
+    # se ejecuta este minibloque del procedimiento.
     map_dfr(
       seq_len(max_lags),
       function(lag_order) {
@@ -2986,6 +3094,7 @@ exports_commodity_sensitivity_lag_selection <- pmap_dfr(
           function(include_ecm) {
             model_type <- if_else(include_ecm, "ecm", "diff")
 
+            # se evalua esta condicion antes de continuar con el flujo.
             if (include_ecm && !isTRUE(exports_use_ecm)) {
               return(tibble(
                 commodity_variant = commodity_variant,
@@ -2999,6 +3108,7 @@ exports_commodity_sensitivity_lag_selection <- pmap_dfr(
               ))
             }
 
+            # se construye regressors con las instrucciones de este minibloque.
             regressors <- make_model_terms(
               contemporaneous_vars,
               lagged_vars,
@@ -3007,12 +3117,14 @@ exports_commodity_sensitivity_lag_selection <- pmap_dfr(
               include_ecm
             )
 
+            # se construye fit con las instrucciones de este minibloque.
             fit <- estimate_lm_on_common_sample(
               common_sample,
               dependent_var,
               regressors
             )
 
+            # se ejecuta este bloque amplio del procedimiento.
             tibble(
               commodity_variant = commodity_variant,
               model_type = model_type,
@@ -3030,6 +3142,7 @@ exports_commodity_sensitivity_lag_selection <- pmap_dfr(
   }
 )
 
+# se construye exports_commodity_sensitivity_selected_lags mediante un bloque de calculo extendido.
 exports_commodity_sensitivity_selected_lags <-
   exports_commodity_sensitivity_lag_selection %>%
   filter(estimated) %>%
@@ -3043,6 +3156,7 @@ exports_commodity_sensitivity_selected_lags <-
     selected_by = "BIC"
   )
 
+# se define la funcion auxiliar estimate_exports_commodity_sensitivity.
 estimate_exports_commodity_sensitivity <- function(commodity_variant,
                                                    model_type,
                                                    dependent_var,
@@ -3074,6 +3188,7 @@ estimate_exports_commodity_sensitivity <- function(commodity_variant,
   )
   has_commodity_terms <- any(str_detect(regressors, "commodity_price_index"))
 
+  # se ejecuta este bloque amplio del procedimiento.
   tibble(
     model_key = paste("exports", model_type, commodity_variant, sep = "_"),
     commodity_variant = commodity_variant,
@@ -3132,18 +3247,22 @@ exports_commodity_sensitivity_summary <- exports_commodity_sensitivity_info %>%
     }
   )
 
+# se define la funcion auxiliar calculate_vif_from_fit.
 calculate_vif_from_fit <- function(fit) {
   if (is.null(fit)) {
     return(tibble())
   }
 
+  # se construye x_matrix con las instrucciones de este minibloque.
   x_matrix <- model.matrix(fit)
   x_matrix <- x_matrix[, colnames(x_matrix) != "(Intercept)", drop = FALSE]
 
+  # se evalua esta condicion antes de continuar con el flujo.
   if (ncol(x_matrix) == 0) {
     return(tibble())
   }
 
+  # se evalua esta condicion antes de continuar con el flujo.
   if (ncol(x_matrix) == 1) {
     return(
       tibble(
@@ -3154,6 +3273,7 @@ calculate_vif_from_fit <- function(fit) {
     )
   }
 
+  # se ejecuta este bloque amplio del procedimiento.
   map_dfr(
     colnames(x_matrix),
     function(term_name) {
@@ -3163,6 +3283,7 @@ calculate_vif_from_fit <- function(fit) {
       aux_r_squared <- summary(aux_fit)$r.squared
       vif_value <- 1 / (1 - aux_r_squared)
 
+      # se ejecuta este bloque amplio del procedimiento.
       tibble(
         term = term_name,
         vif = vif_value,
@@ -3193,6 +3314,7 @@ model_multicollinearity_vif <- imap_dfr(
   ) %>%
   relocate(trade_flow, model_label, .after = model_key)
 
+# se construye external_regressor_correlation con las instrucciones de este minibloque.
 external_regressor_correlation <- modeling_data %>%
   select(d_ln_pib_socios, d_ln_itcrm, d_ln_commodity_price_index) %>%
   cor(use = "complete.obs") %>%
@@ -3200,6 +3322,7 @@ external_regressor_correlation <- modeling_data %>%
   rownames_to_column("variable") %>%
   as_tibble()
 
+# se calcula long_run_coefficients_export para usarlo en el paso siguiente.
 long_run_coefficients_export <- cointegration_long_run_coefficients
 
 # aislar los terminos ECM y traducirlos en velocidad de
@@ -3233,6 +3356,7 @@ ecm_adjustment_summary <- econometric_model_coefficients %>%
     )
   )
 
+# se define la funcion auxiliar extract_main_coefficient_interpretation.
 extract_main_coefficient_interpretation <- function(model_key_filter, term_filter,
                                                     coefficient_label,
                                                     expected_sign,
@@ -3450,6 +3574,7 @@ own_elasticities_for_literature <- bind_rows(
     )
 )
 
+# se arma la tabla literature_benchmark_template con informacion de este paso.
 literature_benchmark_template <- tibble(
   source = c(
     "Berrettoni y Castresana (2008)",
@@ -3467,11 +3592,13 @@ literature_benchmark_template <- tibble(
   )
 )
 
+# se unen filas para formar literature_comparison_template.
 literature_comparison_template <- bind_rows(
   own_elasticities_for_literature,
   literature_benchmark_template
 )
 
+# se informa en consola el estado de la corrida.
 print(lag_selection_results)
 print(econometric_model_specs)
 print(econometric_model_summary)
@@ -3492,6 +3619,7 @@ write_csv(
   file.path(output_dir, "pib_socios_traceability.csv")
 )
 
+# se exporta esta salida para documentar los resultados.
 write_csv(
   literature_comparison_template,
   file.path(output_dir, "literature_comparison_template.csv")
@@ -3718,12 +3846,14 @@ diagnostics_report_guide <- tibble(
   )
 )
 
+# se informa en consola el estado de la corrida.
 print(diagnostic_tests_reference)
 print(model_diagnostics_summary)
 print(diagnostic_flags_long)
 print(model_diagnostic_interpretation)
 print(diagnostics_report_guide)
 
+# se exporta esta salida para documentar los resultados.
 write_xlsx(
   list(
     tests_reference = diagnostic_tests_reference,
@@ -3747,6 +3877,7 @@ save_econometric_plot <- function(plot, filename, width = 9, height = 6) {
   )
 }
 
+# se construye plot_cointegration_residuals_data con las instrucciones de este minibloque.
 plot_cointegration_residuals_data <- engle_granger_residuals_long %>%
   left_join(
     cointegration_specs %>%
@@ -3754,6 +3885,7 @@ plot_cointegration_residuals_data <- engle_granger_residuals_long %>%
     by = "model_key"
   )
 
+# se construye plot_cointegration_residuals mediante un bloque de calculo extendido.
 plot_cointegration_residuals <- plot_cointegration_residuals_data %>%
   ggplot(aes(x = quarter_date, y = residual)) +
   geom_hline(
@@ -3771,12 +3903,14 @@ plot_cointegration_residuals <- plot_cointegration_residuals_data %>%
   ) +
   exploratory_theme
 
+# se ejecuta este minibloque del procedimiento.
 save_econometric_plot(
   plot_cointegration_residuals,
   "section_12_cointegration_residuals.png",
   height = 5.5
 )
 
+# se construye final_model_residuals_long con las instrucciones de este minibloque.
 final_model_residuals_long <- imap_dfr(
   econometric_model_fits,
   function(fit, model_key_name) {
@@ -3784,6 +3918,7 @@ final_model_residuals_long <- imap_dfr(
       return(tibble())
     }
 
+    # se ejecuta este bloque amplio del procedimiento.
     tibble(
       model_key = model_key_name,
       observation = seq_along(resid(fit)),
@@ -3798,6 +3933,7 @@ final_model_residuals_long <- imap_dfr(
     by = "model_key"
   )
 
+# se construye plot_model_residuals mediante un bloque de calculo extendido.
 plot_model_residuals <- final_model_residuals_long %>%
   ggplot(aes(x = observation, y = residual)) +
   geom_hline(
@@ -3814,18 +3950,22 @@ plot_model_residuals <- final_model_residuals_long %>%
   ) +
   exploratory_theme
 
+# se ejecuta este minibloque del procedimiento.
 save_econometric_plot(
   plot_model_residuals,
   "section_12_model_residuals.png",
   height = 7
 )
 
+# se construye final_model_residuals_exports con las instrucciones de este minibloque.
 final_model_residuals_exports <- final_model_residuals_long %>%
   filter(trade_flow == "exports")
 
+# se construye final_model_residuals_imports con las instrucciones de este minibloque.
 final_model_residuals_imports <- final_model_residuals_long %>%
   filter(trade_flow == "imports")
 
+# se construye plot_fitted_vs_residuals_exports mediante un bloque de calculo extendido.
 plot_fitted_vs_residuals_exports <- final_model_residuals_exports %>%
   ggplot(aes(x = fitted, y = residual)) +
   geom_hline(
@@ -3842,6 +3982,7 @@ plot_fitted_vs_residuals_exports <- final_model_residuals_exports %>%
   ) +
   exploratory_theme
 
+# se ejecuta este minibloque del procedimiento.
 save_econometric_plot(
   plot_fitted_vs_residuals_exports,
   "section_12_fitted_vs_residuals_exports.png",
@@ -3849,6 +3990,7 @@ save_econometric_plot(
   height = 4.2
 )
 
+# se construye plot_fitted_vs_residuals_imports mediante un bloque de calculo extendido.
 plot_fitted_vs_residuals_imports <- final_model_residuals_imports %>%
   ggplot(aes(x = fitted, y = residual)) +
   geom_hline(
@@ -3865,6 +4007,7 @@ plot_fitted_vs_residuals_imports <- final_model_residuals_imports %>%
   ) +
   exploratory_theme
 
+# se ejecuta este minibloque del procedimiento.
 save_econometric_plot(
   plot_fitted_vs_residuals_imports,
   "section_12_fitted_vs_residuals_imports.png",
@@ -3886,6 +4029,7 @@ ecm_adjustment_plot_data <- ecm_adjustment_summary %>%
     model_label = fct_reorder(model_label, adjustment_speed_pct, .desc = TRUE)
   )
 
+# se construye plot_ecm_adjustment mediante un bloque de calculo extendido.
 plot_ecm_adjustment <- ecm_adjustment_plot_data %>%
   ggplot(aes(x = model_label, y = adjustment_speed_pct)) +
   geom_col(fill = "#2f5597", width = 0.55) +
@@ -3908,6 +4052,7 @@ plot_ecm_adjustment <- ecm_adjustment_plot_data %>%
     axis.text.x = element_text(angle = 15, hjust = 1)
   )
 
+# se ejecuta este minibloque del procedimiento.
 save_econometric_plot(
   plot_ecm_adjustment,
   "section_12_ecm_adjustment_speed.png",
@@ -4093,10 +4238,12 @@ final_outputs_summary <- final_outputs_catalog %>%
   count(output_group, delivery_status, name = "n_files") %>%
   arrange(output_group, delivery_status)
 
+# se informa en consola el estado de la corrida.
 print(final_outputs_catalog)
 print(missing_final_outputs)
 print(final_outputs_summary)
 
+# se exporta esta salida para documentar los resultados.
 write_xlsx(
   list(
     outputs_catalog = final_outputs_catalog,
@@ -4212,6 +4359,7 @@ final_methodological_notes <- tibble(
   )
 )
 
+# se arma la tabla final_script_summary con informacion de este paso.
 final_script_summary <- tibble(
   script_completed_at = Sys.time(),
   project_dir = project_dir,
@@ -4224,10 +4372,12 @@ final_script_summary <- tibble(
   n_model_diagnostic_alerts = sum(model_diagnostics_summary$diagnostic_flag_count)
 )
 
+# se informa en consola el estado de la corrida.
 print(final_reproducibility_check)
 print(final_methodological_notes)
 print(final_script_summary)
 
+# se exporta esta salida para documentar los resultados.
 write_xlsx(
   list(
     global_model_config = global_model_config,
@@ -4238,6 +4388,7 @@ write_xlsx(
   file.path(output_dir, "section_14_reproducibility_check.xlsx")
 )
 
+# se ejecuta este minibloque del procedimiento.
 capture.output(
   sessionInfo(),
   file = file.path(output_dir, "session_info.txt")
