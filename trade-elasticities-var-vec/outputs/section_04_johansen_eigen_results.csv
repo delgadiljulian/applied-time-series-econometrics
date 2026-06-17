@@ -1,0 +1,13 @@
+"system","test_type","null_hypothesis","null_rank","statistic","critical_10pct","critical_5pct","critical_1pct","reject_5pct","ecdet","spec","lag_k","season"
+"imports","eigen","r <= 2 |",2,7.59788263182504,7.52,9.24,12.97,FALSE,"const","transitory",4,4
+"imports","eigen","r <= 1 |",1,8.9143385241531,13.75,15.67,20.2,FALSE,"const","transitory",4,4
+"imports","eigen","r = 0  |",0,18.9371806415625,19.77,22,26.81,FALSE,"const","transitory",4,4
+"exports","eigen","r <= 2 |",2,9.65811656984584,7.52,9.24,12.97,TRUE,"const","transitory",2,4
+"exports","eigen","r <= 1 |",1,10.1467320455243,13.75,15.67,20.2,FALSE,"const","transitory",2,4
+"exports","eigen","r = 0  |",0,19.2627658462726,19.77,22,26.81,FALSE,"const","transitory",2,4
+"imports","eigen","r <= 2 |",2,6.09828000205164,6.5,8.18,11.65,FALSE,"none","transitory",4,4
+"imports","eigen","r <= 1 |",1,8.39482825832781,12.91,14.9,19.19,FALSE,"none","transitory",4,4
+"imports","eigen","r = 0  |",0,17.5391819368872,18.9,21.07,25.75,FALSE,"none","transitory",4,4
+"exports","eigen","r <= 2 |",2,2.39570054645209,6.5,8.18,11.65,FALSE,"none","transitory",2,4
+"exports","eigen","r <= 1 |",1,10.1459057292514,12.91,14.9,19.19,FALSE,"none","transitory",2,4
+"exports","eigen","r = 0  |",0,18.1746157137183,18.9,21.07,25.75,FALSE,"none","transitory",2,4

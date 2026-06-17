@@ -1,0 +1,7 @@
+"model_key","model_label","horizon","term","estimate","std_error","t_statistic","p_value"
+"imports","Importaciones: comercio, PIB argentino e ITCRM","long_run","(Intercept)",-6.49496164138346,2.3403473923594,-2.77521262979493,0.00700201921882104
+"imports","Importaciones: comercio, PIB argentino e ITCRM","long_run","ln_gdp_real",1.51840843099458,0.150783792994057,10.0701036951261,0.00000000000000189089049749249
+"imports","Importaciones: comercio, PIB argentino e ITCRM","long_run","ln_itcrm",-0.399193203690215,0.084727686988262,-4.71148473279483,0.0000114539952607844
+"exports","Exportaciones: comercio, PIB socios e ITCRM","long_run","(Intercept)",7.61789640486439,1.2766867683222,5.96692673088144,0.0000000799231997032852
+"exports","Exportaciones: comercio, PIB socios e ITCRM","long_run","ln_pib_socios",0.720320971254635,0.187980679750928,3.83188832069898,0.000266968919145079
+"exports","Exportaciones: comercio, PIB socios e ITCRM","long_run","ln_itcrm",0.159388539916543,0.088288627150859,1.8053122475695,0.0751491109982524

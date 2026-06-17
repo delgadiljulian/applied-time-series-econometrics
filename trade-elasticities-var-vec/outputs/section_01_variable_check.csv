@@ -1,0 +1,17 @@
+"variable","exists_in_panel","non_missing_full_panel","non_missing_work_sample"
+"quarter",TRUE,88,76
+"year",TRUE,88,76
+"q",TRUE,88,76
+"quarter_date",TRUE,88,76
+"ln_imports_real",TRUE,76,76
+"ln_exports_real",TRUE,76,76
+"ln_gdp_real",TRUE,76,76
+"ln_itcrm",TRUE,88,76
+"ln_pib_socios",TRUE,88,76
+"ln_commodity_price_index",TRUE,88,76
+"d_ln_imports_real",TRUE,75,75
+"d_ln_exports_real",TRUE,75,75
+"d_ln_gdp_real",TRUE,75,75
+"d_ln_itcrm",TRUE,87,75
+"d_ln_pib_socios",TRUE,87,75
+"d_ln_commodity_price_index",TRUE,87,75

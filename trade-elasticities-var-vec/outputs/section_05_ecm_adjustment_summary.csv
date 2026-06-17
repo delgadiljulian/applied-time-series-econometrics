@@ -1,0 +1,2 @@
+"model_key","model_label","adjustment_term","adjustment_coefficient","p_value","adjustment_percent_per_quarter","interpretation"
+"imports_ecm","Importaciones - ECM","l1_resid_imports",-0.525005578906693,0.00000000114688709458165,52.5005578906693,"corrige una fraccion del desequilibrio por trimestre"

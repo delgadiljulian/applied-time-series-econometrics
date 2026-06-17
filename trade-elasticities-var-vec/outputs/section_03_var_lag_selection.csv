@@ -1,0 +1,9 @@
+"system","criterion","selected_lag","error"
+"imports","AIC",8,NA
+"imports","HQ",5,NA
+"imports","SC",4,NA
+"imports","FPE",8,NA
+"exports","AIC",5,NA
+"exports","HQ",1,NA
+"exports","SC",1,NA
+"exports","FPE",5,NA

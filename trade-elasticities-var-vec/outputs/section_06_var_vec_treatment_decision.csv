@@ -1,0 +1,3 @@
+"system","dependent_series_order","engle_granger_supports_cointegration","johansen_const_trace_rank","johansen_const_eigen_rank","johansen_none_trace_rank","johansen_none_eigen_rank","recommended_var_vec_treatment","decision_note"
+"imports","I(1)",TRUE,1,0,1,0,"estimar VECM con r=1 como extension multivariada; mantener ECM como respaldo","Importaciones combina ADF compatible con I(1), evidencia Engle-Granger y rango 1 por traza en Johansen con constante; maximo autovalor no confirma."
+"exports","I(0)",FALSE,1,0,0,0,"estimar VAR en diferencias; reportar Johansen solo como evidencia indicativa","Exportaciones presenta alerta ADF I(0) y Engle-Granger no respalda cointegracion; por prudencia no se usara VECM como especificacion principal."

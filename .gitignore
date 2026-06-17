@@ -56,14 +56,11 @@ local_clases_teorico_practicas/
 # Project-local R package libraries
 **/r_libs/
 
-# TP3 work area kept local until explicitly published
-trade-elasticities-var-vec/
-
 # R Environment Variables
 .Renviron
 
-# pkgdown site
-docs/
+# pkgdown site at repository root
+/docs/
 
 # translation temp files
 po/*~

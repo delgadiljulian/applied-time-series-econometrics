@@ -1,0 +1,5 @@
+"flow","variable","long_run_term","short_run_term","long_run_estimate","short_run_estimate","interpretation"
+"Importaciones","PIB","ln_gdp_real","d_ln_gdp_real",1.51840843099458,0.492977162312406,"Elasticidad ingreso positiva; ECM estimado por evidencia de cointegracion."
+"Importaciones","TCR","ln_itcrm","d_ln_itcrm",-0.399193203690215,-0.0572387424957599,"Elasticidad cambiaria negativa; ECM estimado por evidencia de cointegracion."
+"Exportaciones","PIB socios","ln_pib_socios","d_ln_pib_socios",0.720320971254635,-0.304594199925372,"Elasticidad de corto plazo en diferencias; largo plazo solo indicativo."
+"Exportaciones","TCR","ln_itcrm","d_ln_itcrm",0.159388539916543,-0.113222349608704,"Elasticidad de corto plazo en diferencias; largo plazo solo indicativo."

@@ -1,0 +1,9 @@
+"model_key","model_label","horizon","term","estimate","std_error","t_statistic","p_value"
+"imports_ecm","Importaciones - ECM","ecm","(Intercept)",0.00935398785983065,0.00743078801938685,1.25881505910627,0.212220444845541
+"imports_ecm","Importaciones - ECM","ecm","d_ln_gdp_real",0.492977162312406,0.101446284500652,4.85948957853885,0.00000680682785661007
+"imports_ecm","Importaciones - ECM","ecm","d_ln_itcrm",-0.0572387424957599,0.132406287131839,-0.432296258249175,0.666836265149262
+"imports_ecm","Importaciones - ECM","ecm","l1_resid_imports",-0.525005578906693,0.0749409356852152,-7.00559145821112,0.00000000114688709458165
+"exports_diff","Exportaciones - primeras diferencias","short_run_diff","(Intercept)",0.00277474624039677,0.0139017642820389,0.199596697520023,0.842366555518297
+"exports_diff","Exportaciones - primeras diferencias","short_run_diff","d_ln_pib_socios",-0.304594199925372,0.962994608806093,-0.316298966930878,0.752703633245031
+"exports_diff","Exportaciones - primeras diferencias","short_run_diff","d_ln_itcrm",-0.113222349608704,0.235991411897948,-0.479773177753036,0.632863382798826
+"exports_diff","Exportaciones - primeras diferencias","short_run_diff","d_ln_commodity_price_index",0.262785411741994,0.138498144281796,1.89739301638089,0.0618429093484502
