@@ -42,6 +42,14 @@ applied-time-series-econometrics/
 │   ├── report/
 │   └── scripts/
 │
+├── trade-elasticities-var-vec/
+│   ├── data/
+│   ├── docs/
+│   ├── figures/
+│   ├── outputs/
+│   ├── report/
+│   └── scripts/
+│
 └── README.md
 ```
 
@@ -81,6 +89,24 @@ Analyzed variables include:
 - Multilateral real exchange rate
 - Trade-partner GDP
 
+### Trade Elasticities with VAR and VEC Models
+
+Multivariate extension of the trade elasticities analysis using:
+
+- Engle-Granger and Johansen cointegration tests
+- VAR models in differences when cointegration is not supported
+- VECM specifications when cointegration is supported
+- Long-run and short-run elasticity comparison
+- Article-style reporting with reproducible R scripts
+
+Analyzed variables include:
+
+- Argentine GDP
+- Exports
+- Imports
+- Real exchange rate
+- Global or trade-partner GDP
+
 ---
 
 ## Tools and Libraries
@@ -97,6 +123,8 @@ Analyzed variables include:
 - ggplot2
 - readxl
 - dplyr
+- urca
+- vars
 
 ---
 
