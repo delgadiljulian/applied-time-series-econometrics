@@ -600,13 +600,14 @@ Exportaciones &
 \end{table}
 
 La selección de rezagos se realiza con un máximo de ocho rezagos trimestrales y
-una constante en el VAR. Se adopta el criterio SC/BIC como regla principal por
+una constante en el VAR. Se adopta el criterio SC/BIC como punto de partida por
 su penalización a la complejidad del modelo, manteniendo AIC, HQ y FPE como
-criterios de contraste. Para las pruebas de Johansen se utiliza la convención
-trabajada en clase: constante en la relación de cointegración, especificación
-\texttt{transitory} y dummies estacionales trimestrales. Cuando el rezago
-seleccionado por SC/BIC es igual a uno, la prueba se estima con \(K=2\), mínimo
-requerido por \texttt{urca::ca.jo}.
+criterios de contraste. Luego se reevalúan los rezagos candidatos mediante
+diagnósticos de autocorrelación residual, de modo que los resultados de
+\texttt{vcorr\_res.R} retroalimenten la configuración posterior del sistema.
+Para las pruebas de Johansen se utiliza la convención trabajada en clase:
+constante en la relación de cointegración, especificación \texttt{transitory} y
+dummies estacionales trimestrales.
 
 La interpretación de resultados sigue una regla de prudencia. Los modelos que
 cumplen las condiciones de integración, cointegración y diagnóstico se tratan
@@ -615,7 +616,7 @@ supuestos, o que dependen de un único test favorable, se reportan como evidenci
 indicativa, tal como solicita la consigna actualizada.
 
 \autoref{tab:seleccion-rezagos-var} resume los rezagos sugeridos por los
-criterios de información y el rezago elegido para cada sistema.
+criterios de información y el rezago SC/BIC inicial para cada sistema.
 
 \begin{table}[H]
 \centering
@@ -624,10 +625,32 @@ criterios de información y el rezago elegido para cada sistema.
 \small
 \begin{tabular}{lccccc}
 \toprule
-Sistema & AIC & HQ & SC/BIC & FPE & Rezago elegido \\
+Sistema & AIC & HQ & SC/BIC & FPE & Rezago SC/BIC \\
 \midrule
 Importaciones & 8 & 5 & 4 & 8 & 4 \\
 Exportaciones & 5 & 1 & 1 & 5 & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\autoref{tab:decision-rezagos-diagnostico} presenta la decisión final de
+rezagos luego de incorporar los diagnósticos de autocorrelación residual. Esta
+tabla se construye a partir de
+\path{section_03_var_lag_diagnostic_decision.csv}.
+
+\begin{table}[H]
+\centering
+\caption{Decisión final de rezagos ajustada por diagnóstico residual.}
+\label{tab:decision-rezagos-diagnostico}
+\scriptsize
+\begin{tabular}{lcccp{6.2cm}}
+\toprule
+Sistema & SC/BIC & Final & \(p\)-valores PT/BG & Regla de decisión \\
+\midrule
+Importaciones & 4 & 4 & 0.0015 / 0.0014 &
+Se conserva SC/BIC porque ningún candidato hasta 8 elimina la autocorrelación residual; resultados indicativos. \\
+Exportaciones & 1 & 4 & 0.0864 / 0.0851 &
+Se eleva el rezago al menor candidato que pasa los diagnósticos de autocorrelación residual al 5\%. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -856,7 +879,8 @@ exportaciones, la lectura debe tomarse como indicativa porque la prueba ADF
 formal clasificó \texttt{ln\_exports\_real} como I(0).
 
 \autoref{tab:johansen} presenta la prueba de Johansen bajo la especificación
-con constante en la relación de cointegración.
+con constante en la relación de cointegración. La tabla utiliza el rezago final
+ajustado por diagnóstico residual.
 
 \begin{table}[H]
 \centering
@@ -869,7 +893,7 @@ con constante en la relación de cointegración.
 Sistema & Rezago VAR & \(K\) Johansen & Traza \(r=0\) & Max. autovalor \(r=0\) & Rango traza & Rango max. \\
 \midrule
 Importaciones & 4 & 4 & 35.449* & 18.937 & 1 & 0 \\
-Exportaciones & 1 & 2 & 39.068* & 19.263 & 1 & 0 \\
+Exportaciones & 4 & 4 & 33.917 & 16.693 & 0 & 0 \\
 \bottomrule
 \end{tabular}
 }
@@ -892,8 +916,8 @@ Sistema & Especificación & Rezago VAR & \(K\) Johansen & Rango traza & Rango ma
 \midrule
 Importaciones & \texttt{const} & 4 & 4 & 1 & 0 \\
 Importaciones & \texttt{none} & 4 & 4 & 1 & 0 \\
-Exportaciones & \texttt{const} & 1 & 2 & 1 & 0 \\
-Exportaciones & \texttt{none} & 1 & 2 & 0 & 0 \\
+Exportaciones & \texttt{const} & 4 & 4 & 0 & 0 \\
+Exportaciones & \texttt{none} & 4 & 4 & 0 & 0 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -913,11 +937,41 @@ Sistema & ADF dep. & Engle-Granger & Johansen robusto & Tratamiento recomendado 
 \midrule
 Importaciones & I(1) & Sí & Parcial: traza \(r=1\), máximo \(r=0\) &
 Estimar VECM con \(r=1\) como extensión multivariada y mantener el ECM como respaldo uniecuacional. \\
-Exportaciones & I(0) & No & Débil: solo traza con \texttt{const} sugiere \(r=1\) &
+Exportaciones & I(0) & No & Rango \(0\) con \texttt{const} y \texttt{none} &
 Estimar VAR en diferencias; reportar Johansen solo como evidencia indicativa. \\
 \bottomrule
 \end{tabular}
 }
+\end{table}
+
+\autoref{tab:auditoria-retroalimentacion} verifica que el rezago final ajustado
+por diagnóstico residual se utiliza efectivamente en los bloques posteriores del
+script. Esta tabla proviene de \path{section_06_feedback_audit.csv}.
+
+\begin{table}[H]
+\centering
+\caption{Auditoría de retroalimentación de rezagos en el script.}
+\label{tab:auditoria-retroalimentacion}
+\scriptsize
+\begin{tabular}{llccc}
+\toprule
+Sistema & Bloque posterior & Rezago base & Rezago usado & Usa rezago final \\
+\midrule
+Importaciones & Wald de exclusión de rezagos & 4 & 4 & Sí \\
+Importaciones & Johansen & 4 & 4 & Sí \\
+Importaciones & Autocorrelación residual \texttt{vcorr\_res} & 4 & 4 & Sí \\
+Importaciones & White no-cross & 4 & 4 & Sí \\
+Importaciones & Decisión final VAR/VEC & 4 & 4 & Sí \\
+Exportaciones & Wald de exclusión de rezagos & 1 & 4 & Sí \\
+Exportaciones & Johansen & 1 & 4 & Sí \\
+Exportaciones & Autocorrelación residual \texttt{vcorr\_res} & 1 & 4 & Sí \\
+Exportaciones & White no-cross & 1 & 4 & Sí \\
+Exportaciones & Decisión final VAR/VEC & 1 & 4 & Sí \\
+\bottomrule
+\end{tabular}
+\caption*{\footnotesize Nota: el rezago base corresponde a la selección SC/BIC.
+El rezago usado corresponde al rezago final luego de retroalimentar la selección
+con diagnósticos de autocorrelación residual.}
 \end{table}
 
 La comparación de especificaciones permite fijar una regla metodológica para no
@@ -931,13 +985,36 @@ uniecuacional.
 
 En exportaciones, la evidencia no es suficiente para adoptar un VECM como
 especificación principal. La variable dependiente fue clasificada como I(0) en
-la prueba ADF formal, Engle-Granger no respalda cointegración y el rango \(r=1\)
-por Johansen aparece únicamente en la prueba de traza con constante. Bajo la
-especificación \texttt{none}, tanto traza como máximo autovalor sugieren rango
-cero. Por prudencia, el tratamiento principal para exportaciones será un VAR en
-diferencias. No obstante, siguiendo la consigna actualizada, el VECM de
-exportaciones deberá reportarse igualmente como ejercicio indicativo, junto con
-la advertencia sobre integración y diagnósticos.
+la prueba ADF formal, Engle-Granger no respalda cointegración y Johansen sugiere
+rango cero tanto con \texttt{const} como con \texttt{none} cuando se utiliza el
+rezago final ajustado por diagnóstico residual. Por prudencia, el tratamiento
+principal para exportaciones será un VAR en diferencias. Si se reporta un VECM
+para cumplir la consigna, deberá presentarse solo como ejercicio indicativo,
+junto con la advertencia sobre integración y diagnósticos.
+
+\autoref{tab:diagnostico-autocorrelacion-vcorr} resume el diagnóstico de
+autocorrelación residual calculado con \texttt{vcorr\_res.R} para los rezagos
+finales. Se reporta el contraste acumulado al rezago 12, que es el criterio
+usado para retroalimentar la selección de rezagos.
+
+\begin{table}[H]
+\centering
+\caption{Diagnóstico de autocorrelación residual con \texttt{vcorr\_res.R}.}
+\label{tab:diagnostico-autocorrelacion-vcorr}
+\small
+\begin{tabular}{lccccc}
+\toprule
+Sistema & Rezago VAR & PT ajustado \(Q_{12}\) & \(p\)-valor PT & BG \(Q_{12}\) & \(p\)-valor BG \\
+\midrule
+Importaciones & 4 & 112.878 & 0.0015 & 157.274 & 0.0014 \\
+Exportaciones & 4 & 88.863 & 0.0864 & 128.693 & 0.0851 \\
+\bottomrule
+\end{tabular}
+\caption*{\footnotesize Nota: valores p menores a 0.05 indican evidencia de
+autocorrelación residual. En importaciones persiste autocorrelación aun luego
+de evaluar candidatos hasta ocho rezagos; en exportaciones el rezago final
+cuatro supera el umbral al 5\%.}
+\end{table}
 
 \pendiente{Reportar vectores de cointegración normalizados, coeficientes de
 ajuste, pruebas de normalidad y elasticidades de corto plazo del VECM. Incluir

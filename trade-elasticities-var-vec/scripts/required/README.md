@@ -9,15 +9,9 @@ Se conservan los nombres originales de los archivos:
 
 - `Test.ADF_Ver.3.R`: test de raiz unitaria `Test.ADF.Ver.3`.
 - `vcorr_res.R`: test de autocorrelacion para modelos VAR.
+- `VAR_white_no_cross.R`: test White no-cross de heterocedasticidad residual VAR.
+- `VAR_lag_exclusion_wald.R`: test Wald de exclusion conjunta de rezagos VAR.
 
-## Solicitados pero no encontrados como archivo separado
+## Placeholders
 
-No se encontraron en la carpeta de clases de OneDrive como scripts `.R`
-independientes:
-
-- `VAR_white_no_cross.R`
-- `VAR_lag_exclusion_wald.R`
-
-Para cubrir esos puntos en el TP se puede documentar un equivalente econometrico
-en el script principal, por ejemplo `arch.test()` para heterocedasticidad VAR y
-tests Wald/restricciones sobre rezagos cuando corresponda.
+No quedan placeholders activos para los scripts requeridos por el guideline.

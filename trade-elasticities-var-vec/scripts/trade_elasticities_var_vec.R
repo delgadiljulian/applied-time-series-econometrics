@@ -1,4 +1,4 @@
-# =========================================================
+#********************************************************
 # UNIVERSIDAD DE BUENOS AIRES (UBA)
 # Facultad de Ciencias Economicas
 # Maestria en Economia Aplicada
@@ -17,7 +17,7 @@
 #
 # # El script maestro carga scripts auxiliares de clase cuando estan disponibles,
 # mantiene esos archivos separados y exporta salidas tabulares reproducibles.
-# =========================================================
+#********************************************************
 
 # se limpia la sesion, se reinician graficos y se evita notacion cientifica.
 rm(list = ls())
@@ -30,22 +30,33 @@ course_r_lib <- "C:/Users/julla/R/trade-var-vec-library/4.3"
 # se identifica la libreria de usuario de R como respaldo.
 user_r_lib <- Sys.getenv("R_LIBS_USER")
 
-# se priorizan las librerias externas antes de cargar paquetes.
-.libPaths(unique(c(
+# se priorizan las librerias externas antes de cargar paquetes. Si el script se
+# relanza en una sesion RStudio con paquetes ya cargados, no se reordena la
+# busqueda porque R podria intentar cambiar versiones de namespaces activos.
+current_lib_paths <- .libPaths()
+extra_lib_paths <- c(
   if (dir.exists(course_r_lib)) course_r_lib,
-  if (nzchar(user_r_lib) && dir.exists(user_r_lib)) user_r_lib,
-  .libPaths()
-)))
+  if (nzchar(user_r_lib) && dir.exists(user_r_lib)) user_r_lib
+)
+loaded_package_namespaces <- c(
+  "zoo", "dynlm", "urca", "vars", "strucchange", "sandwich", "lmtest"
+)
 
-# =========================================================
+if (any(vapply(loaded_package_namespaces, isNamespaceLoaded, logical(1)))) {
+  .libPaths(unique(c(current_lib_paths, extra_lib_paths)))
+} else {
+  .libPaths(unique(c(extra_lib_paths, current_lib_paths)))
+}
+
+#********************************************************
 # 1. Directorios
-# =========================================================
-
+#********************************************************
 # se calcula project_dir para usarlo en el paso siguiente.
 project_dir <- "C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec"
 
 # se construye la ruta scripts_dir sin escribirla manualmente.
 scripts_dir <- file.path(project_dir, "scripts")
+required_scripts_dir <- file.path(scripts_dir, "required")
 processed_data_dir <- file.path(project_dir, "data", "processed")
 output_dir <- file.path(project_dir, "outputs")
 figures_dir <- file.path(project_dir, "figures")
@@ -54,13 +65,13 @@ figures_dir <- file.path(project_dir, "figures")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(figures_dir, recursive = TRUE, showWarnings = FALSE)
 
-# =========================================================
+#********************************************************
 # 1A. Scripts auxiliares de clase
-# =========================================================
-
+#********************************************************
 # se define la funcion auxiliar source_course_script.
-source_course_script <- function(file_name, required_packages = character()) {
-  script_path <- file.path(scripts_dir, file_name)
+source_course_script <- function(file_name, required_packages = character(),
+                                 expected_function = NA_character_) {
+  script_path <- file.path(required_scripts_dir, file_name)
   missing_packages <- required_packages[
     !vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)
   ]
@@ -71,6 +82,7 @@ source_course_script <- function(file_name, required_packages = character()) {
       loaded = FALSE,
       file = file_name,
       path = script_path,
+      expected_function = expected_function,
       status = "missing_file",
       message = paste("No se encontro el script de clase:", script_path)
     ))
@@ -82,6 +94,7 @@ source_course_script <- function(file_name, required_packages = character()) {
       loaded = FALSE,
       file = file_name,
       path = script_path,
+      expected_function = expected_function,
       status = "missing_package",
       message = paste("Faltan paquetes requeridos:", paste(missing_packages, collapse = ", "))
     ))
@@ -102,8 +115,24 @@ source_course_script <- function(file_name, required_packages = character()) {
       loaded = FALSE,
       file = file_name,
       path = script_path,
+      expected_function = expected_function,
       status = "source_error",
       message = source_result$message
+    ))
+  }
+
+  expected_function_loaded <- is.na(expected_function) ||
+    exists(expected_function, mode = "function")
+
+  # se evalua una condicion antes de decidir el siguiente paso.
+  if (!expected_function_loaded) {
+    return(list(
+      loaded = FALSE,
+      file = file_name,
+      path = script_path,
+      expected_function = expected_function,
+      status = "missing_function",
+      message = paste("El script se cargo, pero no se encontro la funcion", expected_function)
     ))
   }
 
@@ -112,6 +141,7 @@ source_course_script <- function(file_name, required_packages = character()) {
     loaded = TRUE,
     file = file_name,
     path = script_path,
+    expected_function = expected_function,
     status = "loaded",
     message = "Script de clase cargado correctamente."
   )
@@ -121,11 +151,21 @@ source_course_script <- function(file_name, required_packages = character()) {
 course_script_loads <- list(
   source_course_script(
     "Test.ADF_Ver.3.R",
-    required_packages = c("dynlm", "urca")
+    required_packages = c("dynlm", "urca"),
+    expected_function = "Test.ADF.Ver.3"
   ),
   source_course_script(
     "vcorr_res.R",
-    required_packages = c("vars")
+    required_packages = c("vars"),
+    expected_function = "vcorr_res"
+  ),
+  source_course_script(
+    "VAR_white_no_cross.R",
+    expected_function = "VAR_white_no_cross"
+  ),
+  source_course_script(
+    "VAR_lag_exclusion_wald.R",
+    expected_function = "VAR_lag_exclusion_wald"
   )
 )
 
@@ -136,6 +176,7 @@ course_scripts_status <- do.call(
     data.frame(
       file = x$file,
       path = x$path,
+      expected_function = x$expected_function,
       loaded = x$loaded,
       status = x$status,
       message = x$message,
@@ -160,10 +201,9 @@ if (!file.exists(input_panel_file)) {
   stop("No se encontro la base principal: ", input_panel_file)
 }
 
-# =========================================================
+#********************************************************
 # 2. Carga de datos y muestra de trabajo
-# =========================================================
-
+#********************************************************
 # se importa la base que alimenta el objeto panel_data.
 panel_data <- read.csv(input_panel_file, stringsAsFactors = FALSE)
 panel_data$quarter_date <- as.Date(panel_data$quarter_date)
@@ -237,10 +277,9 @@ model_sample_definition <- data.frame(
   stringsAsFactors = FALSE
 )
 
-# =========================================================
+#********************************************************
 # 3. Verificacion de variables y sistemas
-# =========================================================
-
+#********************************************************
 # se define el vector imports_system_vars usado en este bloque.
 imports_system_vars <- c(
   "ln_imports_real",
@@ -297,10 +336,9 @@ variable_check <- data.frame(
   stringsAsFactors = FALSE
 )
 
-# =========================================================
+#********************************************************
 # 4. Analisis descriptivo
-# =========================================================
-
+#********************************************************
 # se arma la tabla descriptive_series con resultados de este paso.
 descriptive_series <- data.frame(
   series_key = c("imports", "exports", "gdp_arg", "itcrm", "pib_socios", "commodities"),
@@ -508,10 +546,9 @@ plot_series_panel(
   "figure_02_log_differences.png"
 )
 
-# =========================================================
+#********************************************************
 # 5. ADF en niveles y diferencias
-# =========================================================
-
+#********************************************************
 # se calcula adf_specs para usarlo en el paso siguiente.
 adf_specs <- descriptive_series
 
@@ -726,10 +763,9 @@ for (i in seq_len(nrow(adf_order_summary))) {
   }
 }
 
-# =========================================================
+#********************************************************
 # 5. ADF formal con urca::ur.df
-# =========================================================
-
+#********************************************************
 # se evalua una condicion antes de decidir el siguiente paso.
 if (!requireNamespace("urca", quietly = TRUE)) {
   stop(
@@ -933,10 +969,9 @@ for (i in seq_len(nrow(adf_urca_order_summary))) {
   }
 }
 
-# =========================================================
+#********************************************************
 # 5B. ADF con script de clase Test.ADF.Ver.3.R
-# =========================================================
-
+#********************************************************
 # se define la funcion auxiliar parse_course_adf_output.
 parse_course_adf_output <- function(output_lines, pattern) {
   match_line <- grep(pattern, output_lines, value = TRUE)
@@ -1076,10 +1111,9 @@ course_adf_results <- do.call(
   })
 )
 
-# =========================================================
+#********************************************************
 # 6. Seleccion de rezagos VAR
-# =========================================================
-
+#********************************************************
 # se construye var_lag_max con las instrucciones de este minibloque.
 var_lag_max <- 8
 var_type <- "const"
@@ -1208,11 +1242,277 @@ var_lag_decision$note <- paste(
   "AIC, HQ y FPE se reportan como contraste."
 )
 
-# =========================================================
-# =========================================================
-# 7. Cointegracion de Johansen
-# =========================================================
+# esta funcion recupera el rezago base elegido por SC/BIC para cada sistema.
+get_base_var_lag <- function(system_name) {
+  lag_value <- var_lag_decision$preferred_selected_lag[
+    var_lag_decision$system == system_name
+  ]
 
+  if (length(lag_value) != 1 || is.na(lag_value)) {
+    stop("No se encontro rezago base para el sistema: ", system_name)
+  }
+
+  as.integer(lag_value)
+}
+
+# Run diagnostico de rezagos: evalua autocorrelacion residual para candidatos.
+run_var_lag_diagnostic_grid <- function(system_name, matrix_data, base_lag,
+                                        lag_max, type, diagnostic_lag = 12) {
+  candidate_lags <- seq.int(base_lag, lag_max)
+
+  do.call(
+    rbind,
+    lapply(candidate_lags, function(candidate_lag) {
+      fit <- tryCatch(
+        vars::VAR(matrix_data, p = candidate_lag, type = type),
+        error = function(e) e
+      )
+
+      if (inherits(fit, "error")) {
+        return(data.frame(
+          system = system_name,
+          base_selected_lag = base_lag,
+          candidate_lag = candidate_lag,
+          diagnostic_lag = NA_integer_,
+          pt_adjusted_p_value = NA_real_,
+          bg_p_value = NA_real_,
+          passes_serial_diagnostic_5pct = FALSE,
+          status = "var_error",
+          note = fit$message,
+          stringsAsFactors = FALSE
+        ))
+      }
+
+      lags_to_use <- min(diagnostic_lag, floor(fit$obs / 3))
+      pt_result <- tryCatch(
+        vars::serial.test(fit, lags.pt = lags_to_use, type = "PT.adjusted"),
+        error = function(e) e
+      )
+      bg_result <- tryCatch(
+        vars::serial.test(fit, lags.bg = lags_to_use, type = "BG"),
+        error = function(e) e
+      )
+
+      pt_p_value <- if (inherits(pt_result, "error")) {
+        NA_real_
+      } else {
+        as.numeric(pt_result$serial$p.value)
+      }
+      bg_p_value <- if (inherits(bg_result, "error")) {
+        NA_real_
+      } else {
+        as.numeric(bg_result$serial$p.value)
+      }
+      pt_p_value <- if (length(pt_p_value) == 1) pt_p_value else NA_real_
+      bg_p_value <- if (length(bg_p_value) == 1) bg_p_value else NA_real_
+      passes <- is.finite(pt_p_value) && is.finite(bg_p_value) &&
+        pt_p_value >= 0.05 && bg_p_value >= 0.05
+
+      data.frame(
+        system = system_name,
+        base_selected_lag = base_lag,
+        candidate_lag = candidate_lag,
+        diagnostic_lag = lags_to_use,
+        pt_adjusted_p_value = pt_p_value,
+        bg_p_value = bg_p_value,
+        passes_serial_diagnostic_5pct = passes,
+        status = "ok",
+        note = ifelse(
+          passes,
+          "Candidato sin autocorrelacion residual al 5%.",
+          "Candidato mantiene evidencia de autocorrelacion residual."
+        ),
+        stringsAsFactors = FALSE
+      )
+    })
+  )
+}
+
+var_lag_diagnostic_grid <- rbind(
+  run_var_lag_diagnostic_grid(
+    system_name = "imports",
+    matrix_data = imports_var_matrix,
+    base_lag = get_base_var_lag("imports"),
+    lag_max = var_lag_max,
+    type = var_type
+  ),
+  run_var_lag_diagnostic_grid(
+    system_name = "exports",
+    matrix_data = exports_var_matrix,
+    base_lag = get_base_var_lag("exports"),
+    lag_max = var_lag_max,
+    type = var_type
+  )
+)
+
+# Se elige el menor rezago >= SC/BIC que pase autocorrelacion residual.
+var_lag_diagnostic_decision <- do.call(
+  rbind,
+  lapply(unique(var_lag_diagnostic_grid$system), function(system_name) {
+    system_grid <- var_lag_diagnostic_grid[
+      var_lag_diagnostic_grid$system == system_name,
+    ]
+    base_lag <- unique(system_grid$base_selected_lag)[1]
+    passing_lags <- system_grid$candidate_lag[
+      system_grid$passes_serial_diagnostic_5pct
+    ]
+    final_lag <- if (length(passing_lags) > 0) {
+      min(passing_lags)
+    } else {
+      base_lag
+    }
+    final_row <- system_grid[system_grid$candidate_lag == final_lag, ][1, ]
+    diagnostics_pass <- isTRUE(final_row$passes_serial_diagnostic_5pct)
+
+    data.frame(
+      system = system_name,
+      base_selected_lag = base_lag,
+      final_selected_lag = final_lag,
+      lag_max = var_lag_max,
+      var_type = var_type,
+      selection_rule = ifelse(
+        diagnostics_pass,
+        "menor rezago que pasa autocorrelacion residual",
+        "SC/BIC conservado por falta de candidato sin autocorrelacion"
+      ),
+      pt_adjusted_p_value = final_row$pt_adjusted_p_value,
+      bg_p_value = final_row$bg_p_value,
+      diagnostics_pass_5pct = diagnostics_pass,
+      diagnostic_status = ifelse(
+        diagnostics_pass,
+        "serial_diagnostic_pass",
+        "residual_autocorrelation_warning"
+      ),
+      note = ifelse(
+        diagnostics_pass,
+        "El rezago final retroalimenta los diagnosticos de autocorrelacion.",
+        "Ningun rezago candidato elimina autocorrelacion; resultados indicativos."
+      ),
+      stringsAsFactors = FALSE
+    )
+  })
+)
+
+# esta funcion recupera el rezago VAR elegido para cada sistema.
+get_preferred_var_lag <- function(system_name) {
+  # se usa la decision final ajustada por diagnosticos residuales.
+  lag_value <- var_lag_diagnostic_decision$final_selected_lag[
+    var_lag_diagnostic_decision$system == system_name
+  ]
+
+  # se detiene la corrida si no existe una decision unica y valida.
+  if (length(lag_value) != 1 || is.na(lag_value)) {
+    stop("No se encontro rezago final para el sistema: ", system_name)
+  }
+
+  # se devuelve el rezago como entero para pasarlo a las rutinas VAR/VEC.
+  as.integer(lag_value)
+}
+
+# Run Wald de exclusion: evalua si un rezago completo aporta al sistema VAR.
+run_var_lag_exclusion_wald <- function(system_name, matrix_data, p, type) {
+  if (!course_script_loaded("VAR_lag_exclusion_wald.R") ||
+      !exists("VAR_lag_exclusion_wald", mode = "function")) {
+    return(data.frame(
+      system = system_name,
+      var_lag = p,
+      tested_lag = NA_integer_,
+      statistic = NA_real_,
+      df = NA_integer_,
+      p_value = NA_real_,
+      n_restrictions = NA_integer_,
+      conclusion_5pct = NA_character_,
+      note = "No se pudo interpretar porque el script requerido no cargo.",
+      status = "script_not_loaded",
+      message = course_scripts_status$message[
+        course_scripts_status$file == "VAR_lag_exclusion_wald.R"
+      ][1],
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  var_fit <- tryCatch(
+    vars::VAR(matrix_data, p = p, type = type),
+    error = function(e) e
+  )
+
+  # Si falla la estimacion del VAR, se registra el error sin cortar la corrida.
+  if (inherits(var_fit, "error")) {
+    return(data.frame(
+      system = system_name,
+      var_lag = p,
+      tested_lag = NA_integer_,
+      statistic = NA_real_,
+      df = NA_integer_,
+      p_value = NA_real_,
+      n_restrictions = NA_integer_,
+      conclusion_5pct = NA_character_,
+      note = "No se pudo interpretar porque el VAR no pudo estimarse.",
+      status = "var_error",
+      message = var_fit$message,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  wald_result <- tryCatch(
+    VAR_lag_exclusion_wald(var_fit, lags = seq_len(p)),
+    error = function(e) e
+  )
+
+  # Si falla el Wald, se conserva el mensaje para auditar el script requerido.
+  if (inherits(wald_result, "error")) {
+    return(data.frame(
+      system = system_name,
+      var_lag = p,
+      tested_lag = NA_integer_,
+      statistic = NA_real_,
+      df = NA_integer_,
+      p_value = NA_real_,
+      n_restrictions = NA_integer_,
+      conclusion_5pct = NA_character_,
+      note = "No se pudo interpretar porque fallo el test Wald.",
+      status = "wald_error",
+      message = wald_result$message,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  data.frame(
+    system = system_name,
+    var_lag = p,
+    tested_lag = wald_result$lag,
+    statistic = wald_result$statistic,
+    df = wald_result$df,
+    p_value = wald_result$p_value,
+    n_restrictions = wald_result$n_restrictions,
+    conclusion_5pct = wald_result$conclusion_5pct,
+    note = wald_result$note,
+    status = "ok",
+    message = "Lag exclusion Wald ejecutado con VAR_lag_exclusion_wald.R.",
+    stringsAsFactors = FALSE
+  )
+}
+
+# Se documenta si cada bloque de rezagos elegido aporta informacion conjunta.
+var_lag_exclusion_wald_results <- rbind(
+  run_var_lag_exclusion_wald(
+    system_name = "imports",
+    matrix_data = imports_var_matrix,
+    p = get_preferred_var_lag("imports"),
+    type = var_type
+  ),
+  run_var_lag_exclusion_wald(
+    system_name = "exports",
+    matrix_data = exports_var_matrix,
+    p = get_preferred_var_lag("exports"),
+    type = var_type
+  )
+)
+
+#********************************************************
+#********************************************************
+# 7. Cointegracion de Johansen
+#********************************************************
 # se fija la constante dentro de la relacion de cointegracion.
 johansen_ecdet <- "const"
 
@@ -1224,22 +1524,6 @@ johansen_spec <- "transitory"
 
 # se agregan dummies estacionales trimestrales.
 johansen_season <- 4
-
-# esta funcion recupera el rezago VAR elegido para cada sistema.
-get_preferred_var_lag <- function(system_name) {
-  # se filtra la decision de rezagos para el sistema solicitado.
-  lag_value <- var_lag_decision$preferred_selected_lag[
-    var_lag_decision$system == system_name
-  ]
-
-  # se detiene la corrida si no existe una decision unica y valida.
-  if (length(lag_value) != 1 || is.na(lag_value)) {
-    stop("No se encontro rezago preferido para el sistema: ", system_name)
-  }
-
-  # se devuelve el rezago como entero para pasarlo a las rutinas VAR/VEC.
-  as.integer(lag_value)
-}
 
 # esta funcion adapta el rezago VAR al minimo requerido por Johansen.
 get_johansen_lag <- function(system_name) {
@@ -1338,18 +1622,24 @@ select_johansen_rank <- function(johansen_results) {
 # se define la funcion auxiliar run_johansen_system.
 run_johansen_system <- function(system_name, matrix_data, lag_k, system_vars,
                                 ecdet) {
-  # se recupera el rezago VAR base elegido por el criterio principal.
+  # se recuperan rezagos base y final para documentar la retroalimentacion.
   selected_var_lag <- get_preferred_var_lag(system_name)
+  base_var_lag <- get_base_var_lag(system_name)
 
   # se documenta si el rezago de Johansen difiere por la restriccion K >= 2.
   lag_note <- if (lag_k != selected_var_lag) {
     paste(
-      "SC/BIC selecciono", selected_var_lag,
+      "El rezago final ajustado fue", selected_var_lag,
       "rezago VAR; ca.jo exige K >= 2, por lo que Johansen se estima con K =",
-      lag_k
+      lag_k,
+      paste0("(base SC/BIC = ", base_var_lag, ").")
     )
   } else {
-    paste("Johansen se estima con el rezago VAR seleccionado por SC/BIC: K =", lag_k)
+    paste(
+      "Johansen se estima con el rezago VAR final ajustado: K =",
+      lag_k,
+      paste0("(base SC/BIC = ", base_var_lag, ").")
+    )
   }
 
   # se estima la prueba de traza dentro de un tryCatch para capturar errores.
@@ -1516,10 +1806,9 @@ johansen_rank_decision <- do.call(
   lapply(johansen_system_results, function(result) result$decision)
 )
 
-# =========================================================
+#********************************************************
 # 7B. Autocorrelacion residual con script de clase vcorr_res.R
-# =========================================================
-
+#********************************************************
 # Run autocorrelacion de clase: estima un VAR y aplica vcorr_res.R para obtener
 # diagnosticos Q/BG de residuos en el formato usado en clase.
 # se define la funcion auxiliar run_course_vcorr.
@@ -1655,10 +1944,126 @@ course_vcorr_results <- do.call(
   )
 )
 
-# =========================================================
-# 8. Engle-Granger y ECM
-# =========================================================
+#********************************************************
+# 7C. Heterocedasticidad residual con script VAR_white_no_cross.R
+#********************************************************
+# Run White no-cross: aplica el test de heterocedasticidad pedido por la consigna.
+run_course_white_no_cross <- function(system_name, matrix_data, p, type) {
+  if (!course_script_loaded("VAR_white_no_cross.R") ||
+      !exists("VAR_white_no_cross", mode = "function")) {
+    return(data.frame(
+      system = system_name,
+      course_script = "VAR_white_no_cross.R",
+      var_lag = p,
+      var_type = type,
+      equation = NA_character_,
+      statistic = NA_real_,
+      df = NA_integer_,
+      p_value = NA_real_,
+      n_obs = NA_integer_,
+      n_auxiliary_terms = NA_integer_,
+      conclusion_5pct = NA_character_,
+      note = "No se pudo interpretar porque el script requerido no cargo.",
+      status = "not_run",
+      message = course_scripts_status$message[
+        course_scripts_status$file == "VAR_white_no_cross.R"
+      ][1],
+      stringsAsFactors = FALSE
+    ))
+  }
 
+  suppressPackageStartupMessages(library(vars))
+
+  fit <- tryCatch(
+    vars::VAR(matrix_data, p = p, type = type),
+    error = function(e) e
+  )
+
+  # Si falla la estimacion del VAR, se registra el error sin cortar la corrida.
+  if (inherits(fit, "error")) {
+    return(data.frame(
+      system = system_name,
+      course_script = "VAR_white_no_cross.R",
+      var_lag = p,
+      var_type = type,
+      equation = NA_character_,
+      statistic = NA_real_,
+      df = NA_integer_,
+      p_value = NA_real_,
+      n_obs = NA_integer_,
+      n_auxiliary_terms = NA_integer_,
+      conclusion_5pct = NA_character_,
+      note = "No se pudo interpretar porque el VAR no pudo estimarse.",
+      status = "var_error",
+      message = fit$message,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  white_result <- tryCatch(
+    VAR_white_no_cross(fit),
+    error = function(e) e
+  )
+
+  # Si falla el White, se conserva el mensaje para auditar el script requerido.
+  if (inherits(white_result, "error")) {
+    return(data.frame(
+      system = system_name,
+      course_script = "VAR_white_no_cross.R",
+      var_lag = p,
+      var_type = type,
+      equation = NA_character_,
+      statistic = NA_real_,
+      df = NA_integer_,
+      p_value = NA_real_,
+      n_obs = NA_integer_,
+      n_auxiliary_terms = NA_integer_,
+      conclusion_5pct = NA_character_,
+      note = "No se pudo interpretar porque fallo el test White no-cross.",
+      status = "white_error",
+      message = white_result$message,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  data.frame(
+    system = system_name,
+    course_script = "VAR_white_no_cross.R",
+    var_lag = p,
+    var_type = type,
+    equation = white_result$equation,
+    statistic = white_result$statistic,
+    df = white_result$df,
+    p_value = white_result$p_value,
+    n_obs = white_result$n_obs,
+    n_auxiliary_terms = white_result$n_auxiliary_terms,
+    conclusion_5pct = white_result$conclusion_5pct,
+    note = white_result$note,
+    status = "ok",
+    message = "White no-cross ejecutado con VAR_white_no_cross.R.",
+    stringsAsFactors = FALSE
+  )
+}
+
+# Se corre White no-cross sobre los VAR finales ajustados por diagnostico.
+course_white_no_cross_results <- rbind(
+  run_course_white_no_cross(
+    system_name = "imports",
+    matrix_data = imports_var_matrix,
+    p = get_preferred_var_lag("imports"),
+    type = var_type
+  ),
+  run_course_white_no_cross(
+    system_name = "exports",
+    matrix_data = exports_var_matrix,
+    p = get_preferred_var_lag("exports"),
+    type = var_type
+  )
+)
+
+#********************************************************
+# 8. Engle-Granger y ECM
+#********************************************************
 # se define la funcion auxiliar format_model_formula.
 format_model_formula <- function(dependent_var, regressors) {
   paste(dependent_var, "~", paste(regressors, collapse = " + "))
@@ -2111,12 +2516,85 @@ get_formal_order_for_key <- function(series_key) {
   value[1]
 }
 
+# se define la funcion auxiliar get_lag_diagnostic_value.
+get_lag_diagnostic_value <- function(system_name, column_name) {
+  value <- var_lag_diagnostic_decision[
+    var_lag_diagnostic_decision$system == system_name,
+    column_name
+  ]
+
+  if (length(value) == 0) {
+    return(NA)
+  }
+
+  value[1]
+}
+
+# se define la funcion auxiliar get_white_joint_value.
+get_white_joint_value <- function(system_name, column_name) {
+  value <- course_white_no_cross_results[
+    course_white_no_cross_results$system == system_name &
+      course_white_no_cross_results$equation == "joint",
+    column_name
+  ]
+
+  if (length(value) == 0) {
+    return(NA)
+  }
+
+  value[1]
+}
+
+# se define la funcion auxiliar combined_diagnostic_status.
+combined_diagnostic_status <- function(system_name) {
+  serial_status <- get_lag_diagnostic_value(system_name, "diagnostic_status")
+  white_conclusion <- get_white_joint_value(system_name, "conclusion_5pct")
+  white_rejects <- identical(white_conclusion, "reject homoskedasticity")
+
+  if (identical(serial_status, "residual_autocorrelation_warning") &&
+      white_rejects) {
+    return("serial_and_heteroskedasticity_warning")
+  }
+  if (identical(serial_status, "residual_autocorrelation_warning")) {
+    return("serial_autocorrelation_warning")
+  }
+  if (white_rejects) {
+    return("heteroskedasticity_warning")
+  }
+
+  "diagnostics_pass"
+}
+
 # se arma la tabla var_vec_treatment_decision con resultados de este paso.
 var_vec_treatment_decision <- data.frame(
   system = c("imports", "exports"),
   dependent_series_order = c(
     get_formal_order_for_key("imports"),
     get_formal_order_for_key("exports")
+  ),
+  base_var_lag = c(
+    get_lag_diagnostic_value("imports", "base_selected_lag"),
+    get_lag_diagnostic_value("exports", "base_selected_lag")
+  ),
+  final_var_lag = c(
+    get_lag_diagnostic_value("imports", "final_selected_lag"),
+    get_lag_diagnostic_value("exports", "final_selected_lag")
+  ),
+  residual_diagnostic_status = c(
+    get_lag_diagnostic_value("imports", "diagnostic_status"),
+    get_lag_diagnostic_value("exports", "diagnostic_status")
+  ),
+  white_joint_p_value = c(
+    get_white_joint_value("imports", "p_value"),
+    get_white_joint_value("exports", "p_value")
+  ),
+  white_joint_conclusion_5pct = c(
+    get_white_joint_value("imports", "conclusion_5pct"),
+    get_white_joint_value("exports", "conclusion_5pct")
+  ),
+  diagnostic_validity_status = c(
+    combined_diagnostic_status("imports"),
+    combined_diagnostic_status("exports")
   ),
   engle_granger_supports_cointegration = c(
     get_eg_use_ecm("imports"),
@@ -2145,20 +2623,79 @@ var_vec_treatment_decision <- data.frame(
   decision_note = c(
     paste(
       "Importaciones combina ADF compatible con I(1), evidencia Engle-Granger",
-      "y rango 1 por traza en Johansen con constante; maximo autovalor no confirma."
+      "y rango 1 por traza en Johansen con constante; maximo autovalor no confirma.",
+      get_lag_diagnostic_value("imports", "note"),
+      get_white_joint_value("imports", "note")
     ),
     paste(
       "Exportaciones presenta alerta ADF I(0) y Engle-Granger no respalda",
-      "cointegracion; por prudencia no se usara VECM como especificacion principal."
+      "cointegracion; por prudencia no se usara VECM como especificacion principal.",
+      get_lag_diagnostic_value("exports", "note"),
+      get_white_joint_value("exports", "note")
     )
   ),
   stringsAsFactors = FALSE
 )
 
-# =========================================================
-# 9. Exportacion
-# =========================================================
+# se define la funcion auxiliar get_unique_lag_used.
+get_unique_lag_used <- function(data, system_name, lag_column) {
+  values <- unique(data[data$system == system_name, lag_column])
+  values <- values[!is.na(values)]
 
+  if (length(values) == 0) {
+    return(NA_integer_)
+  }
+  if (length(values) > 1) {
+    return(NA_integer_)
+  }
+
+  as.integer(values[1])
+}
+
+# Esta tabla verifica que las decisiones posteriores usen el rezago retroalimentado.
+feedback_audit_rows <- list()
+for (system_name in c("imports", "exports")) {
+  base_lag <- as.integer(get_lag_diagnostic_value(system_name, "base_selected_lag"))
+  final_lag <- as.integer(get_lag_diagnostic_value(system_name, "final_selected_lag"))
+  stage_lags <- data.frame(
+    downstream_block = c(
+      "VAR_lag_exclusion_wald",
+      "Johansen_rank_decision",
+      "vcorr_residual_autocorrelation",
+      "white_no_cross_heteroskedasticity",
+      "final_var_vec_treatment"
+    ),
+    lag_used = c(
+      get_unique_lag_used(var_lag_exclusion_wald_results, system_name, "var_lag"),
+      get_unique_lag_used(johansen_rank_decision, system_name, "selected_var_lag"),
+      get_unique_lag_used(course_vcorr_results, system_name, "var_lag"),
+      get_unique_lag_used(course_white_no_cross_results, system_name, "var_lag"),
+      as.integer(get_lag_diagnostic_value(system_name, "final_selected_lag"))
+    ),
+    stringsAsFactors = FALSE
+  )
+
+  feedback_audit_rows[[system_name]] <- data.frame(
+    system = system_name,
+    base_selected_lag = base_lag,
+    final_selected_lag = final_lag,
+    stage_lags,
+    uses_final_lag = stage_lags$lag_used == final_lag,
+    feedback_role = ifelse(
+      stage_lags$downstream_block == "final_var_vec_treatment",
+      "resume diagnosticos y decisiones econometricas",
+      "usa rezago final ajustado por diagnosticos"
+    ),
+    stringsAsFactors = FALSE
+  )
+}
+
+feedback_audit <- do.call(rbind, feedback_audit_rows)
+rownames(feedback_audit) <- NULL
+
+#********************************************************
+# 9. Exportacion
+#********************************************************
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   model_sample_definition,
@@ -2281,6 +2818,30 @@ write.csv(
 
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
+  var_lag_diagnostic_grid,
+  file.path(output_dir, "section_03_var_lag_diagnostic_grid.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  var_lag_diagnostic_decision,
+  file.path(output_dir, "section_03_var_lag_diagnostic_decision.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  var_lag_exclusion_wald_results,
+  file.path(output_dir, "section_03_var_lag_exclusion_wald.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
   johansen_trace_results,
   file.path(output_dir, "section_04_johansen_trace_results.csv"),
   row.names = FALSE,
@@ -2307,6 +2868,14 @@ write.csv(
 write.csv(
   course_vcorr_results,
   file.path(output_dir, "section_04_course_vcorr_residual_autocorrelation.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  course_white_no_cross_results,
+  file.path(output_dir, "section_04_course_white_no_cross_heteroskedasticity.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2391,10 +2960,19 @@ write.csv(
   fileEncoding = "UTF-8"
 )
 
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  feedback_audit,
+  file.path(output_dir, "section_06_feedback_audit.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
 # se arma la tabla output_manifest con resultados de este paso.
 output_manifest <- data.frame(
   file = c(
     "section_00_course_scripts_status.csv",
+    "section_01_outputs_manifest.csv",
     "section_01_model_sample.csv",
     "section_01_variable_check.csv",
     "section_01_system_samples.csv",
@@ -2409,10 +2987,14 @@ output_manifest <- data.frame(
     "section_03_var_lag_selection.csv",
     "section_03_var_lag_criteria.csv",
     "section_03_var_lag_decision.csv",
+    "section_03_var_lag_diagnostic_grid.csv",
+    "section_03_var_lag_diagnostic_decision.csv",
+    "section_03_var_lag_exclusion_wald.csv",
     "section_04_johansen_trace_results.csv",
     "section_04_johansen_eigen_results.csv",
     "section_04_johansen_rank_decision.csv",
     "section_04_course_vcorr_residual_autocorrelation.csv",
+    "section_04_course_white_no_cross_heteroskedasticity.csv",
     "section_05_engle_granger_equations.csv",
     "section_05_engle_granger_long_run_coefficients.csv",
     "section_05_engle_granger_residual_tests.csv",
@@ -2422,10 +3004,12 @@ output_manifest <- data.frame(
     "section_05_ecm_adjustment_summary.csv",
     "section_05_eg_ecm_elasticity_summary.csv",
     "section_06_johansen_robustness_summary.csv",
-    "section_06_var_vec_treatment_decision.csv"
+    "section_06_var_vec_treatment_decision.csv",
+    "section_06_feedback_audit.csv"
   ),
   description = c(
     "Estado de carga de scripts auxiliares provistos en clase",
+    "Indice de salidas CSV generadas por el script maestro",
     "Definicion de muestra de trabajo",
     "Verificacion de variables requeridas",
     "Subconjuntos para sistemas de importaciones y exportaciones",
@@ -2439,11 +3023,15 @@ output_manifest <- data.frame(
     "Resultados ADF capturados desde Test.ADF.Ver.3.R",
     "Rezagos VAR sugeridos por AIC, HQ, SC/BIC y FPE",
     "Valores de criterios de informacion para rezagos VAR candidatos",
-    "Decision de rezagos VAR usando SC/BIC como criterio principal",
+    "Decision base de rezagos VAR usando SC/BIC como criterio principal",
+    "Grilla de autocorrelacion residual para retroalimentar rezagos VAR",
+    "Decision final de rezagos VAR ajustada por diagnosticos residuales",
+    "Tests Wald de exclusion conjunta por rezago en cada VAR; H0: bloque de rezago igual a cero",
     "Pruebas de cointegracion de Johansen por estadistico de traza",
     "Pruebas de cointegracion de Johansen por maximo autovalor",
     "Decision preliminar de rango de cointegracion por Johansen",
     "Diagnosticos de autocorrelacion residual VAR con vcorr_res.R",
+    "Test White no-cross de heterocedasticidad residual VAR",
     "Ecuaciones de largo plazo Engle-Granger",
     "Coeficientes de largo plazo Engle-Granger",
     "Pruebas ADF sobre residuos Engle-Granger",
@@ -2453,7 +3041,8 @@ output_manifest <- data.frame(
     "Velocidad de ajuste del ECM",
     "Resumen de elasticidades Engle-Granger y ECM para el informe",
     "Robustez de Johansen comparando ecdet const y none",
-    "Decision operativa para VECM o VAR en diferencias"
+    "Decision operativa para VECM o VAR en diferencias",
+    "Auditoria de retroalimentacion entre diagnosticos y bloques posteriores"
   ),
   stringsAsFactors = FALSE
 )

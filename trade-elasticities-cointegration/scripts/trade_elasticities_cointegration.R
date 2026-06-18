@@ -1,4 +1,4 @@
-# =========================================================
+#********************************************************
 # UNIVERSIDAD DE BUENOS AIRES (UBA)
 # Facultad de Ciencias Económicas
 # Maestría en Economía Aplicada
@@ -38,10 +38,9 @@
 # - FRED (Federal Reserve Economic Data)
 # - World Bank Commodity Price Data (Pink Sheet)
 #
-# =========================================================
+#********************************************************
 # 1. INICIALIZACIÓN DEL ENTORNO
-# =========================================================
-
+#********************************************************
 # reiniciar la sesion de trabajo para evitar que objetos
 # viejos contaminen los resultados reproducibles del script.
 
@@ -54,10 +53,9 @@ graphics.off()
 # Evitar notacion cientifica.
 options(scipen = 999)
 
-# =========================================================
+#********************************************************
 # 2. CARGA DE PAQUETES
-# =========================================================
-
+#********************************************************
 # cargar librerias para limpieza, series de tiempo,
 # econometria, visualizacion y exportacion de resultados.
 
@@ -87,10 +85,9 @@ library(scales)
 library(writexl)
 library(haven)
 
-# =========================================================
+#********************************************************
 # 3. DIRECTORIOS DE TRABAJO
-# =========================================================
-
+#********************************************************
 # definir rutas del proyecto y crear carpetas necesarias
 # para que las salidas se escriban siempre en ubicaciones esperadas.
 
@@ -120,10 +117,9 @@ walk(
   ~ dir.create(.x, recursive = TRUE, showWarnings = FALSE)
 )
 
-# =========================================================
+#********************************************************
 # 3.1 CONFIGURACIÓN GLOBAL DEL MODELO
-# =========================================================
-
+#********************************************************
 # concentrar los parametros econometricos principales en un solo bloque para
 # que las decisiones de muestra, rezagos, inferencia y parsimonia sean visibles.
 analysis_start_date <- as.Date("2004-01-01")
@@ -185,10 +181,9 @@ global_model_config <- tibble(
   )
 )
 
-# =========================================================
+#********************************************************
 # 4. ARCHIVOS DE ENTRADA
-# =========================================================
-
+#********************************************************
 # declarar las rutas de las fuentes crudas que alimentan
 # todo el flujo posterior de limpieza, panel y modelos.
 
@@ -239,10 +234,9 @@ commodity_file <- file.path(
   "world_bank_commodity_index.xlsx"
 )
 
-# =========================================================
+#********************************************************
 # 5. IMPORTACIÓN Y LIMPIEZA DE DATOS
-# =========================================================
-
+#********************************************************
 # importar cada fuente cruda, homogeneizar fechas,
 # construir logs y guardar bases intermedias auditables en .dta y .csv.
 
@@ -790,10 +784,9 @@ commodity_dta <- read_dta(
   file.path(processed_data_dir, "world_bank_commodity_index_quarterly_2004_2025.dta")
 )
 
-# =========================================================
+#********************************************************
 # 6. CONSTRUCCIÓN DEL PANEL FINAL
-# =========================================================
-
+#********************************************************
 # unir todas las bases trimestrales por fecha para
 # obtener el panel maestro que usaran transformaciones, graficos y modelos.
 
@@ -969,10 +962,9 @@ trade_elasticities_panel_dta <- read_dta(
   file.path(processed_data_dir, "trade_elasticities_panel_2004_2025.dta")
 )
 
-# =========================================================
+#********************************************************
 # 7. TRANSFORMACIONES DE VARIABLES
-# =========================================================
-
+#********************************************************
 # crear variables econometricas derivadas, incluyendo
 # diferencias logaritmicas, rezagos y la proxy PIBSOCIOS.
 
@@ -1164,10 +1156,9 @@ trade_elasticities_panel_transformed_dta <- read_dta(
   file.path(processed_data_dir, "trade_elasticities_panel_transformed_2004_2025.dta")
 )
 
-# =========================================================
+#********************************************************
 # 8. VISUALIZACIÓN EXPLORATORIA
-# =========================================================
-
+#********************************************************
 # generar figuras descriptivas para entender tendencias,
 # cobertura de datos y dinamica previa a las pruebas econometricas.
 
@@ -1415,10 +1406,9 @@ save_exploratory_plot(
 )
 
 
-# =========================================================
+#********************************************************
 # 9. ANÁLISIS DE ESTACIONARIEDAD
-# =========================================================
-
+#********************************************************
 # evaluar si las series en logs son I(1) y si sus
 # primeras diferencias son estacionarias antes de pasar a cointegracion.
 
@@ -1827,10 +1817,9 @@ write_xlsx(
 )
 
 
-# =========================================================
+#********************************************************
 # 10. ANÁLISIS DE COINTEGRACIÓN
-# =========================================================
-
+#********************************************************
 # estimar relaciones de largo plazo, guardar residuos y
 # decidir si corresponde modelar con ECM o solo con primeras diferencias.
 
@@ -2364,10 +2353,9 @@ trade_elasticities_residuals_view <- trade_elasticities_panel_modeling_dta %>%
 print(head(trade_elasticities_residuals_view, 10))
 tail(names(trade_elasticities_panel_modeling_dta), 10)
 
-# =========================================================
+#********************************************************
 # 11. MODELOS ECONOMÉTRICOS
-# =========================================================
-
+#********************************************************
 # estimar modelos de corto plazo y ECM con rezagos,
 # HAC/Newey-West, diagnosticos, parsimonia y tablas listas para el informe.
 
@@ -3656,10 +3644,9 @@ write_xlsx(
 )
 
 
-# =========================================================
+#********************************************************
 # 12. DIAGNÓSTICOS DEL MODELO
-# =========================================================
-
+#********************************************************
 # ordenar los diagnosticos ya calculados en la seccion 11 y convertirlos en
 # una lectura econometrica directa para informe y anexo.
 
@@ -4061,10 +4048,9 @@ save_econometric_plot(
 )
 
 
-# =========================================================
+#********************************************************
 # 13. EXPORTACIÓN DE RESULTADOS
-# =========================================================
-
+#********************************************************
 # ordenar las salidas finales generadas por el script para que el informe y el
 # anexo tengan un mapa claro de archivos, ubicacion y uso.
 
@@ -4254,10 +4240,9 @@ write_xlsx(
 )
 
 
-# =========================================================
+#********************************************************
 # 14. FIN DEL SCRIPT
-# =========================================================
-
+#********************************************************
 # cerrar el script con controles de reproducibilidad y notas metodologicas que
 # deben quedar visibles antes de preparar la entrega final.
 
