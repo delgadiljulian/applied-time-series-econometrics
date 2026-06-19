@@ -61,9 +61,48 @@ processed_data_dir <- file.path(project_dir, "data", "processed")
 output_dir <- file.path(project_dir, "outputs")
 figures_dir <- file.path(project_dir, "figures")
 
+# se agrupan las salidas CSV por bloque para facilitar la revision manual.
+output_subdirs <- c(
+  section_00 = "00_setup",
+  section_01 = "01_data_descriptives",
+  section_02 = "02_unit_roots",
+  section_03 = "03_var_lags",
+  section_04 = "04_johansen_diagnostics",
+  section_05 = "05_engle_granger_ecm",
+  section_06 = "06_vecm_decisions"
+)
+
 # se crea la carpeta necesaria si todavia no existe.
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(figures_dir, recursive = TRUE, showWarnings = FALSE)
+for (subdir in output_subdirs) {
+  dir.create(file.path(output_dir, subdir), recursive = TRUE,
+             showWarnings = FALSE)
+}
+
+# esta funcion centraliza la ruta de exportacion para cada CSV del trabajo.
+output_path <- function(file_name) {
+  section_key <- sub("^((section_[0-9]{2}).*)$", "\\2", file_name)
+  subdir <- output_subdirs[[section_key]]
+
+  if (is.null(subdir) || is.na(subdir)) {
+    return(file.path(output_dir, file_name))
+  }
+
+  file.path(output_dir, subdir, file_name)
+}
+
+# devuelve la ruta relativa desde outputs para el manifiesto reproducible.
+output_relative_path <- function(file_name) {
+  section_key <- sub("^((section_[0-9]{2}).*)$", "\\2", file_name)
+  subdir <- output_subdirs[[section_key]]
+
+  if (is.null(subdir) || is.na(subdir)) {
+    return(file_name)
+  }
+
+  file.path(subdir, file_name)
+}
 
 #********************************************************
 # 1A. Scripts auxiliares de clase
@@ -497,17 +536,23 @@ descriptive_interpretation <- data.frame(
 )
 
 # se define la funcion auxiliar plot_series_panel.
-plot_series_panel <- function(data, variables, labels, ylab, main, file_name) {
+plot_series_panel <- function(data, variables, labels, ylab, file_name,
+                              width = 1800, height = 1700,
+                              event_dates = NULL) {
   output_file <- file.path(figures_dir, file_name)
-  grDevices::png(output_file, width = 1800, height = 1400, res = 180)
+  grDevices::png(output_file, width = width, height = height, res = 180)
   old_par <- par(no.readonly = TRUE)
   on.exit({
     par(old_par)
     grDevices::dev.off()
   })
 
-  # se ejecuta este bloque amplio del procedimiento.
-  par(mfrow = c(length(variables), 1), mar = c(2.5, 4.2, 2.1, 1.2), oma = c(1, 0, 2, 0))
+  par(
+    mfrow = c(length(variables), 1),
+    mar = c(3.2, 4.2, 2.0, 1.2),
+    oma = c(0.4, 0, 0.2, 0),
+    pty = "m"
+  )
   for (i in seq_along(variables)) {
     plot(
       data$quarter_date,
@@ -521,10 +566,15 @@ plot_series_panel <- function(data, variables, labels, ylab, main, file_name) {
     )
     grid(col = "gray85")
     abline(h = 0, col = "gray60", lty = 3)
+    if (!is.null(event_dates)) {
+      abline(v = as.Date(event_dates), col = "gray75", lty = 3)
+    }
   }
-  mtext(main, outer = TRUE, cex = 1.1, font = 2)
   invisible(output_file)
 }
+
+# se define una lista breve de eventos para ubicar quiebres visuales.
+descriptive_event_dates <- as.Date(c("2008-10-01", "2020-04-01"))
 
 # se ejecuta este bloque amplio del procedimiento.
 plot_series_panel(
@@ -532,8 +582,8 @@ plot_series_panel(
   descriptive_series$level_var,
   descriptive_series$series_label,
   "log",
-  "Series en niveles logaritmicos",
-  "figure_01_log_levels.png"
+  "figure_01_log_levels.png",
+  event_dates = descriptive_event_dates
 )
 
 # se ejecuta este bloque amplio del procedimiento.
@@ -542,8 +592,59 @@ plot_series_panel(
   descriptive_series$diff_var,
   descriptive_series$series_label,
   "dif. log",
-  "Primeras diferencias logaritmicas",
-  "figure_02_log_differences.png"
+  "figure_02_log_differences.png",
+  event_dates = descriptive_event_dates
+)
+
+# se separan los paneles por sistema para revisar una version mas legible.
+imports_system_keys <- c("imports", "gdp_arg", "itcrm")
+exports_system_keys <- c("exports", "pib_socios", "itcrm", "commodities")
+
+select_descriptive_rows <- function(series_keys) {
+  descriptive_series[match(series_keys, descriptive_series$series_key), ]
+}
+
+imports_descriptive_series <- select_descriptive_rows(imports_system_keys)
+exports_descriptive_series <- select_descriptive_rows(exports_system_keys)
+
+plot_series_panel(
+  work_data,
+  imports_descriptive_series$level_var,
+  imports_descriptive_series$series_label,
+  "log",
+  "figure_01a_imports_log_levels.png",
+  height = 1000,
+  event_dates = descriptive_event_dates
+)
+
+plot_series_panel(
+  work_data,
+  exports_descriptive_series$level_var,
+  exports_descriptive_series$series_label,
+  "log",
+  "figure_01b_exports_log_levels.png",
+  height = 1200,
+  event_dates = descriptive_event_dates
+)
+
+plot_series_panel(
+  work_data,
+  imports_descriptive_series$diff_var,
+  imports_descriptive_series$series_label,
+  "dif. log",
+  "figure_02a_imports_log_differences.png",
+  height = 1000,
+  event_dates = descriptive_event_dates
+)
+
+plot_series_panel(
+  work_data,
+  exports_descriptive_series$diff_var,
+  exports_descriptive_series$series_label,
+  "dif. log",
+  "figure_02b_exports_log_differences.png",
+  height = 1200,
+  event_dates = descriptive_event_dates
 )
 
 #********************************************************
@@ -1393,6 +1494,96 @@ var_lag_diagnostic_decision <- do.call(
   })
 )
 
+# se define la funcion auxiliar plot_var_lag_serial_diagnostics.
+plot_var_lag_serial_diagnostics <- function(diagnostic_grid, diagnostic_decision,
+                                            file_name) {
+  output_file <- file.path(figures_dir, file_name)
+  system_names <- unique(diagnostic_grid$system)
+  system_labels <- c(
+    imports = "Importaciones",
+    exports = "Exportaciones"
+  )
+
+  grDevices::png(output_file, width = 1800, height = 1050, res = 180)
+  old_par <- par(no.readonly = TRUE)
+  on.exit({
+    par(old_par)
+    grDevices::dev.off()
+  })
+
+  par(
+    mfrow = c(length(system_names), 1),
+    mar = c(4.2, 4.4, 2.2, 1.2),
+    oma = c(0.2, 0, 0.2, 0),
+    pty = "m"
+  )
+
+  for (system_name in system_names) {
+    system_grid <- diagnostic_grid[diagnostic_grid$system == system_name, ]
+    system_decision <- diagnostic_decision[
+      diagnostic_decision$system == system_name,
+    ][1, ]
+    p_values <- c(system_grid$pt_adjusted_p_value, system_grid$bg_p_value)
+    finite_p_values <- p_values[is.finite(p_values)]
+    y_max <- if (length(finite_p_values) == 0) {
+      0.10
+    } else {
+      min(1, max(0.10, max(finite_p_values, na.rm = TRUE) * 1.15))
+    }
+    label <- ifelse(
+      system_name %in% names(system_labels),
+      system_labels[[system_name]],
+      system_name
+    )
+
+    plot(
+      system_grid$candidate_lag,
+      system_grid$pt_adjusted_p_value,
+      type = "b",
+      pch = 16,
+      lwd = 1.6,
+      col = "#1F4E79",
+      ylim = c(0, y_max),
+      xaxt = "n",
+      xlab = "Rezago VAR candidato",
+      ylab = "p-valor",
+      main = label
+    )
+    lines(
+      system_grid$candidate_lag,
+      system_grid$bg_p_value,
+      type = "b",
+      pch = 17,
+      lwd = 1.6,
+      col = "#B45F06"
+    )
+    axis(1, at = system_grid$candidate_lag)
+    grid(col = "gray85")
+    abline(h = 0.05, col = "gray45", lty = 2)
+    abline(v = system_decision$base_selected_lag, col = "gray45", lty = 3)
+    abline(v = system_decision$final_selected_lag, col = "#38761D", lty = 4)
+
+    legend(
+      "topright",
+      legend = c("PT ajustado", "BG", "Umbral 5%", "SC/BIC", "Rezago final"),
+      col = c("#1F4E79", "#B45F06", "gray45", "gray45", "#38761D"),
+      lty = c(1, 1, 2, 3, 4),
+      pch = c(16, 17, NA, NA, NA),
+      bty = "n",
+      cex = 0.82
+    )
+  }
+
+  invisible(output_file)
+}
+
+# se exporta una figura diagnostica para justificar la decision final de rezagos.
+plot_var_lag_serial_diagnostics(
+  var_lag_diagnostic_grid,
+  var_lag_diagnostic_decision,
+  "figure_03_var_lag_serial_diagnostics.png"
+)
+
 # esta funcion recupera el rezago VAR elegido para cada sistema.
 get_preferred_var_lag <- function(system_name) {
   # se usa la decision final ajustada por diagnosticos residuales.
@@ -1712,7 +1903,9 @@ run_johansen_system <- function(system_name, matrix_data, lag_k, system_vars,
         note = paste(lag_note, error_message, sep = " | "),
         integration_warning = integration_warning_for_system(system_name, system_vars),
         stringsAsFactors = FALSE
-      )
+      ),
+      trace_fit = NULL,
+      eigen_fit = NULL
     ))
   }
 
@@ -1745,7 +1938,12 @@ run_johansen_system <- function(system_name, matrix_data, lag_k, system_vars,
   )
 
   # se devuelve tanto la tabla de pruebas como la decision resumida.
-  list(results = combined_results, decision = decision)
+  list(
+    results = combined_results,
+    decision = decision,
+    trace_fit = trace_fit,
+    eigen_fit = eigen_fit
+  )
 }
 
 # se vinculan las variables del sistema de importaciones con sus claves ADF.
@@ -1804,6 +2002,374 @@ johansen_eigen_results <- johansen_results[johansen_results$test_type == "eigen"
 johansen_rank_decision <- do.call(
   rbind,
   lapply(johansen_system_results, function(result) result$decision)
+)
+
+# esta funcion recupera la corrida Johansen de traza para un sistema/especificacion.
+get_johansen_trace_fit <- function(system_name, ecdet) {
+  matches <- lapply(johansen_system_results, function(result) {
+    decision <- result$decision
+    if (nrow(decision) == 1 &&
+        identical(decision$system[1], system_name) &&
+        identical(decision$ecdet[1], ecdet)) {
+      return(result$trace_fit)
+    }
+    NULL
+  })
+
+  matches <- matches[!vapply(matches, is.null, logical(1))]
+  if (length(matches) == 0) {
+    return(NULL)
+  }
+
+  matches[[1]]
+}
+
+# se transforma una matriz con nombres de filas/columnas en tabla larga.
+matrix_to_long <- function(matrix_x, value_name) {
+  if (is.null(matrix_x) || length(matrix_x) == 0) {
+    return(data.frame(
+      relation = NA_character_,
+      term = NA_character_,
+      value = NA_real_,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  matrix_x <- as.matrix(matrix_x)
+  relation_names <- colnames(matrix_x)
+  if (is.null(relation_names)) {
+    relation_names <- paste0("relation_", seq_len(ncol(matrix_x)))
+  }
+  term_names <- rownames(matrix_x)
+  if (is.null(term_names)) {
+    term_names <- paste0("term_", seq_len(nrow(matrix_x)))
+  }
+
+  rows <- do.call(
+    rbind,
+    lapply(seq_len(ncol(matrix_x)), function(col_i) {
+      data.frame(
+        relation = relation_names[col_i],
+        term = term_names,
+        value = as.numeric(matrix_x[, col_i]),
+        stringsAsFactors = FALSE
+      )
+    })
+  )
+  names(rows)[names(rows) == "value"] <- value_name
+  rows
+}
+
+# se extraen errores estandar, estadisticos t y p-valores de un modelo mlm/lm.
+extract_coefficient_statistics <- function(model_object) {
+  summary_object <- tryCatch(
+    summary(model_object),
+    error = function(e) e
+  )
+
+  if (inherits(summary_object, "error") || !is.list(summary_object)) {
+    return(data.frame(
+      equation = character(),
+      term = character(),
+      std_error = numeric(),
+      statistic = numeric(),
+      p_value = numeric(),
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  equation_names <- names(summary_object)
+  if (is.null(equation_names) || any(equation_names == "")) {
+    equation_names <- colnames(stats::coef(model_object))
+  }
+  if (is.null(equation_names)) {
+    equation_names <- paste0("equation_", seq_along(summary_object))
+  }
+
+  stats_rows <- do.call(
+    rbind,
+    lapply(seq_along(summary_object), function(eq_i) {
+      coefficients <- summary_object[[eq_i]]$coefficients
+      if (is.null(coefficients) || length(coefficients) == 0) {
+        return(NULL)
+      }
+
+      coefficients <- as.matrix(coefficients)
+      std_col <- grep("Std\\. Error|Std. Error", colnames(coefficients))[1]
+      stat_col <- grep("t value|z value|statistic", colnames(coefficients),
+                       ignore.case = TRUE)[1]
+      p_col <- grep("Pr\\(|p.value|p_value", colnames(coefficients),
+                    ignore.case = TRUE)[1]
+
+      data.frame(
+        equation = equation_names[eq_i],
+        term = rownames(coefficients),
+        std_error = if (!is.na(std_col)) {
+          as.numeric(coefficients[, std_col])
+        } else {
+          NA_real_
+        },
+        statistic = if (!is.na(stat_col)) {
+          as.numeric(coefficients[, stat_col])
+        } else {
+          NA_real_
+        },
+        p_value = if (!is.na(p_col)) {
+          as.numeric(coefficients[, p_col])
+        } else {
+          NA_real_
+        },
+        stringsAsFactors = FALSE
+      )
+    })
+  )
+
+  if (is.null(stats_rows)) {
+    return(data.frame(
+      equation = character(),
+      term = character(),
+      std_error = numeric(),
+      statistic = numeric(),
+      p_value = numeric(),
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  stats_rows
+}
+
+# se quitan columnas inferenciales cuando cajorls no entrega informacion usable.
+clean_empty_inference_columns <- function(data_frame) {
+  inference_columns <- c("std_error", "statistic", "p_value")
+  present_columns <- intersect(inference_columns, names(data_frame))
+
+  if (length(present_columns) == 0) {
+    data_frame$inference_available <- FALSE
+    data_frame$inference_note <- "Salida sin columnas inferenciales."
+    return(data_frame)
+  }
+
+  has_inference <- vapply(
+    present_columns,
+    function(column_name) {
+      values <- data_frame[[column_name]]
+      if (is.numeric(values) || is.integer(values)) {
+        return(any(is.finite(values)))
+      }
+      any(!is.na(values) & nzchar(trimws(as.character(values))))
+    },
+    logical(1)
+  )
+
+  if (!any(has_inference)) {
+    data_frame <- data_frame[, setdiff(names(data_frame), present_columns),
+                             drop = FALSE]
+    data_frame$inference_available <- FALSE
+    data_frame$inference_note <- paste(
+      "cajorls no entrego errores estandar, estadisticos ni p-valores",
+      "en una estructura exportable; se reportan coeficientes estimados."
+    )
+  } else {
+    data_frame$inference_available <- TRUE
+    data_frame$inference_note <- "Inferencia disponible en columnas especificas."
+  }
+
+  data_frame
+}
+
+# se arma la salida VECM para el sistema de importaciones cuando hay rango positivo.
+extract_vecm_outputs <- function(system_name, ecdet, rank_used, status_note) {
+  trace_fit <- get_johansen_trace_fit(system_name, ecdet)
+  selected_var_lag <- get_preferred_var_lag(system_name)
+  lag_k <- get_johansen_lag(system_name)
+
+  empty_vector <- data.frame(
+    system = system_name,
+    ecdet = ecdet,
+    spec = johansen_spec,
+    selected_var_lag = selected_var_lag,
+    johansen_k = lag_k,
+    rank_used = rank_used,
+    relation = NA_character_,
+    term = NA_character_,
+    beta_coefficient = NA_real_,
+    normalized_to = NA_character_,
+    long_run_elasticity = NA_real_,
+    status = "skipped",
+    note = status_note,
+    stringsAsFactors = FALSE
+  )
+  empty_adjustment <- data.frame(
+    system = system_name,
+    ecdet = ecdet,
+    spec = johansen_spec,
+    selected_var_lag = selected_var_lag,
+    johansen_k = lag_k,
+    rank_used = rank_used,
+    equation = NA_character_,
+    relation = NA_character_,
+    adjustment_coefficient = NA_real_,
+    std_error = NA_real_,
+    statistic = NA_real_,
+    p_value = NA_real_,
+    status = "skipped",
+    note = status_note,
+    stringsAsFactors = FALSE
+  )
+  empty_short_run <- data.frame(
+    system = system_name,
+    ecdet = ecdet,
+    spec = johansen_spec,
+    selected_var_lag = selected_var_lag,
+    johansen_k = lag_k,
+    rank_used = rank_used,
+    equation = NA_character_,
+    term = NA_character_,
+    coefficient = NA_real_,
+    std_error = NA_real_,
+    statistic = NA_real_,
+    p_value = NA_real_,
+    coefficient_block = NA_character_,
+    status = "skipped",
+    note = status_note,
+    stringsAsFactors = FALSE
+  )
+
+  if (is.null(trace_fit) || is.na(rank_used) || rank_used < 1) {
+    return(list(
+      vectors = empty_vector,
+      adjustment = empty_adjustment,
+      short_run = empty_short_run
+    ))
+  }
+
+  vecm_fit <- tryCatch(
+    urca::cajorls(trace_fit, r = rank_used),
+    error = function(e) e
+  )
+
+  if (inherits(vecm_fit, "error")) {
+    empty_vector$status <- "vecm_error"
+    empty_adjustment$status <- "vecm_error"
+    empty_short_run$status <- "vecm_error"
+    empty_vector$note <- vecm_fit$message
+    empty_adjustment$note <- vecm_fit$message
+    empty_short_run$note <- vecm_fit$message
+    return(list(
+      vectors = empty_vector,
+      adjustment = empty_adjustment,
+      short_run = empty_short_run
+    ))
+  }
+
+  beta_long <- matrix_to_long(vecm_fit$beta, "beta_coefficient")
+  normalized_to <- rownames(as.matrix(vecm_fit$beta))[1]
+  normalizing_value <- as.numeric(as.matrix(vecm_fit$beta)[1, ])
+  names(normalizing_value) <- colnames(as.matrix(vecm_fit$beta))
+  beta_long$system <- system_name
+  beta_long$ecdet <- ecdet
+  beta_long$spec <- johansen_spec
+  beta_long$selected_var_lag <- selected_var_lag
+  beta_long$johansen_k <- lag_k
+  beta_long$rank_used <- rank_used
+  beta_long$normalized_to <- normalized_to
+  beta_long$long_run_elasticity <- mapply(
+    function(relation, term, coefficient) {
+      norm_value <- normalizing_value[[relation]]
+      if (is.na(norm_value) || norm_value == 0 ||
+          identical(term, normalized_to) ||
+          grepl("constant|const|trend", term, ignore.case = TRUE)) {
+        return(NA_real_)
+      }
+      -coefficient / norm_value
+    },
+    beta_long$relation,
+    beta_long$term,
+    beta_long$beta_coefficient
+  )
+  beta_long$status <- "ok"
+  beta_long$note <- status_note
+  beta_long <- beta_long[, c(
+    "system", "ecdet", "spec", "selected_var_lag", "johansen_k", "rank_used",
+    "relation", "term", "beta_coefficient", "normalized_to",
+    "long_run_elasticity", "status", "note"
+  )]
+
+  coef_matrix <- as.matrix(stats::coef(vecm_fit$rlm))
+  coef_long <- matrix_to_long(coef_matrix, "coefficient")
+  names(coef_long)[names(coef_long) == "relation"] <- "equation"
+  coefficient_statistics <- extract_coefficient_statistics(vecm_fit$rlm)
+  coef_long <- merge(
+    coef_long,
+    coefficient_statistics,
+    by = c("equation", "term"),
+    all.x = TRUE,
+    sort = FALSE
+  )
+  coef_long$coefficient_block <- ifelse(
+    grepl("^ect", coef_long$term, ignore.case = TRUE),
+    "adjustment",
+    ifelse(grepl("\\.dl[0-9]+$|\\.d$", coef_long$term), "short_run", "deterministic")
+  )
+  coef_long$system <- system_name
+  coef_long$ecdet <- ecdet
+  coef_long$spec <- johansen_spec
+  coef_long$selected_var_lag <- selected_var_lag
+  coef_long$johansen_k <- lag_k
+  coef_long$rank_used <- rank_used
+  coef_long$status <- "ok"
+  coef_long$note <- status_note
+
+  adjustment <- coef_long[coef_long$coefficient_block == "adjustment", ]
+  if (nrow(adjustment) == 0) {
+    adjustment <- empty_adjustment
+    adjustment$status <- "no_adjustment_terms_found"
+  } else {
+    names(adjustment)[names(adjustment) == "term"] <- "relation"
+    names(adjustment)[names(adjustment) == "coefficient"] <-
+      "adjustment_coefficient"
+    adjustment <- adjustment[, c(
+      "system", "ecdet", "spec", "selected_var_lag", "johansen_k",
+      "rank_used", "equation", "relation", "adjustment_coefficient",
+      "std_error", "statistic", "p_value", "status", "note"
+    )]
+  }
+
+  short_run <- coef_long[coef_long$coefficient_block != "adjustment", ]
+  short_run <- short_run[, c(
+    "system", "ecdet", "spec", "selected_var_lag", "johansen_k",
+    "rank_used", "equation", "term", "coefficient", "std_error",
+    "statistic", "p_value", "coefficient_block", "status", "note"
+  )]
+
+  list(
+    vectors = beta_long,
+    adjustment = adjustment,
+    short_run = short_run
+  )
+}
+
+imports_vecm_rank <- johansen_rank_decision$selected_rank_trace_5pct[
+  johansen_rank_decision$system == "imports" &
+    johansen_rank_decision$ecdet == johansen_ecdet
+][1]
+
+imports_vecm_outputs <- extract_vecm_outputs(
+  system_name = "imports",
+  ecdet = johansen_ecdet,
+  rank_used = imports_vecm_rank,
+  status_note = paste(
+    "VECM estimado para importaciones con el rango de traza al 5%;",
+    "se reporta como extension multivariada y respaldo del ECM uniecuacional."
+  )
+)
+
+vecm_cointegration_vectors <- imports_vecm_outputs$vectors
+vecm_adjustment_coefficients <- clean_empty_inference_columns(
+  imports_vecm_outputs$adjustment
+)
+vecm_short_run_summary <- clean_empty_inference_columns(
+  imports_vecm_outputs$short_run
 )
 
 #********************************************************
@@ -2699,7 +3265,7 @@ rownames(feedback_audit) <- NULL
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   model_sample_definition,
-  file.path(output_dir, "section_01_model_sample.csv"),
+  output_path("section_01_model_sample.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2707,7 +3273,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   variable_check,
-  file.path(output_dir, "section_01_variable_check.csv"),
+  output_path("section_01_variable_check.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2715,7 +3281,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   system_sample_summary,
-  file.path(output_dir, "section_01_system_samples.csv"),
+  output_path("section_01_system_samples.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2723,7 +3289,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   course_scripts_status,
-  file.path(output_dir, "section_00_course_scripts_status.csv"),
+  output_path("section_00_course_scripts_status.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2731,7 +3297,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   descriptive_stats,
-  file.path(output_dir, "section_01_descriptive_statistics.csv"),
+  output_path("section_01_descriptive_statistics.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2739,7 +3305,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   seasonal_diff_summary,
-  file.path(output_dir, "section_01_descriptive_seasonality_by_quarter.csv"),
+  output_path("section_01_descriptive_seasonality_by_quarter.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2747,7 +3313,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   descriptive_interpretation,
-  file.path(output_dir, "section_01_descriptive_interpretation_guide.csv"),
+  output_path("section_01_descriptive_interpretation_guide.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2755,7 +3321,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   adf_results,
-  file.path(output_dir, "section_01_unit_root_adf_results.csv"),
+  output_path("section_01_unit_root_adf_results.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2763,7 +3329,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   adf_order_summary,
-  file.path(output_dir, "section_01_unit_root_adf_order_summary.csv"),
+  output_path("section_01_unit_root_adf_order_summary.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2771,7 +3337,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   adf_urca_results,
-  file.path(output_dir, "section_02_unit_root_adf_urca_results.csv"),
+  output_path("section_02_unit_root_adf_urca_results.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2779,7 +3345,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   adf_urca_order_summary,
-  file.path(output_dir, "section_02_unit_root_adf_urca_order_summary.csv"),
+  output_path("section_02_unit_root_adf_urca_order_summary.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2787,7 +3353,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   course_adf_results,
-  file.path(output_dir, "section_02_course_adf_ver3_results.csv"),
+  output_path("section_02_course_adf_ver3_results.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2795,7 +3361,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   var_lag_selection,
-  file.path(output_dir, "section_03_var_lag_selection.csv"),
+  output_path("section_03_var_lag_selection.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2803,7 +3369,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   var_lag_criteria,
-  file.path(output_dir, "section_03_var_lag_criteria.csv"),
+  output_path("section_03_var_lag_criteria.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2811,7 +3377,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   var_lag_decision,
-  file.path(output_dir, "section_03_var_lag_decision.csv"),
+  output_path("section_03_var_lag_decision.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2819,7 +3385,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   var_lag_diagnostic_grid,
-  file.path(output_dir, "section_03_var_lag_diagnostic_grid.csv"),
+  output_path("section_03_var_lag_diagnostic_grid.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2827,7 +3393,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   var_lag_diagnostic_decision,
-  file.path(output_dir, "section_03_var_lag_diagnostic_decision.csv"),
+  output_path("section_03_var_lag_diagnostic_decision.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2835,7 +3401,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   var_lag_exclusion_wald_results,
-  file.path(output_dir, "section_03_var_lag_exclusion_wald.csv"),
+  output_path("section_03_var_lag_exclusion_wald.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2843,7 +3409,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   johansen_trace_results,
-  file.path(output_dir, "section_04_johansen_trace_results.csv"),
+  output_path("section_04_johansen_trace_results.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2851,7 +3417,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   johansen_eigen_results,
-  file.path(output_dir, "section_04_johansen_eigen_results.csv"),
+  output_path("section_04_johansen_eigen_results.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2859,7 +3425,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   johansen_rank_decision,
-  file.path(output_dir, "section_04_johansen_rank_decision.csv"),
+  output_path("section_04_johansen_rank_decision.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2867,7 +3433,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   course_vcorr_results,
-  file.path(output_dir, "section_04_course_vcorr_residual_autocorrelation.csv"),
+  output_path("section_04_course_vcorr_residual_autocorrelation.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2875,7 +3441,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   course_white_no_cross_results,
-  file.path(output_dir, "section_04_course_white_no_cross_heteroskedasticity.csv"),
+  output_path("section_04_course_white_no_cross_heteroskedasticity.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2883,7 +3449,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   engle_granger_equations,
-  file.path(output_dir, "section_05_engle_granger_equations.csv"),
+  output_path("section_05_engle_granger_equations.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2891,7 +3457,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   engle_granger_long_run_coefficients,
-  file.path(output_dir, "section_05_engle_granger_long_run_coefficients.csv"),
+  output_path("section_05_engle_granger_long_run_coefficients.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2899,7 +3465,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   engle_granger_residual_tests,
-  file.path(output_dir, "section_05_engle_granger_residual_tests.csv"),
+  output_path("section_05_engle_granger_residual_tests.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2907,7 +3473,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   engle_granger_decision,
-  file.path(output_dir, "section_05_engle_granger_decision.csv"),
+  output_path("section_05_engle_granger_decision.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2915,7 +3481,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   short_run_model_summary,
-  file.path(output_dir, "section_05_ecm_short_run_model_summary.csv"),
+  output_path("section_05_ecm_short_run_model_summary.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2923,7 +3489,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   short_run_coefficients,
-  file.path(output_dir, "section_05_ecm_short_run_coefficients.csv"),
+  output_path("section_05_ecm_short_run_coefficients.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2931,7 +3497,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   ecm_adjustment_summary,
-  file.path(output_dir, "section_05_ecm_adjustment_summary.csv"),
+  output_path("section_05_ecm_adjustment_summary.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2939,7 +3505,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   eg_ecm_elasticity_summary,
-  file.path(output_dir, "section_05_eg_ecm_elasticity_summary.csv"),
+  output_path("section_05_eg_ecm_elasticity_summary.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2947,7 +3513,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   johansen_robustness_summary,
-  file.path(output_dir, "section_06_johansen_robustness_summary.csv"),
+  output_path("section_06_johansen_robustness_summary.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2955,7 +3521,31 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   var_vec_treatment_decision,
-  file.path(output_dir, "section_06_var_vec_treatment_decision.csv"),
+  output_path("section_06_var_vec_treatment_decision.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  vecm_cointegration_vectors,
+  output_path("section_06_vecm_cointegration_vectors.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  vecm_adjustment_coefficients,
+  output_path("section_06_vecm_adjustment_coefficients.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  vecm_short_run_summary,
+  output_path("section_06_vecm_short_run_summary.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -2963,7 +3553,7 @@ write.csv(
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   feedback_audit,
-  file.path(output_dir, "section_06_feedback_audit.csv"),
+  output_path("section_06_feedback_audit.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -3005,6 +3595,9 @@ output_manifest <- data.frame(
     "section_05_eg_ecm_elasticity_summary.csv",
     "section_06_johansen_robustness_summary.csv",
     "section_06_var_vec_treatment_decision.csv",
+    "section_06_vecm_cointegration_vectors.csv",
+    "section_06_vecm_adjustment_coefficients.csv",
+    "section_06_vecm_short_run_summary.csv",
     "section_06_feedback_audit.csv"
   ),
   description = c(
@@ -3042,15 +3635,23 @@ output_manifest <- data.frame(
     "Resumen de elasticidades Engle-Granger y ECM para el informe",
     "Robustez de Johansen comparando ecdet const y none",
     "Decision operativa para VECM o VAR en diferencias",
+    "Vectores de cointegracion normalizados del VECM de importaciones",
+    "Coeficientes de ajuste del VECM de importaciones",
+    "Coeficientes deterministas y de corto plazo del VECM de importaciones",
     "Auditoria de retroalimentacion entre diagnosticos y bloques posteriores"
   ),
   stringsAsFactors = FALSE
+)
+output_manifest$file <- vapply(
+  output_manifest$file,
+  output_relative_path,
+  character(1)
 )
 
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
   output_manifest,
-  file.path(output_dir, "section_01_outputs_manifest.csv"),
+  output_path("section_01_outputs_manifest.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )

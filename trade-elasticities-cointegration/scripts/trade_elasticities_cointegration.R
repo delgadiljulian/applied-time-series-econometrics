@@ -103,6 +103,17 @@ scripts_dir        <- file.path(project_dir, "scripts")
 report_dir         <- file.path(project_dir, "report")
 docs_dir           <- file.path(project_dir, "docs")
 
+# Agrupar salidas finales por bloque facilita revisar resultados y anexos.
+output_subdirs <- c(
+  support = "00_support",
+  section_09 = "09_stationarity",
+  section_10 = "10_cointegration",
+  section_11 = "11_models",
+  section_12 = "12_diagnostics",
+  section_13 = "13_outputs_index",
+  section_14 = "14_reproducibility"
+)
+
 # Crear carpetas esperadas para que el script pueda correr desde cero.
 walk(
   c(
@@ -116,6 +127,58 @@ walk(
   ),
   ~ dir.create(.x, recursive = TRUE, showWarnings = FALSE)
 )
+
+walk(
+  output_subdirs,
+  ~ dir.create(file.path(output_dir, .x), recursive = TRUE,
+               showWarnings = FALSE)
+)
+
+# Centralizar rutas de outputs evita que el script vuelva a escribir archivos
+# mezclados en la raiz de outputs.
+output_path <- function(file_name) {
+  if (grepl("^section_09_", file_name)) {
+    return(file.path(output_dir, output_subdirs[["section_09"]], file_name))
+  }
+  if (grepl("^section_10_", file_name)) {
+    return(file.path(output_dir, output_subdirs[["section_10"]], file_name))
+  }
+  if (grepl("^section_11_", file_name)) {
+    return(file.path(output_dir, output_subdirs[["section_11"]], file_name))
+  }
+  if (grepl("^section_12_", file_name)) {
+    return(file.path(output_dir, output_subdirs[["section_12"]], file_name))
+  }
+  if (grepl("^section_14_", file_name) || identical(file_name, "session_info.txt")) {
+    return(file.path(output_dir, output_subdirs[["section_14"]], file_name))
+  }
+  if (identical(file_name, "final_outputs_index.xlsx")) {
+    return(file.path(output_dir, output_subdirs[["section_13"]], file_name))
+  }
+  if (file_name %in% c(
+    "pib_socios_traceability.csv",
+    "literature_comparison_template.csv"
+  )) {
+    return(file.path(output_dir, output_subdirs[["support"]], file_name))
+  }
+
+  file.path(output_dir, file_name)
+}
+
+output_relative_path <- function(file_name) {
+  full_path <- normalizePath(output_path(file_name), winslash = "/",
+                             mustWork = FALSE)
+  root_path <- paste0(
+    normalizePath(output_dir, winslash = "/", mustWork = FALSE),
+    "/"
+  )
+
+  if (startsWith(full_path, root_path)) {
+    return(substring(full_path, nchar(root_path) + 1))
+  }
+
+  file_name
+}
 
 #********************************************************
 # 3.1 CONFIGURACIÓN GLOBAL DEL MODELO
@@ -1813,7 +1876,7 @@ write_xlsx(
     decisions = stationarity_decisions_by_transform,
     order_summary = stationarity_order_summary
   ),
-  file.path(output_dir, "section_09_stationarity_results.xlsx")
+  output_path("section_09_stationarity_results.xlsx")
 )
 
 
@@ -2335,7 +2398,7 @@ write_xlsx(
     decision_summary = cointegration_decision_summary,
     residuals = engle_granger_residuals_long
   ),
-  file.path(output_dir, "section_10_cointegration_results.xlsx")
+  output_path("section_10_cointegration_results.xlsx")
 )
 
 # Vista reducida de chequeo para evitar buscarlas al final del visor.
@@ -3604,13 +3667,13 @@ print(literature_comparison_template)
 # independiente para consulta rapida.
 write_csv(
   pib_socios_traceability,
-  file.path(output_dir, "pib_socios_traceability.csv")
+  output_path("pib_socios_traceability.csv")
 )
 
 # se exporta esta salida para documentar los resultados.
 write_csv(
   literature_comparison_template,
-  file.path(output_dir, "literature_comparison_template.csv")
+  output_path("literature_comparison_template.csv")
 )
 
 # exportar todas las salidas de modelacion en hojas
@@ -3640,7 +3703,7 @@ write_xlsx(
     literature_comparison_template = literature_comparison_template,
     ecm_adjustment = ecm_adjustment_summary
   ),
-  file.path(output_dir, "section_11_econometric_models.xlsx")
+  output_path("section_11_econometric_models.xlsx")
 )
 
 
@@ -3849,7 +3912,7 @@ write_xlsx(
     model_interpretation = model_diagnostic_interpretation,
     report_guide = diagnostics_report_guide
   ),
-  file.path(output_dir, "section_12_model_diagnostics.xlsx")
+  output_path("section_12_model_diagnostics.xlsx")
 )
 
 # guardar figuras econometricas finales para complementar las tablas del informe
@@ -4094,7 +4157,15 @@ final_outputs_catalog <- tibble(
   directory = c(
     rep(processed_data_dir, 5),
     rep(figures_dir, 10),
-    rep(output_dir, 9),
+    dirname(output_path("section_09_stationarity_results.xlsx")),
+    dirname(output_path("section_10_cointegration_results.xlsx")),
+    dirname(output_path("section_11_econometric_models.xlsx")),
+    dirname(output_path("section_12_model_diagnostics.xlsx")),
+    dirname(output_path("pib_socios_traceability.csv")),
+    dirname(output_path("literature_comparison_template.csv")),
+    dirname(output_path("final_outputs_index.xlsx")),
+    dirname(output_path("section_14_reproducibility_check.xlsx")),
+    dirname(output_path("session_info.txt")),
     report_dir,
     report_dir,
     scripts_dir
@@ -4236,7 +4307,7 @@ write_xlsx(
     missing_outputs = missing_final_outputs,
     outputs_summary = final_outputs_summary
   ),
-  file.path(output_dir, "final_outputs_index.xlsx")
+  output_path("final_outputs_index.xlsx")
 )
 
 
@@ -4285,11 +4356,11 @@ final_reproducibility_check <- tibble(
       "l1_resid_imports_eg",
       "l1_resid_exports_eg"
     ) %in% names(trade_elasticities_panel_modeling_dta)),
-    file.exists(file.path(output_dir, "section_11_econometric_models.xlsx")),
+    file.exists(output_path("section_11_econometric_models.xlsx")),
     exists("model_diagnostics_summary") &&
       all(model_diagnostics_summary$diagnostic_flag_count == 0),
     exists("missing_final_outputs") && nrow(missing_final_outputs) == 0,
-    file.exists(file.path(output_dir, "pib_socios_traceability.csv"))
+    file.exists(output_path("pib_socios_traceability.csv"))
   ),
   note = c(
     "El calendario maestro cubre el horizonte completo de la consigna.",
@@ -4370,11 +4441,11 @@ write_xlsx(
     methodological_notes = final_methodological_notes,
     script_summary = final_script_summary
   ),
-  file.path(output_dir, "section_14_reproducibility_check.xlsx")
+  output_path("section_14_reproducibility_check.xlsx")
 )
 
 # se ejecuta este minibloque del procedimiento.
 capture.output(
   sessionInfo(),
-  file = file.path(output_dir, "session_info.txt")
+  file = output_path("session_info.txt")
 )

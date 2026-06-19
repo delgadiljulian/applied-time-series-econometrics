@@ -46,7 +46,9 @@
 }
 \urlstyle{tt}
 \renewcommand{\figureautorefname}{Figura}
-\renewcommand{\tableautorefname}{Cuadro}
+\renewcommand{\tableautorefname}{Tabla}
+\renewcommand{\tablename}{Tabla}
+\captionsetup[table]{name=Tabla}
 
 \newcommand{\pendiente}[1]{\textcolor{red}{[Pendiente: #1]}}
 \newcommand{\reportheader}{%
@@ -247,6 +249,9 @@ ello, el trabajo distingue explícitamente entre elasticidades de largo plazo,
 asociadas a vectores de cointegración, y elasticidades de corto plazo, asociadas
 a modelos en diferencias.
 
+\subsection{Transformaciones y especificación de elasticidades}
+\label{subsec:metodologia-transformaciones}
+
 Todas las variables reales se transforman a logaritmos naturales. Para una
 variable positiva \(Z_t\), la transformación se define como:
 
@@ -282,6 +287,9 @@ que el coeficiente del tipo de cambio real resume la elasticidad frente a
 precios relativos. Para exportaciones se utiliza la relación de largo plazo
 \eqref{eq:exportaciones-largo-plazo}, donde el producto de socios comerciales
 aproxima la demanda externa relevante.
+
+\subsection{Raíces unitarias, Engle-Granger y ECM}
+\label{subsec:metodologia-engle-granger}
 
 Antes de estimar relaciones en niveles se evalúa el orden de integración de las
 series. La hipótesis central es que las variables macroeconómicas utilizadas en
@@ -344,6 +352,9 @@ resume como:
 = |\widehat{\lambda}| \times 100
 \label{eq:tp3-velocidad-ajuste}
 \end{equation}
+
+\subsection{Johansen, VECM y VAR en diferencias}
+\label{subsec:metodologia-johansen-var}
 
 El enfoque uniecuacional se complementa con la metodología multivariada de
 Johansen. Para cada flujo comercial se define un sistema de variables en
@@ -445,6 +456,9 @@ de corto plazo y no como elasticidades de equilibrio. Esta distinción es
 central para el informe: la interpretación económica depende del resultado de
 las pruebas de integración y cointegración.
 
+\subsection{Diagnósticos y criterio de interpretación}
+\label{subsec:metodologia-diagnosticos}
+
 Finalmente, los modelos estimados se evalúan mediante diagnósticos de
 autocorrelación residual, normalidad, estabilidad y consistencia de signos. En
 los sistemas VAR/VEC, la estabilidad resulta necesaria para interpretar la
@@ -467,6 +481,9 @@ debe incorporarse antes de cerrar la versión final del informe.
 % -------------------------------
 \section{Datos}
 \label{sec:datos}
+
+\subsection{Fuentes, base procesada y muestra}
+\label{subsec:datos-fuentes-muestra}
 
 El trabajo utiliza las series construidas para el Trabajo Práctico
 N.\textdegree~2, dado que el enunciado del TP 3 indica explícitamente que debe
@@ -505,6 +522,9 @@ inicial se define entre 2004Q1 y 2022Q4, con 76 observaciones trimestrales. Este
 cierre replica la muestra econométrica empleada en el informe anterior, aunque
 la base conserva cobertura extendida hasta 2025Q4 para eventuales ejercicios de
 sensibilidad.
+
+\subsection{Variables de análisis}
+\label{subsec:datos-variables}
 
 \autoref{tab:variables} resume las variables principales del análisis, sus
 transformaciones y el uso econométrico previsto. Luego,
@@ -615,46 +635,6 @@ como evidencia principal. Los modelos que no satisfacen plenamente esos
 supuestos, o que dependen de un único test favorable, se reportan como evidencia
 indicativa, tal como solicita la consigna actualizada.
 
-\autoref{tab:seleccion-rezagos-var} resume los rezagos sugeridos por los
-criterios de información y el rezago SC/BIC inicial para cada sistema.
-
-\begin{table}[H]
-\centering
-\caption{Selección de rezagos para sistemas VAR en niveles.}
-\label{tab:seleccion-rezagos-var}
-\small
-\begin{tabular}{lccccc}
-\toprule
-Sistema & AIC & HQ & SC/BIC & FPE & Rezago SC/BIC \\
-\midrule
-Importaciones & 8 & 5 & 4 & 8 & 4 \\
-Exportaciones & 5 & 1 & 1 & 5 & 1 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\autoref{tab:decision-rezagos-diagnostico} presenta la decisión final de
-rezagos luego de incorporar los diagnósticos de autocorrelación residual. Esta
-tabla se construye a partir de
-\path{section_03_var_lag_diagnostic_decision.csv}.
-
-\begin{table}[H]
-\centering
-\caption{Decisión final de rezagos ajustada por diagnóstico residual.}
-\label{tab:decision-rezagos-diagnostico}
-\scriptsize
-\begin{tabular}{lcccp{6.2cm}}
-\toprule
-Sistema & SC/BIC & Final & \(p\)-valores PT/BG & Regla de decisión \\
-\midrule
-Importaciones & 4 & 4 & 0.0015 / 0.0014 &
-Se conserva SC/BIC porque ningún candidato hasta 8 elimina la autocorrelación residual; resultados indicativos. \\
-Exportaciones & 1 & 4 & 0.0864 / 0.0851 &
-Se eleva el rezago al menor candidato que pasa los diagnósticos de autocorrelación residual al 5\%. \\
-\bottomrule
-\end{tabular}
-\end{table}
-
 % -------------------------------
 % 6. Resultados
 % -------------------------------
@@ -669,34 +649,51 @@ elasticidades.
 \subsection{Análisis descriptivo}
 \label{subsec:analisis-descriptivo}
 
-\autoref{fig:niveles-logaritmicos} presenta las series centrales en
-niveles logarítmicos. En términos generales, las importaciones, el PIB argentino
-y el PIB de socios muestran una trayectoria creciente a lo largo de la muestra,
-aunque con interrupciones asociadas a episodios de crisis y recuperación. Las
-exportaciones exhiben una dinámica más acotada en niveles, mientras que el ITCRM
-presenta movimientos amplios y cambios de nivel que justifican tratarlo con
-cautela en las especificaciones de largo plazo.
+\autoref{fig:niveles-importaciones} y \autoref{fig:niveles-exportaciones}
+presentan las series centrales en niveles logarítmicos, separadas según el
+sistema de importaciones y el sistema de exportaciones. En términos generales,
+las importaciones, el PIB argentino y el PIB de socios muestran una trayectoria
+creciente a lo largo de la muestra, aunque con interrupciones asociadas a
+episodios de crisis y recuperación. Las exportaciones exhiben una dinámica más
+acotada en niveles, mientras que el ITCRM presenta movimientos amplios y cambios
+de nivel que justifican tratarlo con cautela en las especificaciones de largo
+plazo.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figure_01_log_levels.png}
-\caption{Series en niveles logarítmicos.}
-\label{fig:niveles-logaritmicos}
+\includegraphics[width=\textwidth]{figure_01a_imports_log_levels.png}
+\caption{Sistema de importaciones: series en niveles logarítmicos.}
+\label{fig:niveles-importaciones}
 \end{figure}
 
-\autoref{fig:diferencias-logaritmicas} muestra las primeras diferencias
-logarítmicas. Esta transformación concentra la atención en la dinámica de corto
-plazo y permite observar con más claridad los episodios de mayor volatilidad. En
-la muestra base, las exportaciones presentan la mayor desviación estándar
-trimestral en diferencias, seguidas por importaciones y PIB argentino. El PIB de
-socios comerciales es la serie menos volátil, como era esperable por tratarse de
-un indicador externo agregado.
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figure_01b_exports_log_levels.png}
+\caption{Sistema de exportaciones: series en niveles logarítmicos.}
+\label{fig:niveles-exportaciones}
+\end{figure}
+
+\autoref{fig:diferencias-importaciones} y
+\autoref{fig:diferencias-exportaciones} muestran las primeras diferencias
+logarítmicas por sistema. Esta transformación concentra la atención en la
+dinámica de corto plazo y permite observar con más claridad los episodios de
+mayor volatilidad. En la muestra base, las exportaciones presentan la mayor
+desviación estándar trimestral en diferencias, seguidas por importaciones y PIB
+argentino. El PIB de socios comerciales es la serie menos volátil, como era
+esperable por tratarse de un indicador externo agregado.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figure_02_log_differences.png}
-\caption{Primeras diferencias logarítmicas.}
-\label{fig:diferencias-logaritmicas}
+\includegraphics[width=\textwidth]{figure_02a_imports_log_differences.png}
+\caption{Sistema de importaciones: primeras diferencias logarítmicas.}
+\label{fig:diferencias-importaciones}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figure_02b_exports_log_differences.png}
+\caption{Sistema de exportaciones: primeras diferencias logarítmicas.}
+\label{fig:diferencias-exportaciones}
 \end{figure}
 
 \autoref{tab:resumen-descriptivo} sintetiza la amplitud de las series en niveles
@@ -718,6 +715,7 @@ Exportaciones reales & 0.5356 & 0.0054 & 0.1140 \\
 PIB real Argentina & 0.5416 & 0.0058 & 0.0784 \\
 ITCRM & 0.7483 & -0.0075 & 0.0566 \\
 PIB socios comerciales & 0.3964 & 0.0053 & 0.0168 \\
+Índice de precios de commodities & 1.1314 & 0.0129 & 0.1174 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -732,13 +730,13 @@ pruebas de raíz unitaria, cointegración y modelos dinámicos.
 \label{subsec:resultados-integracion}
 
 \noindent\textit{Nota metodológica.} Las pruebas ADF se estiman con
-\texttt{urca::ur.df} y deben contrastarse con la rutina de clase
-\texttt{Test.ADF.Ver.3.R} antes de cerrar la versión final. En niveles
+\texttt{urca::ur.df} y se contrastan con la rutina de clase
+\texttt{Test.ADF.Ver.3.R}. En niveles
 logarítmicos se utiliza una especificación con tendencia determinística; en
 primeras diferencias logarítmicas se utiliza una especificación con constante.
 En ambos casos se emplean cuatro rezagos fijos. La clasificación final del orden
-de integración deberá revisar también la sensibilidad al criterio de selección
-de rezagos de la función del curso.
+de integración se complementa con la selección BIC de rezagos de la función del
+curso.
 
 \autoref{tab:adf-resultados-formales} presenta los estadísticos ADF para cada
 serie en niveles logarítmicos y primeras diferencias.
@@ -763,9 +761,46 @@ ITCRM & Nivel log. & Tend. & 76 & 4 & -1.662 & -3.450 & No rechaza raíz unitari
 ITCRM & Dif. log. & Const. & 75 & 4 & -4.125 & -2.890 & Rechaza raíz unitaria \\
 PIB socios comerciales & Nivel log. & Tend. & 76 & 4 & -1.982 & -3.450 & No rechaza raíz unitaria \\
 PIB socios comerciales & Dif. log. & Const. & 75 & 4 & -3.875 & -2.890 & Rechaza raíz unitaria \\
+Índice de commodities & Nivel log. & Tend. & 76 & 4 & -2.591 & -3.450 & No rechaza raíz unitaria \\
+Índice de commodities & Dif. log. & Const. & 75 & 4 & -3.733 & -2.890 & Rechaza raíz unitaria \\
 \bottomrule
 \end{tabular}%
 }
+\end{table}
+
+\autoref{tab:adf-script-clase} resume los resultados obtenidos con
+\texttt{Test.ADF\_Ver.3.R}, usando selección de rezagos por BIC.
+
+\begin{table}[H]
+\centering
+\caption{Pruebas ADF con script de clase \texttt{Test.ADF\_Ver.3.R}.}
+\label{tab:adf-script-clase}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrrrl}
+\toprule
+Serie & Transformación & Rezagos BIC & Estadístico tau & VC 5\% & VC 10\% & Decisión 5\% \\
+\midrule
+Importaciones reales & Nivel log. & 0 & -2.375 & -3.45 & -3.15 & No rechaza raíz unitaria \\
+Importaciones reales & Dif. log. & 0 & -7.239 & -2.89 & -2.58 & Rechaza raíz unitaria \\
+Exportaciones reales & Nivel log. & 4 & -3.530 & -3.45 & -3.15 & Rechaza raíz unitaria \\
+Exportaciones reales & Dif. log. & 3 & -4.649 & -2.89 & -2.58 & Rechaza raíz unitaria \\
+PIB real Argentina & Nivel log. & 4 & -2.923 & -3.45 & -3.15 & No rechaza raíz unitaria \\
+PIB real Argentina & Dif. log. & 7 & -2.453 & -2.89 & -2.58 & No rechaza raíz unitaria \\
+ITCRM & Nivel log. & 0 & -1.640 & -3.45 & -3.15 & No rechaza raíz unitaria \\
+ITCRM & Dif. log. & 0 & -7.223 & -2.89 & -2.58 & Rechaza raíz unitaria \\
+PIB socios comerciales & Nivel log. & 0 & -2.471 & -3.45 & -3.15 & No rechaza raíz unitaria \\
+PIB socios comerciales & Dif. log. & 0 & -8.723 & -2.89 & -2.58 & Rechaza raíz unitaria \\
+Índice de commodities & Nivel log. & 1 & -2.964 & -3.45 & -3.15 & No rechaza raíz unitaria \\
+Índice de commodities & Dif. log. & 0 & -5.850 & -2.89 & -2.58 & Rechaza raíz unitaria \\
+\bottomrule
+\end{tabular}
+}
+\caption*{\footnotesize Nota: en niveles se usa especificación con tendencia
+(\texttt{mod = 3}); en primeras diferencias, especificación con constante
+(\texttt{mod = 2}). La única discrepancia relevante frente al ADF formal es la
+diferencia del PIB argentino, que no rechaza al 5\% con el rezago seleccionado
+por BIC del script de clase.}
 \end{table}
 
 \autoref{tab:orden-integracion-formal} traduce los resultados ADF en una
@@ -785,6 +820,7 @@ Exportaciones reales & Rechaza raíz unitaria & Rechaza raíz unitaria & I(0) \\
 PIB real Argentina & No rechaza raíz unitaria & Rechaza raíz unitaria & I(1) \\
 ITCRM & No rechaza raíz unitaria & Rechaza raíz unitaria & I(1) \\
 PIB socios comerciales & No rechaza raíz unitaria & Rechaza raíz unitaria & I(1) \\
+Índice de precios de commodities & No rechaza raíz unitaria & Rechaza raíz unitaria & I(1) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -803,6 +839,35 @@ diferencias y las elasticidades de largo plazo se reportan solo como
 indicativas. En la versión final debe agregarse la verificación del vector de
 cointegración según Wickens y Breusch para el enfoque Engle-Granger.
 
+\subsubsection{Ecuaciones de largo plazo y prueba residual}
+\label{subsubsec:eg-largo-plazo-residuos}
+
+\autoref{tab:engle-granger-ecuaciones} documenta las ecuaciones de largo plazo
+estimadas en la primera etapa Engle-Granger y la muestra efectiva usada en el
+cálculo.
+
+\begin{table}[H]
+\centering
+\caption{Ecuaciones de largo plazo Engle-Granger.}
+\label{tab:engle-granger-ecuaciones}
+\small
+\begin{tabular}{lp{6.1cm}lrr}
+\toprule
+Sistema & Ecuación estimada & Muestra & \(R^2\) & \(R^2\) ajustado \\
+\midrule
+Importaciones &
+\(\ln M_t=\beta_0+\beta_1\ln PIB_t+\beta_2\ln ITCRM_t+u_t\) &
+76 obs.; 2004Q1--2022Q4 & 0.861 & 0.857 \\
+Exportaciones &
+\(\ln X_t=\gamma_0+\gamma_1\ln PIB^{socios}_t+\gamma_2\ln ITCRM_t+v_t\) &
+76 obs.; 2004Q1--2022Q4 & 0.210 & 0.188 \\
+\bottomrule
+\end{tabular}
+\caption*{\footnotesize Nota: las ecuaciones corresponden a la primera etapa
+MCO del procedimiento Engle-Granger. La tabla siguiente evalúa la
+estacionariedad de los residuos de estas relaciones.}
+\end{table}
+
 \autoref{tab:engle-granger-residuos} reporta la prueba sobre los residuos de
 las ecuaciones de largo plazo y permite decidir si corresponde estimar un ECM.
 
@@ -811,14 +876,70 @@ las ecuaciones de largo plazo y permite decidir si corresponde estimar un ECM.
 \caption{Pruebas Engle-Granger sobre residuos.}
 \label{tab:engle-granger-residuos}
 \small
-\begin{tabular}{lrrrrl}
+\begin{tabular}{lrrrrrl}
 \toprule
-Sistema & Obs. & Rezagos ADF & Estadístico & VC 5\% & Decisión 5\% \\
+Sistema & Obs. & Rezagos ADF & Estadístico & VC 5\% & VC 10\% & Decisión \\
 \midrule
-Importaciones & 76 & 4 & -4.558 & -3.930 & Cointegración \\
-Exportaciones & 76 & 4 & -3.308 & -3.930 & Sin cointegración \\
+Importaciones & 76 & 4 & -4.558 & -3.930 & -3.590 & Cointegración al 5\% \\
+Exportaciones & 76 & 4 & -3.308 & -3.930 & -3.590 & Sin cointegración \\
 \bottomrule
 \end{tabular}
+\caption*{\footnotesize Nota: los valores críticos corresponden a la tabla
+Engle-Granger usada en clase para \(q=3\) y \(n=100\). En exportaciones el
+estadístico no supera el umbral del 10\%, por lo que la relación de largo plazo
+se mantiene solo como referencia indicativa.}
+\end{table}
+
+\autoref{tab:decision-engle-granger} traduce la prueba sobre residuos en la
+especificación operativa de corto plazo para cada sistema.
+
+\begin{table}[H]
+\centering
+\caption{Decisión operativa Engle-Granger.}
+\label{tab:decision-engle-granger}
+\small
+\begin{tabular}{lp{4.4cm}lp{4.7cm}}
+\toprule
+Sistema & Evidencia de cointegración & Usar ECM & Siguiente paso \\
+\midrule
+Importaciones &
+Residuos estacionarios; evidencia de cointegración &
+Sí &
+Estimar ECM con residuo Engle-Granger rezagado \\
+Exportaciones &
+No rechaza raíz unitaria en residuos &
+No &
+Estimar modelo en primeras diferencias sin ECM \\
+\bottomrule
+\end{tabular}
+\caption*{\footnotesize Nota: esta decisión alimenta las tablas de
+elasticidades y coeficientes de corto plazo reportadas a continuación.}
+\end{table}
+
+\subsubsection{Elasticidades y dinámica de corto plazo}
+\label{subsubsec:eg-elasticidades-corto-plazo}
+
+\autoref{tab:coeficientes-largo-plazo-eg} presenta los coeficientes de largo
+plazo estimados por MCO en la primera etapa de Engle-Granger.
+
+\begin{table}[H]
+\centering
+\caption{Coeficientes de largo plazo Engle-Granger.}
+\label{tab:coeficientes-largo-plazo-eg}
+\small
+\begin{tabular}{llrrr}
+\toprule
+Sistema & Variable & Coeficiente & Error estándar & \(p\)-valor \\
+\midrule
+Importaciones & \texttt{ln\_gdp\_real} & 1.518 & 0.151 & \(<0.001\) \\
+Importaciones & \texttt{ln\_itcrm} & -0.399 & 0.085 & \(<0.001\) \\
+Exportaciones & \texttt{ln\_pib\_socios} & 0.720 & 0.188 & \(<0.001\) \\
+Exportaciones & \texttt{ln\_itcrm} & 0.159 & 0.088 & 0.0751 \\
+\bottomrule
+\end{tabular}
+\caption*{\footnotesize Nota: se omiten las constantes. En exportaciones estos
+coeficientes se reportan como largo plazo indicativo porque el ADF residual no
+confirma cointegración.}
 \end{table}
 
 \autoref{tab:elasticidades-eg-ecm} sintetiza las elasticidades de largo plazo
@@ -844,6 +965,80 @@ Exportaciones & TCR & 0.159 & -0.113 & Largo plazo solo indicativo; el modelo op
 }
 \end{table}
 
+\autoref{tab:velocidad-ajuste-ecm} reporta el término de corrección del error
+del ECM estimado para importaciones, único sistema con evidencia Engle-Granger
+suficiente para activar este modelo.
+
+\begin{table}[H]
+\centering
+\caption{Velocidad de ajuste del ECM de importaciones.}
+\label{tab:velocidad-ajuste-ecm}
+\small
+\begin{tabular}{lcccc}
+\toprule
+Modelo & Término de ajuste & Coeficiente & \(p\)-valor & Ajuste trimestral \\
+\midrule
+Importaciones - ECM & \texttt{l1\_resid\_imports} & -0.525 & \(<0.001\) & 52.5\% \\
+\bottomrule
+\end{tabular}
+\caption*{\footnotesize Nota: el coeficiente negativo y significativo indica
+corrección del desequilibrio de largo plazo. La magnitud implica que cerca de
+la mitad del desvío se corrige en el trimestre siguiente.}
+\end{table}
+
+\autoref{tab:resumen-modelos-corto-plazo} resume la especificación y el ajuste
+global de los modelos operativos derivados de la decisión Engle-Granger.
+
+\begin{table}[H]
+\centering
+\caption{Resumen de modelos de corto plazo.}
+\label{tab:resumen-modelos-corto-plazo}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lp{7.4cm}lrrrr}
+\toprule
+Modelo & Especificación & Muestra & \(R^2\) & \(R^2\) ajustado & AIC & BIC \\
+\midrule
+Importaciones - ECM &
+\(\Delta \ln M_t=\alpha+\beta_1\Delta \ln PIB_t+\beta_2\Delta \ln ITCRM_t+\lambda \hat{u}_{t-1}+\varepsilon_t\) &
+75 obs.; 2004Q2--2022Q4 & 0.446 & 0.423 & -194.349 & -182.761 \\
+Exportaciones - diferencias &
+\(\Delta \ln X_t=\alpha+\gamma_1\Delta \ln PIB^{socios}_t+\gamma_2\Delta \ln ITCRM_t+\gamma_3\Delta \ln Commodities_t+\eta_t\) &
+75 obs.; 2004Q2--2022Q4 & 0.059 & 0.020 & -108.474 & -96.887 \\
+\bottomrule
+\end{tabular}
+}
+\caption*{\footnotesize Nota: el modelo de importaciones incorpora el residuo
+Engle-Granger rezagado; exportaciones se mantiene en primeras diferencias por
+ausencia de cointegración residual.}
+\end{table}
+
+\autoref{tab:coeficientes-corto-plazo} presenta los coeficientes de corto plazo
+del ECM de importaciones y del modelo en primeras diferencias de exportaciones.
+
+\begin{table}[H]
+\centering
+\caption{Coeficientes de corto plazo: ECM y primeras diferencias.}
+\label{tab:coeficientes-corto-plazo}
+\scriptsize
+\begin{tabular}{llrrr}
+\toprule
+Modelo & Variable & Coeficiente & Error estándar & \(p\)-valor \\
+\midrule
+Importaciones - ECM & \texttt{d\_ln\_gdp\_real} & 0.493 & 0.101 & \(<0.001\) \\
+Importaciones - ECM & \texttt{d\_ln\_itcrm} & -0.057 & 0.132 & 0.6668 \\
+Importaciones - ECM & \texttt{l1\_resid\_imports} & -0.525 & 0.075 & \(<0.001\) \\
+Exportaciones - diferencias & \texttt{d\_ln\_pib\_socios} & -0.305 & 0.963 & 0.7527 \\
+Exportaciones - diferencias & \texttt{d\_ln\_itcrm} & -0.113 & 0.236 & 0.6329 \\
+Exportaciones - diferencias & \texttt{d\_ln\_commodity\_price\_index} & 0.263 & 0.138 & 0.0618 \\
+\bottomrule
+\end{tabular}
+\caption*{\footnotesize Nota: se omiten las constantes para concentrar la
+lectura en elasticidades de corto plazo y en el término de corrección del error.
+En exportaciones, el índice de commodities opera como control adicional del
+modelo en diferencias.}
+\end{table}
+
 En importaciones, el estadístico ADF sobre los residuos de la ecuación de largo
 plazo es menor que el valor crítico de Engle-Granger al 5\%, por lo que se
 mantiene la evidencia de cointegración y se estima un ECM. El coeficiente del
@@ -858,10 +1053,9 @@ base, el índice de commodities se incluye como control de corto plazo, aunque l
 cuadro principal conserva las elasticidades asociadas a demanda externa e ITCRM
 para facilitar la comparación con las ecuaciones del marco teórico.
 
-La lectura de esta sección deberá actualizarse con una columna explícita al
-10\% cuando se incorporen los valores críticos finales utilizados en clase. Ese
-criterio no debe reemplazar la evaluación económica y diagnóstica, sino servir
-como umbral adicional para clasificar resultados fronterizos.
+La lectura al 10\% no modifica la decisión de exportaciones con la muestra
+actual: el estadístico residual no alcanza el valor crítico correspondiente, por
+lo que la evidencia de largo plazo se conserva únicamente como indicativa.
 
 \subsection{Resultados Johansen y VECM}
 \label{subsec:resultados-johansen-vec}
@@ -877,6 +1071,67 @@ normalidad de los residuos del sistema; si esa condición no se verifica, los
 resultados se reportan como evidencia indicativa. En el sistema de
 exportaciones, la lectura debe tomarse como indicativa porque la prueba ADF
 formal clasificó \texttt{ln\_exports\_real} como I(0).
+
+\subsubsection{Selección final de rezagos y retroalimentación diagnóstica}
+\label{subsubsec:seleccion-rezagos-diagnostico}
+
+\autoref{tab:seleccion-rezagos-var} resume los rezagos sugeridos por los
+criterios de información y el rezago SC/BIC inicial para cada sistema.
+
+\begin{table}[H]
+\centering
+\caption{Selección de rezagos para sistemas VAR en niveles.}
+\label{tab:seleccion-rezagos-var}
+\small
+\begin{tabular}{lccccc}
+\toprule
+Sistema & AIC & HQ & SC/BIC & FPE & Rezago SC/BIC \\
+\midrule
+Importaciones & 8 & 5 & 4 & 8 & 4 \\
+Exportaciones & 5 & 1 & 1 & 5 & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\autoref{tab:decision-rezagos-diagnostico} presenta la decisión final de
+rezagos luego de incorporar los diagnósticos de autocorrelación residual. Esta
+tabla se construye a partir de
+\path{03_var_lags/section_03_var_lag_diagnostic_decision.csv}.
+
+\begin{table}[H]
+\centering
+\caption{Decisión final de rezagos ajustada por diagnóstico residual.}
+\label{tab:decision-rezagos-diagnostico}
+\scriptsize
+\begin{tabular}{lcccp{6.2cm}}
+\toprule
+Sistema & SC/BIC & Final & \(p\)-valores PT/BG & Regla de decisión \\
+\midrule
+Importaciones & 4 & 4 & 0.0015 / 0.0014 &
+Se conserva SC/BIC porque ningún candidato hasta 8 elimina la autocorrelación residual; resultados indicativos. \\
+Exportaciones & 1 & 4 & 0.0864 / 0.0851 &
+Se eleva el rezago al menor candidato que pasa los diagnósticos de autocorrelación residual al 5\%. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\autoref{fig:diagnostico-rezagos-autocorrelacion} visualiza la misma regla de
+retroalimentación. En importaciones, los \(p\)-valores permanecen por debajo
+del umbral del 5\% para todos los candidatos evaluados, por lo que se conserva
+el rezago SC/BIC con una advertencia diagnóstica. En exportaciones, el rezago 4
+es el primer candidato en el que los contrastes PT ajustado y BG superan el
+umbral del 5\%, de modo que reemplaza al rezago 1 seleccionado originalmente
+por SC/BIC.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figure_03_var_lag_serial_diagnostics.png}
+\caption{Autocorrelación residual por rezago VAR candidato.}
+\label{fig:diagnostico-rezagos-autocorrelacion}
+\end{figure}
+
+\subsubsection{Rango de cointegración de Johansen}
+\label{subsubsec:rango-johansen}
 
 \autoref{tab:johansen} presenta la prueba de Johansen bajo la especificación
 con constante en la relación de cointegración. La tabla utiliza el rezago final
@@ -922,57 +1177,74 @@ Exportaciones & \texttt{none} & 4 & 4 & 0 & 0 \\
 \end{tabular}
 \end{table}
 
+\subsubsection{Decisión operativa VAR/VEC}
+\label{subsubsec:decision-var-vec}
+
 \autoref{tab:decision-var-vec} combina la evidencia de integración,
-Engle-Granger y Johansen para fijar el tratamiento operativo de cada sistema.
+Engle-Granger, Johansen y diagnósticos residuales para fijar el tratamiento
+operativo de cada sistema.
 
 \begin{table}[H]
 \centering
 \caption{Decisión operativa para VAR/VEC.}
 \label{tab:decision-var-vec}
-\small
+\scriptsize
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{lcccp{6.6cm}}
+\begin{tabular}{lccccccp{6.0cm}}
 \toprule
-Sistema & ADF dep. & Engle-Granger & Johansen robusto & Tratamiento recomendado \\
+Sistema & ADF dep. & Rezago base & Rezago final & Diagnóstico & Engle-Granger & Johansen & Tratamiento recomendado \\
 \midrule
-Importaciones & I(1) & Sí & Parcial: traza \(r=1\), máximo \(r=0\) &
+Importaciones & I(1) & 4 & 4 & Alerta autocorr. & Sí & Parcial: traza \(r=1\), máximo \(r=0\) &
 Estimar VECM con \(r=1\) como extensión multivariada y mantener el ECM como respaldo uniecuacional. \\
-Exportaciones & I(0) & No & Rango \(0\) con \texttt{const} y \texttt{none} &
+Exportaciones & I(0) & 1 & 4 & Alerta heteroc. & No & Rango \(0\) con \texttt{const} y \texttt{none} &
 Estimar VAR en diferencias; reportar Johansen solo como evidencia indicativa. \\
 \bottomrule
 \end{tabular}
 }
+\caption*{\footnotesize Nota: el diagnóstico resume la información de
+\texttt{vcorr\_res.R} y White no-cross. En importaciones persiste
+autocorrelación residual; en exportaciones el rezago final corrige la
+autocorrelación al 5\%, pero White no-cross rechaza homocedasticidad conjunta.}
 \end{table}
 
-\autoref{tab:auditoria-retroalimentacion} verifica que el rezago final ajustado
-por diagnóstico residual se utiliza efectivamente en los bloques posteriores del
-script. Esta tabla proviene de \path{section_06_feedback_audit.csv}.
+\autoref{tab:vecm-importaciones} resume la estimación VECM para importaciones
+cuando se adopta el rango \(r=1\) sugerido por la prueba de traza de Johansen.
+La tabla combina el vector de cointegración normalizado en importaciones y los
+coeficientes de ajuste de las tres ecuaciones del sistema.
 
 \begin{table}[H]
 \centering
-\caption{Auditoría de retroalimentación de rezagos en el script.}
-\label{tab:auditoria-retroalimentacion}
+\caption{VECM de importaciones: vector normalizado y coeficientes de ajuste.}
+\label{tab:vecm-importaciones}
 \scriptsize
-\begin{tabular}{llccc}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrp{7.0cm}}
 \toprule
-Sistema & Bloque posterior & Rezago base & Rezago usado & Usa rezago final \\
+Bloque & Término / ecuación & Coeficiente & Elasticidad implícita & Lectura \\
 \midrule
-Importaciones & Wald de exclusión de rezagos & 4 & 4 & Sí \\
-Importaciones & Johansen & 4 & 4 & Sí \\
-Importaciones & Autocorrelación residual \texttt{vcorr\_res} & 4 & 4 & Sí \\
-Importaciones & White no-cross & 4 & 4 & Sí \\
-Importaciones & Decisión final VAR/VEC & 4 & 4 & Sí \\
-Exportaciones & Wald de exclusión de rezagos & 1 & 4 & Sí \\
-Exportaciones & Johansen & 1 & 4 & Sí \\
-Exportaciones & Autocorrelación residual \texttt{vcorr\_res} & 1 & 4 & Sí \\
-Exportaciones & White no-cross & 1 & 4 & Sí \\
-Exportaciones & Decisión final VAR/VEC & 1 & 4 & Sí \\
+Vector normalizado & \(\ln M_{t-1}\) & 1.000 & -- & Variable de normalización. \\
+Vector normalizado & \(\ln PIB_{t-1}\) & -3.535 & 3.535 & Elasticidad ingreso de largo plazo implícita. \\
+Vector normalizado & \(\ln ITCRM_{t-1}\) & -0.148 & 0.148 & Elasticidad cambiaria de largo plazo implícita. \\
+Vector normalizado & Constante & 36.161 & -- & Constante de la relación de cointegración. \\
+Ajuste & \(\Delta \ln M_t\) & 0.088 & -- & Ajuste de importaciones ante el desequilibrio del sistema. \\
+Ajuste & \(\Delta \ln PIB_t\) & 0.113 & -- & Ajuste de actividad ante el desequilibrio del sistema. \\
+Ajuste & \(\Delta \ln ITCRM_t\) & 0.093 & -- & Ajuste del tipo de cambio real ante el desequilibrio del sistema. \\
 \bottomrule
 \end{tabular}
-\caption*{\footnotesize Nota: el rezago base corresponde a la selección SC/BIC.
-El rezago usado corresponde al rezago final luego de retroalimentar la selección
-con diagnósticos de autocorrelación residual.}
+}
+\caption*{\footnotesize Nota: la relación normalizada puede escribirse como
+\(\ln M_t - 3.535\ln PIB_t - 0.148\ln ITCRM_t + 36.161 = 0\). Los outputs
+documentan que \texttt{cajorls} no entrega inferencia exportable para estos
+coeficientes; por esa razón se reportan coeficientes estimados y el VECM se
+interpreta como extensión multivariada indicativa, manteniendo el ECM
+uniecuacional como respaldo principal. Fuentes:
+\path{06_vecm_decisions/section_06_vecm_cointegration_vectors.csv} y
+\path{06_vecm_decisions/section_06_vecm_adjustment_coefficients.csv}.}
 \end{table}
+
+La auditoría reproducible del script confirma que el rezago final ajustado por
+diagnóstico se utiliza efectivamente en los bloques posteriores. El detalle se
+reporta en \autoref{tab:auditoria-retroalimentacion}.
 
 La comparación de especificaciones permite fijar una regla metodológica para no
 sobreinterpretar la evidencia multivariada. En importaciones, la evidencia es
@@ -991,6 +1263,39 @@ rezago final ajustado por diagnóstico residual. Por prudencia, el tratamiento
 principal para exportaciones será un VAR en diferencias. Si se reporta un VECM
 para cumplir la consigna, deberá presentarse solo como ejercicio indicativo,
 junto con la advertencia sobre integración y diagnósticos.
+
+\subsubsection{Diagnósticos residuales del sistema}
+\label{subsubsec:diagnosticos-residuales-var}
+
+\autoref{tab:wald-exclusion-lags} reporta el test Wald de exclusión conjunta de
+rezagos implementado en \texttt{VAR\_lag\_exclusion\_wald.R}. La hipótesis nula
+es que todos los coeficientes asociados al rezago evaluado son conjuntamente
+cero en el sistema VAR.
+
+\begin{table}[H]
+\centering
+\caption{Test Wald de exclusión conjunta de rezagos VAR.}
+\label{tab:wald-exclusion-lags}
+\small
+\begin{tabular}{lcccc}
+\toprule
+Sistema & Rezago evaluado & Estadístico Wald & \(p\)-valor & Decisión 5\% \\
+\midrule
+Importaciones & 1 & 215.454 & \(<0.001\) & Rechaza exclusión \\
+Importaciones & 2 & 16.367 & 0.0596 & No rechaza exclusión \\
+Importaciones & 3 & 7.682 & 0.5665 & No rechaza exclusión \\
+Importaciones & 4 & 197.630 & \(<0.001\) & Rechaza exclusión \\
+Exportaciones & 1 & 122.382 & \(<0.001\) & Rechaza exclusión \\
+Exportaciones & 2 & 7.849 & 0.5494 & No rechaza exclusión \\
+Exportaciones & 3 & 5.976 & 0.7423 & No rechaza exclusión \\
+Exportaciones & 4 & 37.406 & \(<0.001\) & Rechaza exclusión \\
+\bottomrule
+\end{tabular}
+\caption*{\footnotesize Nota: el rechazo indica que el bloque del rezago aporta
+información conjunta al VAR y no debería excluirse mecánicamente. En ambos
+sistemas los rezagos 1 y 4 aportan información conjunta, mientras que los
+rezagos intermedios muestran evidencia más débil.}
+\end{table}
 
 \autoref{tab:diagnostico-autocorrelacion-vcorr} resume el diagnóstico de
 autocorrelación residual calculado con \texttt{vcorr\_res.R} para los rezagos
@@ -1016,10 +1321,40 @@ de evaluar candidatos hasta ocho rezagos; en exportaciones el rezago final
 cuatro supera el umbral al 5\%.}
 \end{table}
 
-\pendiente{Reportar vectores de cointegración normalizados, coeficientes de
-ajuste, pruebas de normalidad y elasticidades de corto plazo del VECM. Incluir
-importaciones como evidencia principal si los diagnósticos lo permiten y
-exportaciones como ejercicio indicativo.}
+\autoref{tab:diagnostico-white-no-cross} resume el test White no-cross de
+heterocedasticidad residual implementado en \texttt{VAR\_white\_no\_cross.R}.
+Se reportan los resultados por ecuación y el contraste conjunto del sistema.
+
+\begin{table}[H]
+\centering
+\caption{Diagnóstico de heterocedasticidad White no-cross.}
+\label{tab:diagnostico-white-no-cross}
+\scriptsize
+\begin{tabular}{llccc}
+\toprule
+Sistema & Ecuación & Estadístico & \(p\)-valor & Decisión 5\% \\
+\midrule
+Importaciones & \texttt{ln\_imports\_real} & 28.359 & 0.2452 & No rechaza homocedasticidad \\
+Importaciones & \texttt{ln\_gdp\_real} & 29.456 & 0.2034 & No rechaza homocedasticidad \\
+Importaciones & \texttt{ln\_itcrm} & 33.738 & 0.0894 & No rechaza homocedasticidad \\
+Importaciones & Conjunto & 91.553 & 0.0598 & No rechaza homocedasticidad \\
+Exportaciones & \texttt{ln\_exports\_real} & 26.488 & 0.3289 & No rechaza homocedasticidad \\
+Exportaciones & \texttt{ln\_pib\_socios} & 39.753 & 0.0227 & Rechaza homocedasticidad \\
+Exportaciones & \texttt{ln\_itcrm} & 41.508 & 0.0146 & Rechaza homocedasticidad \\
+Exportaciones & Conjunto & 107.750 & 0.0041 & Rechaza homocedasticidad \\
+\bottomrule
+\end{tabular}
+\caption*{\footnotesize Nota: el test auxiliar usa regresores del VAR y sus
+cuadrados, sin productos cruzados. En exportaciones se detecta
+heterocedasticidad residual conjunta; por eso la decisión final conserva una
+advertencia diagnóstica aun cuando el rezago final corrige la autocorrelación al
+5\%.}
+\end{table}
+
+\pendiente{Completar pruebas de normalidad y, si corresponde, una síntesis de
+elasticidades de corto plazo del VECM. Exportaciones debe permanecer como
+ejercicio indicativo si se fuerza un VECM, porque el rango Johansen es cero y la
+variable dependiente fue clasificada como I(0).}
 
 \subsection{VAR en diferencias e interpretación de corto plazo}
 \label{subsec:resultados-var}
@@ -1035,12 +1370,18 @@ de rezagos.}
 \section{Comparación de resultados}
 \label{sec:comparacion}
 
+\subsection{Criterio de comparación entre metodologías}
+\label{subsec:comparacion-metodologias}
+
 La comparación debe distinguir tres niveles. Primero, la comparación interna
 entre Engle-Granger y Johansen. Segundo, la comparación entre elasticidades de
 largo y corto plazo. Tercero, la comparación con la literatura aplicada para
 Argentina. La consigna enfatiza que esta sección no debe limitarse a contrastar
 coeficientes: debe explicar qué resultados son válidos, cuáles son indicativos
 y qué implicancias económicas surgen para la restricción externa.
+
+\subsection{Comparación con literatura aplicada}
+\label{subsec:comparacion-literatura}
 
 \autoref{tab:comparacion-literatura} organiza la comparación entre los
 resultados propios y las referencias aplicadas exigidas por la consigna.
@@ -1055,7 +1396,7 @@ resultados propios y las referencias aplicadas exigidas por la consigna.
 Referencia / método & Importaciones & Exportaciones & Comentario \\
 \midrule
 Engle-Granger / ECM & PIB: 1.518; TCR: -0.399; ajuste ECM: -0.525 & PIB socios: 0.720; TCR: 0.159 & Importaciones con cointegración; exportaciones solo indicativo en largo plazo. \\
-Johansen / VECM & \pendiente{normalizar vector y coeficientes de ajuste} & \pendiente{reportar ejercicio indicativo} & Debe distinguir evidencia principal de ejercicios indicativos. \\
+Johansen / VECM & PIB: 3.535; TCR: 0.148; ajuste \(\Delta \ln M_t\): 0.088 & Rango 0; sin VECM principal & Extensión multivariada indicativa para importaciones; exportaciones se mantiene como VAR en diferencias. \\
 Berrettoni y Castresana (2008) & \pendiente{} & \pendiente{} & \pendiente{} \\
 Bus y Nicolini-Llosa (2007) & \pendiente{} & No aplica & \pendiente{} \\
 Zack y Sotelsek (2016) & \pendiente{} & \pendiente{} & \pendiente{} \\
@@ -1063,6 +1404,9 @@ Song, Witt y Li (2008) & No aplica directo & No aplica directo & Referencia meto
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Lectura económica de los resultados}
+\label{subsec:comparacion-lectura-economica}
 
 La primera lectura de los resultados mantiene una asimetría relevante para la
 interpretación económica. En importaciones, la elasticidad ingreso de largo
@@ -1200,55 +1544,100 @@ Variable & Obs. panel completo & Obs. muestra base \\
 \texttt{ln\_gdp\_real} & 76 & 76 \\
 \texttt{ln\_itcrm} & 88 & 76 \\
 \texttt{ln\_pib\_socios} & 88 & 76 \\
+\texttt{ln\_commodity\_price\_index} & 88 & 76 \\
 \texttt{d\_ln\_imports\_real} & 75 & 75 \\
 \texttt{d\_ln\_exports\_real} & 75 & 75 \\
 \texttt{d\_ln\_gdp\_real} & 75 & 75 \\
 \texttt{d\_ln\_itcrm} & 87 & 75 \\
 \texttt{d\_ln\_pib\_socios} & 87 & 75 \\
+\texttt{d\_ln\_commodity\_price\_index} & 87 & 75 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\autoref{tab:outputs-fase-base} enumera los archivos generados por el script y
-el contenido de cada salida reproducible.
+\autoref{tab:outputs-fase-base} enumera los archivos generados por el script
+maestro y el contenido de cada salida reproducible.
 
 \begin{table}[H]
 \centering
-\caption{Archivos generados por la fase base del script.}
+\caption{Archivos generados por el script maestro.}
 \label{tab:outputs-fase-base}
-\small
+\scriptsize
 \begin{tabular}{>{\raggedright\arraybackslash}p{6.1cm}>{\raggedright\arraybackslash}p{7.7cm}}
 \toprule
 Archivo & Contenido \\
 \midrule
-\path{section_01_model_sample.csv} & Definición de muestra de trabajo \\
-\path{section_01_variable_check.csv} & Verificación de variables requeridas \\
-\path{section_01_system_samples.csv} & Subconjuntos para sistemas de importaciones y exportaciones \\
-\path{section_01_descriptive_statistics.csv} & Estadísticas descriptivas de niveles logarítmicos y primeras diferencias \\
-\path{section_01_descriptive_seasonality_by_quarter.csv} & Resumen por trimestre para revisar estacionalidad en diferencias \\
-\path{section_01_descriptive_interpretation_guide.csv} & Guía de lectura descriptiva para el informe \\
-\path{section_01_unit_root_adf_results.csv} & Resultados ADF en niveles y diferencias \\
-\path{section_01_unit_root_adf_order_summary.csv} & Resumen preliminar de orden de integración \\
-\path{section_02_unit_root_adf_urca_results.csv} & Resultados ADF formales con \texttt{ur.df} \\
-\path{section_02_unit_root_adf_urca_order_summary.csv} & Resumen formal de orden de integración \\
-\path{section_03_var_lag_selection.csv} & Rezagos sugeridos por AIC, HQ, SC/BIC y FPE \\
-\path{section_03_var_lag_criteria.csv} & Valores de criterios de información para rezagos candidatos \\
-\path{section_03_var_lag_decision.csv} & Decisión de rezagos con SC/BIC como criterio principal \\
-\path{section_04_johansen_trace_results.csv} & Pruebas de Johansen por estadístico de traza \\
-\path{section_04_johansen_eigen_results.csv} & Pruebas de Johansen por máximo autovalor \\
-\path{section_04_johansen_rank_decision.csv} & Decisión preliminar de rango de cointegración \\
-\path{section_05_engle_granger_equations.csv} & Ecuaciones de largo plazo Engle-Granger \\
-\path{section_05_engle_granger_long_run_coefficients.csv} & Coeficientes de largo plazo Engle-Granger \\
-\path{section_05_engle_granger_residual_tests.csv} & Pruebas ADF sobre residuos Engle-Granger \\
-\path{section_05_engle_granger_decision.csv} & Decisión operativa entre ECM y primeras diferencias \\
-\path{section_05_ecm_short_run_model_summary.csv} & Resumen de modelos ECM o primeras diferencias \\
-\path{section_05_ecm_short_run_coefficients.csv} & Coeficientes de modelos ECM o primeras diferencias \\
-\path{section_05_ecm_adjustment_summary.csv} & Velocidad de ajuste del ECM \\
-\path{section_05_eg_ecm_elasticity_summary.csv} & Resumen de elasticidades Engle-Granger y ECM \\
-\path{section_06_johansen_robustness_summary.csv} & Robustez de Johansen comparando \texttt{const} y \texttt{none} \\
-\path{section_06_var_vec_treatment_decision.csv} & Decisión operativa entre VECM y VAR en diferencias \\
+\path{00_setup/section_00_course_scripts_status.csv} & Estado de carga de scripts auxiliares provistos en clase \\
+\path{01_data_descriptives/section_01_outputs_manifest.csv} & Índice de salidas CSV generadas por el script maestro \\
+\path{01_data_descriptives/section_01_model_sample.csv} & Definición de muestra de trabajo \\
+\path{01_data_descriptives/section_01_variable_check.csv} & Verificación de variables requeridas \\
+\path{01_data_descriptives/section_01_system_samples.csv} & Subconjuntos para sistemas de importaciones y exportaciones \\
+\path{01_data_descriptives/section_01_descriptive_statistics.csv} & Estadísticas descriptivas de niveles logarítmicos y primeras diferencias \\
+\path{01_data_descriptives/section_01_descriptive_seasonality_by_quarter.csv} & Resumen por trimestre para revisar estacionalidad en diferencias \\
+\path{01_data_descriptives/section_01_descriptive_interpretation_guide.csv} & Guía de lectura descriptiva para el informe \\
+\path{01_data_descriptives/section_01_unit_root_adf_results.csv} & Resultados ADF en niveles y diferencias \\
+\path{01_data_descriptives/section_01_unit_root_adf_order_summary.csv} & Resumen preliminar de orden de integración \\
+\path{02_unit_roots/section_02_unit_root_adf_urca_results.csv} & Resultados ADF formales con \texttt{ur.df} \\
+\path{02_unit_roots/section_02_unit_root_adf_urca_order_summary.csv} & Resumen formal de orden de integración \\
+\path{02_unit_roots/section_02_course_adf_ver3_results.csv} & Resultados ADF capturados desde \texttt{Test.ADF.Ver.3.R} \\
+\path{03_var_lags/section_03_var_lag_selection.csv} & Rezagos sugeridos por AIC, HQ, SC/BIC y FPE \\
+\path{03_var_lags/section_03_var_lag_criteria.csv} & Valores de criterios de información para rezagos candidatos \\
+\path{03_var_lags/section_03_var_lag_decision.csv} & Decisión base de rezagos usando SC/BIC como criterio principal \\
+\path{03_var_lags/section_03_var_lag_diagnostic_grid.csv} & Grilla de autocorrelación residual para retroalimentar rezagos VAR \\
+\path{03_var_lags/section_03_var_lag_diagnostic_decision.csv} & Decisión final de rezagos ajustada por diagnósticos residuales \\
+\path{03_var_lags/section_03_var_lag_exclusion_wald.csv} & Tests Wald de exclusión conjunta por rezago en cada VAR \\
+\path{04_johansen_diagnostics/section_04_johansen_trace_results.csv} & Pruebas de Johansen por estadístico de traza \\
+\path{04_johansen_diagnostics/section_04_johansen_eigen_results.csv} & Pruebas de Johansen por máximo autovalor \\
+\path{04_johansen_diagnostics/section_04_johansen_rank_decision.csv} & Decisión preliminar de rango de cointegración \\
+\path{04_johansen_diagnostics/section_04_course_vcorr_residual_autocorrelation.csv} & Diagnósticos de autocorrelación residual VAR con \texttt{vcorr\_res.R} \\
+\path{04_johansen_diagnostics/section_04_course_white_no_cross_heteroskedasticity.csv} & Test White no-cross de heterocedasticidad residual VAR \\
+\path{05_engle_granger_ecm/section_05_engle_granger_equations.csv} & Ecuaciones de largo plazo Engle-Granger \\
+\path{05_engle_granger_ecm/section_05_engle_granger_long_run_coefficients.csv} & Coeficientes de largo plazo Engle-Granger \\
+\path{05_engle_granger_ecm/section_05_engle_granger_residual_tests.csv} & Pruebas ADF sobre residuos Engle-Granger \\
+\path{05_engle_granger_ecm/section_05_engle_granger_decision.csv} & Decisión operativa entre ECM y primeras diferencias \\
+\path{05_engle_granger_ecm/section_05_ecm_short_run_model_summary.csv} & Resumen de modelos ECM o primeras diferencias \\
+\path{05_engle_granger_ecm/section_05_ecm_short_run_coefficients.csv} & Coeficientes de modelos ECM o primeras diferencias \\
+\path{05_engle_granger_ecm/section_05_ecm_adjustment_summary.csv} & Velocidad de ajuste del ECM \\
+\path{05_engle_granger_ecm/section_05_eg_ecm_elasticity_summary.csv} & Resumen de elasticidades Engle-Granger y ECM \\
+\path{06_vecm_decisions/section_06_johansen_robustness_summary.csv} & Robustez de Johansen comparando \texttt{const} y \texttt{none} \\
+\path{06_vecm_decisions/section_06_var_vec_treatment_decision.csv} & Decisión operativa entre VECM y VAR en diferencias \\
+\path{06_vecm_decisions/section_06_vecm_cointegration_vectors.csv} & Vector de cointegración normalizado del VECM de importaciones \\
+\path{06_vecm_decisions/section_06_vecm_adjustment_coefficients.csv} & Coeficientes de ajuste del VECM de importaciones \\
+\path{06_vecm_decisions/section_06_vecm_short_run_summary.csv} & Coeficientes determinísticos y de corto plazo del VECM de importaciones \\
+\path{06_vecm_decisions/section_06_feedback_audit.csv} & Auditoría de retroalimentación entre diagnósticos y bloques posteriores \\
 \bottomrule
 \end{tabular}
+\end{table}
+
+\autoref{tab:auditoria-retroalimentacion} verifica que el rezago final ajustado
+por diagnóstico residual se utiliza efectivamente en los bloques posteriores del
+script. Esta tabla proviene de
+\path{06_vecm_decisions/section_06_feedback_audit.csv}.
+
+\begin{table}[H]
+\centering
+\caption{Auditoría de retroalimentación de rezagos en el script.}
+\label{tab:auditoria-retroalimentacion}
+\scriptsize
+\begin{tabular}{llccc}
+\toprule
+Sistema & Bloque posterior & Rezago base & Rezago usado & Usa rezago final \\
+\midrule
+Importaciones & Wald de exclusión de rezagos & 4 & 4 & Sí \\
+Importaciones & Johansen & 4 & 4 & Sí \\
+Importaciones & Autocorrelación residual \texttt{vcorr\_res} & 4 & 4 & Sí \\
+Importaciones & White no-cross & 4 & 4 & Sí \\
+Importaciones & Decisión final VAR/VEC & 4 & 4 & Sí \\
+Exportaciones & Wald de exclusión de rezagos & 1 & 4 & Sí \\
+Exportaciones & Johansen & 1 & 4 & Sí \\
+Exportaciones & Autocorrelación residual \texttt{vcorr\_res} & 1 & 4 & Sí \\
+Exportaciones & White no-cross & 1 & 4 & Sí \\
+Exportaciones & Decisión final VAR/VEC & 1 & 4 & Sí \\
+\bottomrule
+\end{tabular}
+\caption*{\footnotesize Nota: el rezago base corresponde a la selección SC/BIC.
+El rezago usado corresponde al rezago final luego de retroalimentar la selección
+con diagnósticos de autocorrelación residual.}
 \end{table}
 
 \subsection{Reproducibilidad}
@@ -1268,33 +1657,34 @@ Control & Estado \\
 \midrule
 Base del TP 2 reutilizada o actualizada & Ejecutado \\
 Variables transformadas a logaritmos & Ejecutado \\
-Pruebas ADF ejecutadas & Ejecutado; falta contraste con \texttt{Test.ADF.Ver.3.R} \\
+Pruebas ADF ejecutadas & Ejecutado; contrastado con \texttt{Test.ADF.Ver.3.R} \\
 Engle-Granger replicado & Ejecutado \\
 Johansen estimado & Ejecutado \\
 VECM o VAR en diferencias estimado & Parcial \\
-Diagnósticos post-estimación revisados & Parcial; faltan White/Wald o equivalentes \\
-Cuadros y figuras exportadas & Parcial \\
+Diagnósticos post-estimación revisados & Ejecutado; incluye \texttt{vcorr\_res.R}, White no-cross y Wald de rezagos \\
+Tablas y figuras exportadas & Parcial \\
 Script principal corre sin interrupciones & Ejecutado \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\autoref{tab:herramientas-clase} registra qué herramientas solicitadas en la
-consigna están disponibles y cuáles deben conseguirse o reconstruirse.
+\autoref{tab:herramientas-clase} registra el estado de carga de las herramientas
+solicitadas en la consigna, según
+\path{00_setup/section_00_course_scripts_status.csv}.
 
 \begin{table}[H]
 \centering
 \caption{Herramientas de clase solicitadas en la consigna actualizada.}
 \label{tab:herramientas-clase}
 \small
-\begin{tabular}{p{5.0cm}p{4.0cm}p{5.5cm}}
+\begin{tabular}{p{5.2cm}p{3.0cm}p{6.0cm}}
 \toprule
-Herramienta solicitada & Estado en la carpeta de trabajo & Uso previsto \\
+Herramienta solicitada & Estado & Uso en el informe \\
 \midrule
-\texttt{Test.ADF.Ver.3.R} & Disponible como \texttt{Test.ADF\_Ver.3.R} & Contrastar pruebas de raíz unitaria y selección de rezagos ADF. \\
-\texttt{vcorr\_res.R} & Disponible & Diagnóstico de autocorrelación en modelos VAR/VEC. \\
-\texttt{VAR\_white\_no\_cross.R} & No localizado en materiales locales & Incorporar test de heterocedasticidad o implementación equivalente. \\
-\texttt{VAR\_lag\_exclusion\_wald.R} & No localizado en materiales locales & Evaluar exclusión de rezagos mediante restricciones tipo Wald. \\
+\texttt{Test.ADF.Ver.3.R} & Cargado & Contraste de raíces unitarias con rutina de clase. \\
+\texttt{vcorr\_res.R} & Cargado & Diagnóstico de autocorrelación y retroalimentación de rezagos VAR. \\
+\texttt{VAR\_white\_no\_cross.R} & Cargado & Test White no-cross de heterocedasticidad residual. \\
+\texttt{VAR\_lag\_exclusion\_wald.R} & Cargado & Test Wald de exclusión conjunta de rezagos. \\
 Paquetes \texttt{svar}, \texttt{urca} y \texttt{lpirfs} & \texttt{urca} usado; \texttt{svar}/\texttt{lpirfs} pendientes según alcance final & Johansen/VEC, ejercicios estructurales o impulso-respuesta si se incorporan. \\
 \bottomrule
 \end{tabular}
