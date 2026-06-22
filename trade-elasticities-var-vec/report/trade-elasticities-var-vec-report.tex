@@ -574,27 +574,53 @@ Archivo de entrada & Inicio & Fin & Observación \\
 \section{Estrategia empírica}
 \label{sec:estrategia-empirica}
 
-La estimación se desarrolla en cinco bloques. Primero, se verifica el orden de
-integración de cada serie, incluyendo la presencia de estacionalidad y la
-conveniencia de trabajar en logaritmos naturales. Segundo, se replican y resumen
-los resultados uniecuacionales del TP 2 mediante Engle-Granger y ECM. Tercero,
-se estiman sistemas VAR/VEC para importaciones y exportaciones mediante la
-metodología de Johansen. Cuarto, se calculan elasticidades de corto plazo con
-modelos en diferencias cuando la cointegración no es robusta. Quinto, se
-comparan los resultados entre metodologías y contra la literatura aplicada.
+La estimación se organiza siguiendo la arquitectura de los scripts trabajados
+en clase. Primero se cargan los paquetes y rutinas auxiliares de la cursada.
+Luego se construyen los objetos de series de tiempo, se revisan gráficos y
+raíces unitarias, se replica la secuencia Engle-Granger/ECM y Wickens-Breusch,
+y recién después se avanza hacia la selección de rezagos, VAR, diagnósticos,
+Johansen, VECM, VAR en diferencias y extensiones IRF/SVAR/LPIRF. Esta secuencia
+es la que sigue el script maestro y la que estructura la lectura empírica del
+informe.
 
 \begin{enumerate}
-  \item Preparar las variables en logaritmos, diferencias y rezagos.
-  \item Seleccionar rezagos para los sistemas VAR candidatos.
-  \item Aplicar pruebas Engle-Granger y Johansen para cada sistema.
-  \item Estimar ECM y VECM cuando haya cointegración, usando también el criterio
-  flexible de significatividad del 10\% indicado en la consigna.
-  \item Estimar VAR en diferencias cuando no haya cointegración robusta, sin
-  omitir los ejercicios indicativos de VECM requeridos por el TP.
-  \item Comparar elasticidades de largo plazo y corto plazo.
-  \item Evaluar diagnósticos: autocorrelación, normalidad, heterocedasticidad,
-  exclusión de rezagos, estabilidad y comportamiento de residuos.
+  \item Cargar paquetes de cursada y scripts auxiliares solicitados.
+  \item Preparar datos, objetos \texttt{ts}, logaritmos, diferencias y rezagos.
+  \item Revisar gráficos descriptivos y pruebas ADF, incluyendo
+  \texttt{Test.ADF\_Ver.3.R}.
+  \item Estimar Engle-Granger, ECM y el contraste Wickens-Breusch.
+  \item Seleccionar rezagos con \texttt{VARselect} y estimar VAR en niveles.
+  \item Evaluar diagnósticos VAR de clase: autocorrelación, White no-cross y
+  exclusión conjunta de rezagos.
+  \item Aplicar Johansen, recuperar VECM cuando corresponda y decidir entre
+  VECM y VAR en diferencias.
+  \item Incorporar extensiones indicativas de clase: IRF, FEVD, SVAR y LPIRF.
+  \item Comparar elasticidades de largo plazo, corto plazo y evidencia dinámica.
 \end{enumerate}
+
+\begin{table}[H]
+\centering
+\caption{Arquitectura de clase aplicada en el script.}
+\label{tab:arquitectura-clase-aplicada}
+\scriptsize
+\begin{tabular}{clp{7.6cm}}
+\toprule
+Paso & Bloque del script & Evidencia generada \\
+\midrule
+1 & Paquetes de cursada & \path{00_setup/section_00_course_packages_status.csv} \\
+2 & Datos y objetos \texttt{ts} & \path{01_data_descriptives/section_01_model_sample.csv} \\
+3 & Gráficos y descriptivos & Figuras de niveles y primeras diferencias \\
+4 & ADF de clase & \path{02_unit_roots/section_02_course_adf_ver3_results.csv} \\
+5 & Engle-Granger y ECM & \path{05_engle_granger_ecm/section_05_*} \\
+6 & Wickens-Breusch & \path{09_wickens_breusch/section_09_wickens_breusch_long_run_coefficients.csv} \\
+7 & VARselect y VAR & \path{03_var_lags/section_03_var_lag_selection.csv} \\
+8 & Diagnósticos VAR de clase & \path{03_var_lags/section_03_var_lag_exclusion_wald.csv}; \path{04_johansen_diagnostics/section_04_course_*} \\
+9 & Johansen y VECM & \path{04_johansen_diagnostics/section_04_johansen_*}; \path{06_vecm_decisions/section_06_vecm_*} \\
+10 & VAR en diferencias & \path{07_var_differences/section_07_var_diff_*} \\
+11 & IRF, FEVD, SVAR y LPIRF & \path{10_class_extensions/section_10_class_*} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \autoref{tab:sistemas-iniciales-var-vec} define los dos sistemas de variables
 que se utilizan como punto de partida para las estimaciones VAR/VEC de
@@ -836,8 +862,9 @@ Engle-Granger utilizados en clase. La consigna permite una lectura flexible al
 10\% para la evidencia de cointegración. Cuando los residuos son estacionarios
 se estima un ECM; cuando no lo son, se conserva un modelo en primeras
 diferencias y las elasticidades de largo plazo se reportan solo como
-indicativas. En la versión final debe agregarse la verificación del vector de
-cointegración según Wickens y Breusch para el enfoque Engle-Granger.
+indicativas. Como contraste frente al sesgo potencial del enfoque en dos
+etapas, se incorpora además una verificación de largo plazo tipo
+Wickens-Breusch para el sistema de importaciones.
 
 \subsubsection{Ecuaciones de largo plazo y prueba residual}
 \label{subsubsec:eg-largo-plazo-residuos}
@@ -963,6 +990,39 @@ Exportaciones & TCR & 0.159 & -0.113 & Largo plazo solo indicativo; el modelo op
 \bottomrule
 \end{tabular}
 }
+\end{table}
+
+\autoref{tab:wickens-breusch-importaciones} contrasta las elasticidades de
+largo plazo de Engle-Granger con las obtenidas a partir de una especificación
+ECM no restringida tipo Wickens-Breusch. Este ejercicio se interpreta solo para
+importaciones, porque es el sistema donde el ADF sobre residuos respalda
+cointegración. En exportaciones, la relación de largo plazo se mantiene como
+indicativa y no se calcula Wickens-Breusch como especificación principal.
+
+\begin{table}[H]
+\centering
+\caption{Comparación Engle-Granger y Wickens-Breusch para importaciones.}
+\label{tab:wickens-breusch-importaciones}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{p{2.4cm}p{2.0cm}rrp{6.2cm}}
+\toprule
+Sistema & Variable & Engle-Granger & Wickens-Breusch & Lectura \\
+\midrule
+Importaciones & PIB & 1.518 & 2.097 &
+Mismo signo y mayor magnitud; refuerza la elasticidad ingreso positiva, con diferencia cuantitativa relevante. \\
+Importaciones & TCR & -0.399 & -0.109 &
+Mismo signo, pero menor magnitud; confirma dirección negativa con sensibilidad al método. \\
+Exportaciones & PIB socios / TCR & Largo plazo indicativo & No aplica &
+No se calcula como resultado principal porque Engle-Granger no respalda cointegración. \\
+\bottomrule
+\end{tabular}
+}
+\caption*{\footnotesize Nota: Wickens-Breusch se calcula desde un ECM no
+restringido como \(-\theta_x/\theta_y\), donde \(\theta_y\) es el coeficiente
+del nivel rezagado de la variable dependiente. El coeficiente de ajuste estimado
+para importaciones es \(-0.570\). Fuente:
+\path{09_wickens_breusch/section_09_wickens_breusch_long_run_coefficients.csv}.}
 \end{table}
 
 \autoref{tab:velocidad-ajuste-ecm} reporta el término de corrección del error
@@ -1242,6 +1302,14 @@ uniecuacional como respaldo principal. Fuentes:
 \path{06_vecm_decisions/section_06_vecm_adjustment_coefficients.csv}.}
 \end{table}
 
+La tabla anterior cierra el único VECM que se reporta como especificación
+estimada en el bloque multivariado. Para exportaciones no se presenta una tabla
+VECM equivalente porque la variable dependiente fue clasificada como I(0),
+Engle-Granger no respalda cointegración y Johansen arroja rango cero bajo las
+especificaciones evaluadas. En ese caso, la especificación operativa queda en
+diferencias, mientras que los ejercicios Johansen/VECM se conservan solo como
+evidencia indicativa exigida por la consigna.
+
 La auditoría reproducible del script confirma que el rezago final ajustado por
 diagnóstico se utiliza efectivamente en los bloques posteriores. El detalle se
 reporta en \autoref{tab:auditoria-retroalimentacion}.
@@ -1351,18 +1419,121 @@ advertencia diagnóstica aun cuando el rezago final corrige la autocorrelación 
 5\%.}
 \end{table}
 
-\pendiente{Completar pruebas de normalidad y, si corresponde, una síntesis de
-elasticidades de corto plazo del VECM. Exportaciones debe permanecer como
-ejercicio indicativo si se fuerza un VECM, porque el rango Johansen es cero y la
-variable dependiente fue clasificada como I(0).}
+\autoref{tab:diagnosticos-normalidad-estabilidad} completa los diagnósticos de
+normalidad y estabilidad para los sistemas VAR/VEC centrales. Esta verificación
+es especialmente relevante porque la metodología de Johansen requiere residuos
+aproximadamente normales para que la inferencia tenga plena validez; cuando esa
+condición no se cumple, los resultados deben reportarse como evidencia
+indicativa.
+
+\begin{table}[H]
+\centering
+\caption{Diagnósticos complementarios de normalidad y estabilidad.}
+\label{tab:diagnosticos-normalidad-estabilidad}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcrclp{5.4cm}}
+\toprule
+Modelo / sistema & Rezago & Normalidad JB \(p\)-valor & Decisión normalidad & Raíz máxima & Lectura \\
+\midrule
+Importaciones VAR/VEC en niveles & 4 & \(<0.001\) & Rechaza normalidad & 0.9755 &
+Estable, pero Johansen/VECM debe leerse con cautela; se mantiene el ECM Engle-Granger como respaldo principal. \\
+Exportaciones VAR/Johansen en niveles & 4 & \(<0.001\) & Rechaza normalidad & 0.9741 &
+Estable, pero solo indicativo: no hay respaldo de cointegración y la dependiente fue clasificada como I(0). \\
+Exportaciones VAR en diferencias & 4 & \(<0.001\) & Rechaza normalidad & 0.9173 &
+Estable y operativo para corto plazo; la inferencia se reporta con cautela por no normalidad. \\
+\bottomrule
+\end{tabular}
+}
+\caption*{\footnotesize Nota: la estabilidad se evalúa por el módulo máximo de
+las raíces del VAR; valores menores que uno indican estabilidad. Fuente:
+\path{08_final_diagnostics/section_08_normality_stability_summary.csv}.}
+\end{table}
+
+Los tres sistemas evaluados son estables, pero ninguno satisface la normalidad
+multivariada al 5\%. Por lo tanto, la evidencia Johansen/VECM debe conservarse
+como indicativa y contrastarse con los resultados Engle-Granger/ECM. En
+exportaciones, esta cautela refuerza la decisión de utilizar el VAR en
+diferencias como especificación operativa de corto plazo.
 
 \subsection{VAR en diferencias e interpretación de corto plazo}
 \label{subsec:resultados-var}
 
-\pendiente{Reportar el VAR en diferencias para los sistemas sin cointegración
-robusta, especialmente exportaciones, incluyendo autocorrelación con
-\texttt{vcorr\_res.R}, heterocedasticidad, normalidad, estabilidad y exclusión
-de rezagos.}
+Como la evidencia de cointegración para exportaciones no es robusta, la
+especificación operativa para este sistema se formula como un VAR en primeras
+diferencias. El sistema incluye \(\Delta \ln X_t\),
+\(\Delta \ln PIB^{socios}_t\) y \(\Delta \ln ITCRM_t\), con cuatro rezagos,
+que es el rezago final seleccionado luego de retroalimentar la decisión con los
+diagnósticos de autocorrelación residual.
+
+\autoref{tab:var-diferencias-exportaciones} reporta la ecuación de
+\(\Delta \ln X_t\) dentro del VAR en diferencias. Los coeficientes se leen como
+efectos dinámicos de corto plazo, no como elasticidades de equilibrio de largo
+plazo.
+
+\begin{table}[H]
+\centering
+\caption{VAR en diferencias para exportaciones: ecuación de corto plazo.}
+\label{tab:var-diferencias-exportaciones}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrrrp{4.4cm}}
+\toprule
+Variable & Rezago & Coeficiente & Error estándar & \(t\) & \(p\)-valor & Lectura \\
+\midrule
+\(\Delta \ln X_t\) & 1 & -0.578 & 0.123 & -4.695 & \(<0.001\) & Persistencia negativa de corto plazo. \\
+\(\Delta \ln PIB^{socios}_t\) & 1 & 0.789 & 0.561 & 1.406 & 0.1652 & Efecto positivo no significativo. \\
+\(\Delta \ln ITCRM_t\) & 1 & -0.013 & 0.177 & -0.073 & 0.9421 & Efecto cambiario no significativo. \\
+\(\Delta \ln X_t\) & 2 & -0.596 & 0.127 & -4.714 & \(<0.001\) & Persistencia negativa de corto plazo. \\
+\(\Delta \ln PIB^{socios}_t\) & 2 & 1.763 & 0.577 & 3.058 & 0.0034 & Elasticidad de corto plazo positiva. \\
+\(\Delta \ln ITCRM_t\) & 2 & -0.049 & 0.173 & -0.284 & 0.7772 & Efecto cambiario no significativo. \\
+\(\Delta \ln X_t\) & 3 & -0.453 & 0.129 & -3.496 & 0.0009 & Persistencia negativa de corto plazo. \\
+\(\Delta \ln PIB^{socios}_t\) & 3 & 1.595 & 0.613 & 2.601 & 0.0118 & Elasticidad de corto plazo positiva. \\
+\(\Delta \ln ITCRM_t\) & 3 & 0.371 & 0.173 & 2.145 & 0.0362 & Elasticidad cambiaria positiva de corto plazo. \\
+\(\Delta \ln X_t\) & 4 & 0.258 & 0.122 & 2.112 & 0.0390 & Reversión parcial de la dinámica previa. \\
+\(\Delta \ln PIB^{socios}_t\) & 4 & 0.830 & 0.621 & 1.337 & 0.1864 & Efecto positivo no significativo. \\
+\(\Delta \ln ITCRM_t\) & 4 & -0.117 & 0.171 & -0.681 & 0.4985 & Efecto cambiario no significativo. \\
+Constante & -- & -0.016 & 0.011 & -1.434 & 0.1571 & No significativa. \\
+\bottomrule
+\end{tabular}
+}
+\caption*{\footnotesize Nota: la ecuación corresponde a
+\path{07_var_differences/section_07_var_diff_exports_equation_coefficients.csv}.
+El VAR se estima con 71 observaciones efectivas entre 2004Q2 y 2022Q4.}
+\end{table}
+
+\autoref{tab:diagnosticos-var-diferencias-exportaciones} resume los
+diagnósticos de autocorrelación y ARCH del VAR en diferencias. El modelo no
+muestra evidencia de autocorrelación residual ni de efectos ARCH multivariados
+al 5\%. La normalidad y la estabilidad se reportan de forma comparativa en
+\autoref{tab:diagnosticos-normalidad-estabilidad}.
+
+\begin{table}[H]
+\centering
+\caption{Diagnósticos residuales del VAR en diferencias de exportaciones.}
+\label{tab:diagnosticos-var-diferencias-exportaciones}
+\small
+\begin{tabular}{lccp{6.2cm}}
+\toprule
+Diagnóstico & Estadístico / valor & \(p\)-valor & Decisión \\
+\midrule
+Autocorrelación PT ajustado & -- & 0.1891 & No rechaza ausencia de autocorrelación residual al 5\%. \\
+Autocorrelación BG & -- & 0.2815 & No rechaza ausencia de autocorrelación residual al 5\%. \\
+ARCH multivariado & -- & 0.9975 & No rechaza efectos ARCH multivariados al 5\%. \\
+\bottomrule
+\end{tabular}
+\caption*{\footnotesize Nota: los diagnósticos provienen de
+\path{07_var_differences/section_07_var_diff_diagnostics.csv}.}
+\end{table}
+
+En conjunto, el VAR en diferencias cumple la función metodológica requerida
+para el sistema de exportaciones: al no verificarse cointegración, permite
+reportar relaciones dinámicas de corto plazo. Los efectos significativos se
+concentran en la propia dinámica de exportaciones, en la demanda externa con
+rezagos dos y tres, y en el ITCRM con rezago tres. La falta de normalidad
+multivariada documentada en \autoref{tab:diagnosticos-normalidad-estabilidad}
+impide tratar la inferencia como plenamente robusta, pero no anula la utilidad
+descriptiva del ejercicio para comparar metodologías.
 
 % -------------------------------
 % 7. Comparación
@@ -1397,10 +1568,11 @@ Referencia / método & Importaciones & Exportaciones & Comentario \\
 \midrule
 Engle-Granger / ECM & PIB: 1.518; TCR: -0.399; ajuste ECM: -0.525 & PIB socios: 0.720; TCR: 0.159 & Importaciones con cointegración; exportaciones solo indicativo en largo plazo. \\
 Johansen / VECM & PIB: 3.535; TCR: 0.148; ajuste \(\Delta \ln M_t\): 0.088 & Rango 0; sin VECM principal & Extensión multivariada indicativa para importaciones; exportaciones se mantiene como VAR en diferencias. \\
-Berrettoni y Castresana (2008) & \pendiente{} & \pendiente{} & \pendiente{} \\
-Bus y Nicolini-Llosa (2007) & \pendiente{} & No aplica & \pendiente{} \\
-Zack y Sotelsek (2016) & \pendiente{} & \pendiente{} & \pendiente{} \\
-Song, Witt y Li (2008) & No aplica directo & No aplica directo & Referencia metodológica para demanda y modelos dinámicos. \\
+Berrettoni y Castresana (2008) & PIB: 2.76; TCR: -0.34; corto plazo PIB: 2.88; TCR: -0.21 & PIB socios: 1.84; TCR: 0.30; corto plazo PIB socios: 1.56; TCR: 0.08 & MCE para 1993--2008; comercio responde más al ingreso que al TCR, con mayor elasticidad ingreso en importaciones. \\
+Bus y Nicolini-Llosa (2007) & \pendiente{} & No aplica & Referencia mencionada en el assignment; falta revisar el artículo exacto. \\
+Duarte, Nicolini-Llosa y Payá (2007) & PIB: 3.52; TCR: -0.36 (EG); PIB: 3.29; TCR: -0.56 (Johansen); corto plazo PIB: 2.38; TCR: -0.15; ajuste: -0.23 & No aplica & Demanda agregada de importaciones, 1970Q1--2005Q4; PDF disponible relacionado, pero distinto de la cita Bus y Nicolini-Llosa del assignment. \\
+Zack y Sotelsek (2016) & Demanda global: 1.72; TCR: -0.30; corto plazo demanda: 3.21; TCR: -0.28; ajuste: -0.15 & Demanda socios: 0.85; TCR: 0.07; corto plazo demanda rez. 3: 1.50; TCR rez. 5: 0.13; ajuste: -0.80 & MCE agregado y por socios, 1996--2013; importaciones tienen elasticidad ingreso casi doble que exportaciones y el TCR tiene efecto limitado. \\
+Song, Witt y Li (2008) & No aplica directo & No aplica directo & Referencia metodológica: demanda, elasticidades, cointegración, ECM, VAR/VEC, IRF y pronóstico; no estima comercio argentino. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1461,7 +1633,13 @@ Revista del CEI: Comercio Exterior e Integración, Nro. 16, 85--97.
 \bibitem{bus_nicolini_llosa_2007}
 Bus, A. G. y Nicolini-Llosa, J. L. (2007).
 \textit{Importaciones de Argentina, una estimación econométrica}.
-XLII Reunión Anual de la Asociación Argentina de Economía Política.
+XLII Reunión Anual de la Asociación Argentina de Economía Política, Bahía
+Blanca, 14--16 de noviembre.
+
+\bibitem{duarte_nicolini_llosa_paya_2007}
+Duarte, A., Nicolini-Llosa, J. L. y Payá, I. (2007).
+\textit{Estimating Argentina's imports elasticities}.
+Lancaster University Management School Working Paper 2007/009.
 
 \bibitem{enders_2014}
 Enders, W. (2014).
@@ -1558,16 +1736,30 @@ Variable & Obs. panel completo & Obs. muestra base \\
 \autoref{tab:outputs-fase-base} enumera los archivos generados por el script
 maestro y el contenido de cada salida reproducible.
 
-\begin{table}[H]
-\centering
-\caption{Archivos generados por el script maestro.}
-\label{tab:outputs-fase-base}
+\begingroup
 \scriptsize
-\begin{tabular}{>{\raggedright\arraybackslash}p{6.1cm}>{\raggedright\arraybackslash}p{7.7cm}}
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{5.8cm}>{\raggedright\arraybackslash}p{7.9cm}}
+\caption{Archivos generados por el script maestro.}
+\label{tab:outputs-fase-base}\\
 \toprule
 Archivo & Contenido \\
 \midrule
+\endfirsthead
+\caption[]{Archivos generados por el script maestro (continuación).}\\
+\toprule
+Archivo & Contenido \\
+\midrule
+\endhead
+\midrule
+\multicolumn{2}{r}{\footnotesize Continúa en la página siguiente.}\\
+\endfoot
+\bottomrule
+\endlastfoot
 \path{00_setup/section_00_course_scripts_status.csv} & Estado de carga de scripts auxiliares provistos en clase \\
+\path{00_setup/section_00_course_packages_status.csv} & Estado de disponibilidad de paquetes utilizados durante la cursada \\
+\path{00_setup/section_00_course_workflow_alignment.csv} & Mapa de alineación entre arquitectura docente y bloques del script maestro \\
 \path{01_data_descriptives/section_01_outputs_manifest.csv} & Índice de salidas CSV generadas por el script maestro \\
 \path{01_data_descriptives/section_01_model_sample.csv} & Definición de muestra de trabajo \\
 \path{01_data_descriptives/section_01_variable_check.csv} & Verificación de variables requeridas \\
@@ -1605,9 +1797,19 @@ Archivo & Contenido \\
 \path{06_vecm_decisions/section_06_vecm_adjustment_coefficients.csv} & Coeficientes de ajuste del VECM de importaciones \\
 \path{06_vecm_decisions/section_06_vecm_short_run_summary.csv} & Coeficientes determinísticos y de corto plazo del VECM de importaciones \\
 \path{06_vecm_decisions/section_06_feedback_audit.csv} & Auditoría de retroalimentación entre diagnósticos y bloques posteriores \\
-\bottomrule
-\end{tabular}
-\end{table}
+\path{07_var_differences/section_07_var_diff_model_summary.csv} & Resumen del VAR en diferencias de exportaciones \\
+\path{07_var_differences/section_07_var_diff_exports_equation_coefficients.csv} & Coeficientes de la ecuación de exportaciones del VAR en diferencias \\
+\path{07_var_differences/section_07_var_diff_diagnostics.csv} & Diagnósticos del VAR en diferencias: autocorrelación, ARCH, normalidad y estabilidad \\
+\path{07_var_differences/section_07_var_diff_stability_roots.csv} & Raíces de estabilidad del VAR en diferencias de exportaciones \\
+\path{08_final_diagnostics/section_08_normality_stability_summary.csv} & Resumen final de normalidad multivariada y estabilidad por modelo \\
+\path{09_wickens_breusch/section_09_wickens_breusch_long_run_coefficients.csv} & Contraste de elasticidades de largo plazo Engle-Granger y Wickens-Breusch \\
+\path{10_class_extensions/section_10_class_irf_results.csv} & Funciones impulso-respuesta acumuladas con \texttt{vars::irf} \\
+\path{10_class_extensions/section_10_class_fevd_results.csv} & Descomposición de varianza con \texttt{vars::fevd} \\
+\path{10_class_extensions/section_10_class_svar_status.csv} & Estado del ejercicio SVAR con \texttt{vars::SVAR} y \texttt{svars} disponible \\
+\path{10_class_extensions/section_10_class_lpirfs_status.csv} & Estado del ejercicio de proyecciones locales con \texttt{lpirfs::lp\_lin} \\
+\path{10_class_extensions/section_10_class_extensions_summary.csv} & Resumen de extensiones de clase IRF, FEVD, SVAR y LPIRF \\
+\end{longtable}
+\endgroup
 
 \autoref{tab:auditoria-retroalimentacion} verifica que el rezago final ajustado
 por diagnóstico residual se utiliza efectivamente en los bloques posteriores del
@@ -1660,9 +1862,12 @@ Variables transformadas a logaritmos & Ejecutado \\
 Pruebas ADF ejecutadas & Ejecutado; contrastado con \texttt{Test.ADF.Ver.3.R} \\
 Engle-Granger replicado & Ejecutado \\
 Johansen estimado & Ejecutado \\
-VECM o VAR en diferencias estimado & Parcial \\
+VECM o VAR en diferencias estimado & Ejecutado; VECM indicativo para importaciones y VAR en diferencias para exportaciones \\
 Diagnósticos post-estimación revisados & Ejecutado; incluye \texttt{vcorr\_res.R}, White no-cross y Wald de rezagos \\
-Tablas y figuras exportadas & Parcial \\
+Paquetes de cursada verificados & Ejecutado; ver \path{00_setup/section_00_course_packages_status.csv} \\
+Arquitectura docente mapeada & Ejecutado; ver \path{00_setup/section_00_course_workflow_alignment.csv} \\
+Extensiones IRF/SVAR/LPIRF de clase & Incorporadas como ejercicios indicativos en el script maestro \\
+Tablas y figuras exportadas & Ejecutado \\
 Script principal corre sin interrupciones & Ejecutado \\
 \bottomrule
 \end{tabular}
@@ -1685,7 +1890,7 @@ Herramienta solicitada & Estado & Uso en el informe \\
 \texttt{vcorr\_res.R} & Cargado & Diagnóstico de autocorrelación y retroalimentación de rezagos VAR. \\
 \texttt{VAR\_white\_no\_cross.R} & Cargado & Test White no-cross de heterocedasticidad residual. \\
 \texttt{VAR\_lag\_exclusion\_wald.R} & Cargado & Test Wald de exclusión conjunta de rezagos. \\
-Paquetes \texttt{svar}, \texttt{urca} y \texttt{lpirfs} & \texttt{urca} usado; \texttt{svar}/\texttt{lpirfs} pendientes según alcance final & Johansen/VEC, ejercicios estructurales o impulso-respuesta si se incorporan. \\
+Paquetes utilizados durante la cursada & Verificados por el script maestro & Incluye \texttt{dynlm}, \texttt{forecast}, \texttt{ivreg}, \texttt{lmtest}, \texttt{lpirfs}, \texttt{mFilter}, \texttt{nlme}, \texttt{readxl}, \texttt{sandwich}, \texttt{sarima}, \texttt{seasonal}, \texttt{strucchangeRcpp}, \texttt{urca}, \texttt{vars} y \texttt{svars}. La mención \texttt{svar} de la consigna se cubre con \texttt{svars} y con las rutinas SVAR de \texttt{vars}. \\
 \bottomrule
 \end{tabular}
 \end{table}

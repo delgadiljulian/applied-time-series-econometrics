@@ -39,7 +39,9 @@ extra_lib_paths <- c(
   if (nzchar(user_r_lib) && dir.exists(user_r_lib)) user_r_lib
 )
 loaded_package_namespaces <- c(
-  "zoo", "dynlm", "urca", "vars", "strucchange", "sandwich", "lmtest"
+  "zoo", "dynlm", "forecast", "ivreg", "lmtest", "lpirfs",
+  "mFilter", "nlme", "readxl", "sandwich", "sarima", "seasonal",
+  "strucchange", "strucchangeRcpp", "urca", "vars", "svars"
 )
 
 if (any(vapply(loaded_package_namespaces, isNamespaceLoaded, logical(1)))) {
@@ -69,7 +71,11 @@ output_subdirs <- c(
   section_03 = "03_var_lags",
   section_04 = "04_johansen_diagnostics",
   section_05 = "05_engle_granger_ecm",
-  section_06 = "06_vecm_decisions"
+  section_06 = "06_vecm_decisions",
+  section_07 = "07_var_differences",
+  section_08 = "08_final_diagnostics",
+  section_09 = "09_wickens_breusch",
+  section_10 = "10_class_extensions"
 )
 
 # se crea la carpeta necesaria si todavia no existe.
@@ -105,7 +111,182 @@ output_relative_path <- function(file_name) {
 }
 
 #********************************************************
-# 1A. Scripts auxiliares de clase
+# 1A. Paquetes utilizados durante la cursada
+#********************************************************
+# se listan los paquetes observados en los scripts teorico-practicos locales y
+# el equivalente CRAN para la mencion SVAR de la consigna.
+course_packages <- data.frame(
+  package = c(
+    "dynlm", "forecast", "ivreg", "lmtest", "lpirfs",
+    "mFilter", "nlme", "readxl", "sandwich", "sarima",
+    "seasonal", "strucchangeRcpp", "urca", "vars", "svars"
+  ),
+  source = c(
+    "clase_01, clase_04, clase_05, clase_06",
+    "clase_03, clase_04",
+    "clase_01",
+    "clase_01, clase_02, clase_03, clase_04",
+    "clase_11",
+    "clase_09",
+    "clase_01",
+    "clase_01, clase_04, clase_09",
+    "clase_01",
+    "clase_04",
+    "clase_09",
+    "clase_06",
+    "clase_03, clase_04, clase_05, clase_06, clase_10, clase_11",
+    "clase_07, clase_08, clase_09, clase_10, clase_11",
+    "consigna TP3: paquete SVAR disponible en CRAN como svars"
+  ),
+  role = c(
+    "Modelos dinamicos y ADF de clase",
+    "ARIMA y pronosticos Box-Jenkins",
+    "Variables instrumentales",
+    "Contrastes y diagnosticos de regresion",
+    "Proyecciones locales e IRF",
+    "Filtro Hodrick-Prescott",
+    "Modelos GLS y maxima verosimilitud",
+    "Lectura de planillas Excel",
+    "Errores estandar robustos",
+    "Modelos SARIMA",
+    "Ajuste estacional",
+    "Quiebres estructurales con implementacion Rcpp",
+    "Raices unitarias, Engle-Granger y Johansen",
+    "VAR, VEC, IRF y SVAR de clase",
+    "Modelos SVAR del ecosistema CRAN"
+  ),
+  required_for_alignment = c(
+    rep(TRUE, 14),
+    FALSE
+  ),
+  stringsAsFactors = FALSE
+)
+
+package_available <- vapply(
+  course_packages$package,
+  requireNamespace,
+  logical(1),
+  quietly = TRUE
+)
+
+package_version <- vapply(
+  course_packages$package,
+  function(pkg) {
+    if (requireNamespace(pkg, quietly = TRUE)) {
+      as.character(utils::packageVersion(pkg))
+    } else {
+      NA_character_
+    }
+  },
+  character(1)
+)
+
+course_packages_status <- data.frame(
+  course_packages,
+  installed = unname(package_available),
+  version = unname(package_version),
+  status = ifelse(package_available, "available", "missing"),
+  stringsAsFactors = FALSE
+)
+
+missing_course_packages <- course_packages_status$package[
+  !course_packages_status$installed &
+    course_packages_status$required_for_alignment
+]
+
+if (length(missing_course_packages) > 0) {
+  stop(
+    "Faltan paquetes utilizados durante la cursada: ",
+    paste(missing_course_packages, collapse = ", "),
+    ". Revisar .libPaths() o instalarlos antes de ejecutar el script maestro."
+  )
+}
+
+# Como en los scripts de clase, se cargan explicitamente los paquetes usados en
+# la cursada. Las llamadas se mantienen separadas para que la consola de RStudio
+# muestre con claridad que el entorno reproduce el de trabajo.
+suppressPackageStartupMessages(library(dynlm))
+suppressPackageStartupMessages(library(forecast))
+suppressPackageStartupMessages(library(ivreg))
+suppressPackageStartupMessages(library(lmtest))
+suppressPackageStartupMessages(library(lpirfs))
+suppressPackageStartupMessages(library(mFilter))
+suppressPackageStartupMessages(library(nlme))
+suppressPackageStartupMessages(library(readxl))
+suppressPackageStartupMessages(library(sandwich))
+suppressPackageStartupMessages(library(sarima))
+suppressPackageStartupMessages(library(seasonal))
+suppressPackageStartupMessages(library(strucchangeRcpp))
+suppressPackageStartupMessages(library(urca))
+suppressPackageStartupMessages(library(vars))
+if (requireNamespace("svars", quietly = TRUE)) {
+  suppressPackageStartupMessages(library(svars))
+}
+
+# se documenta la arquitectura docente que organiza el script maestro.
+course_workflow_alignment <- data.frame(
+  step = seq_len(12),
+  class_workflow = c(
+    "Cargar paquetes de la cursada con library()",
+    "Cargar datos y convertir a objetos ts",
+    "Graficar niveles y diferencias",
+    "Evaluar raices unitarias con ADF de clase",
+    "Estimar Engle-Granger y ECM",
+    "Contrastar Wickens-Breusch",
+    "Seleccionar rezagos con VARselect y estimar VAR",
+    "Aplicar diagnosticos VAR de clase",
+    "Estimar Johansen con ca.jo",
+    "Recuperar VEC con cajorls",
+    "Usar VAR en diferencias si no hay cointegracion",
+    "Agregar extensiones IRF, FEVD, SVAR y LPIRF"
+  ),
+  teacher_reference = c(
+    "scripts clase_01 a clase_11",
+    "scripts VAR/VEC y ADF",
+    "scripts ADF, VAR y VEC",
+    "Test.ADF.Ver.3.R",
+    "clase_05_cointegracion_ecm",
+    "clase_05_cointegracion_ecm",
+    "clase_07_var",
+    "clase_07_var, clase_10_vec y scripts requeridos",
+    "clase_10_vec",
+    "clase_10_vec",
+    "clase_07_var y consigna TP3",
+    "clase_08_var_irf, clase_09_var_svar y clase_11_local_projections"
+  ),
+  script_block = c(
+    "1A. Paquetes utilizados durante la cursada",
+    "2. Carga de datos y muestra de trabajo",
+    "4. Analisis descriptivo",
+    "5B. ADF con script de clase",
+    "6. Engle-Granger y ECM",
+    "6A. Wickens-Breusch",
+    "7. Seleccion de rezagos VAR",
+    "8B/8C y Wald de exclusion",
+    "8. Cointegracion de Johansen",
+    "8D. Decisiones VECM/VAR",
+    "9. VAR en diferencias",
+    "10. Extensiones de clase"
+  ),
+  evidence_output = c(
+    "00_setup/section_00_course_packages_status.csv",
+    "01_data_descriptives/section_01_model_sample.csv",
+    "figures/figure_01*_log_levels.png y figures/figure_02*_log_differences.png",
+    "02_unit_roots/section_02_course_adf_ver3_results.csv",
+    "05_engle_granger_ecm/section_05_*",
+    "09_wickens_breusch/section_09_wickens_breusch_long_run_coefficients.csv",
+    "03_var_lags/section_03_var_lag_selection.csv",
+    "03_var_lags/section_03_var_lag_exclusion_wald.csv y 04_johansen_diagnostics/section_04_course_*",
+    "04_johansen_diagnostics/section_04_johansen_*",
+    "06_vecm_decisions/section_06_vecm_*",
+    "07_var_differences/section_07_var_diff_*",
+    "10_class_extensions/section_10_class_*"
+  ),
+  stringsAsFactors = FALSE
+)
+
+#********************************************************
+# 1B. Scripts auxiliares de clase
 #********************************************************
 # se define la funcion auxiliar source_course_script.
 source_course_script <- function(file_name, required_packages = character(),
@@ -303,6 +484,20 @@ work_data <- panel_data[
 ]
 work_data <- work_data[order(work_data$quarter_date), ]
 
+# se construyen objetos ts como en los scripts de clase para que el recorrido
+# datos -> series de tiempo -> graficos -> ADF -> VAR/VEC sea transparente.
+work_ts_start <- c(work_data$year[1], work_data$q[1])
+ts_levels <- ts(
+  work_data[, required_level_vars],
+  start = work_ts_start,
+  frequency = 4
+)
+ts_differences <- ts(
+  work_data[, required_diff_vars],
+  start = work_ts_start,
+  frequency = 4
+)
+
 # se arma la tabla model_sample_definition con resultados de este paso.
 model_sample_definition <- data.frame(
   model_sample_start = min(work_data$quarter),
@@ -344,6 +539,18 @@ exports_system_data <- work_data[
   complete.cases(work_data[, exports_system_vars]),
   c(required_metadata_vars, exports_system_vars)
 ]
+
+# se replican los objetos ts por sistema que el docente usa antes de estimar VAR.
+imports_ts_levels <- ts(
+  imports_system_data[, imports_system_vars],
+  start = c(imports_system_data$year[1], imports_system_data$q[1]),
+  frequency = 4
+)
+exports_ts_levels <- ts(
+  exports_system_data[, exports_system_vars],
+  start = c(exports_system_data$year[1], exports_system_data$q[1]),
+  frequency = 4
+)
 
 # se arma la tabla system_sample_summary con resultados de este paso.
 system_sample_summary <- data.frame(
@@ -1213,7 +1420,541 @@ course_adf_results <- do.call(
 )
 
 #********************************************************
-# 6. Seleccion de rezagos VAR
+# 6. Engle-Granger y ECM
+#********************************************************
+# se define la funcion auxiliar format_model_formula.
+format_model_formula <- function(dependent_var, regressors) {
+  paste(dependent_var, "~", paste(regressors, collapse = " + "))
+}
+
+# se define la funcion auxiliar tidy_lm_coefficients_base.
+tidy_lm_coefficients_base <- function(fit, model_key, model_label, horizon) {
+  coef_table <- as.data.frame(summary(fit)$coefficients)
+  coef_table$term <- rownames(coef_table)
+  rownames(coef_table) <- NULL
+
+  # se ejecuta este bloque amplio del procedimiento.
+  data.frame(
+    model_key = model_key,
+    model_label = model_label,
+    horizon = horizon,
+    term = coef_table$term,
+    estimate = coef_table$Estimate,
+    std_error = coef_table$`Std. Error`,
+    t_statistic = coef_table$`t value`,
+    p_value = coef_table$`Pr(>|t|)`,
+    stringsAsFactors = FALSE
+  )
+}
+
+# se define la funcion auxiliar residual_adf_t_stat.
+residual_adf_t_stat <- function(residuals, lag_order) {
+  residuals <- as.numeric(residuals)
+  dy <- diff(residuals)
+  y_lag <- residuals[-length(residuals)]
+
+  # se arma la tabla adf_data con resultados de este paso.
+  adf_data <- data.frame(dy = dy, y_lag = y_lag)
+
+  # se evalua una condicion antes de decidir el siguiente paso.
+  if (lag_order > 0) {
+    for (lag_i in seq_len(lag_order)) {
+      adf_data[[paste0("dy_lag", lag_i)]] <- c(
+        rep(NA_real_, lag_i),
+        dy[seq_len(length(dy) - lag_i)]
+      )
+    }
+  }
+
+  # se calcula adf_data para usarlo en el paso siguiente.
+  adf_data <- adf_data[complete.cases(adf_data), ]
+
+  # se construye rhs con las instrucciones de este minibloque.
+  rhs <- if (lag_order > 0) {
+    paste(c("y_lag", paste0("dy_lag", seq_len(lag_order))), collapse = " + ")
+  } else {
+    "y_lag"
+  }
+
+  # se construye fit con las instrucciones de este minibloque.
+  fit <- lm(as.formula(paste0("dy ~ ", rhs, " - 1")), data = adf_data)
+  unname(summary(fit)$coefficients["y_lag", "t value"])
+}
+
+# se arma la tabla engle_granger_critical_values con resultados de este paso.
+engle_granger_critical_values <- data.frame(
+  q_series = c(2L, 2L, 2L, 3L, 3L, 3L),
+  reference_n_obs = c(50L, 100L, 200L, 50L, 100L, 200L),
+  critical_value_1pct = c(-4.32, -4.07, -4.00, -4.84, -4.45, -4.35),
+  critical_value_5pct = c(-3.67, -3.37, -3.37, -4.11, -3.93, -3.78),
+  critical_value_10pct = c(-3.28, -3.03, -3.02, -3.73, -3.59, -3.47),
+  stringsAsFactors = FALSE
+)
+
+# Run Engle-Granger: estima la relacion de largo plazo, guarda residuos y aplica
+# el ADF residual que define si corresponde continuar con un ECM.
+# se define la funcion auxiliar run_engle_granger.
+run_engle_granger <- function(data, model_key, model_label, dependent_var,
+                              regressors) {
+  model_vars <- c(dependent_var, regressors)
+  model_data <- data[complete.cases(data[, model_vars]), c(required_metadata_vars, model_vars)]
+  model_data <- model_data[order(model_data$quarter_date), ]
+
+  # se construye fit mediante un bloque de calculo extendido.
+  fit <- lm(reformulate(regressors, response = dependent_var), data = model_data)
+  residuals <- resid(fit)
+  n_obs <- length(residuals)
+  adf_lag <- trunc((n_obs - 1)^(1 / 3))
+  statistic <- residual_adf_t_stat(residuals, adf_lag)
+  q_series <- length(regressors) + 1L
+  reference_n_obs <- engle_granger_critical_values$reference_n_obs[
+    which.min(abs(engle_granger_critical_values$reference_n_obs - n_obs))
+  ]
+  critical_row <- engle_granger_critical_values[
+    engle_granger_critical_values$q_series == q_series &
+      engle_granger_critical_values$reference_n_obs == reference_n_obs,
+  ]
+
+  # se ejecuta este bloque amplio del procedimiento.
+  list(
+    fit = fit,
+    residuals = data.frame(
+      quarter = model_data$quarter,
+      quarter_date = model_data$quarter_date,
+      model_key = model_key,
+      residual = residuals,
+      stringsAsFactors = FALSE
+    ),
+    equation = data.frame(
+      model_key = model_key,
+      model_label = model_label,
+      method = "Engle-Granger first-stage OLS",
+      formula = format_model_formula(dependent_var, regressors),
+      n_obs = n_obs,
+      first_quarter = min(model_data$quarter),
+      last_quarter = max(model_data$quarter),
+      r_squared = summary(fit)$r.squared,
+      adj_r_squared = summary(fit)$adj.r.squared,
+      stringsAsFactors = FALSE
+    ),
+    coefficients = tidy_lm_coefficients_base(
+      fit = fit,
+      model_key = model_key,
+      model_label = model_label,
+      horizon = "long_run"
+    ),
+    residual_test = data.frame(
+      model_key = model_key,
+      model_label = model_label,
+      method = "Engle-Granger residual ADF without constant",
+      n_obs = n_obs,
+      adf_lag = adf_lag,
+      q_series = q_series,
+      reference_n_obs = reference_n_obs,
+      statistic = statistic,
+      critical_value_1pct = critical_row$critical_value_1pct,
+      critical_value_5pct = critical_row$critical_value_5pct,
+      critical_value_10pct = critical_row$critical_value_10pct,
+      rejects_unit_root_5pct = statistic < critical_row$critical_value_5pct,
+      conclusion_5pct = ifelse(
+        statistic < critical_row$critical_value_5pct,
+        "residuos estacionarios; evidencia de cointegracion",
+        "no rechaza raiz unitaria en residuos"
+      ),
+      note = "Comparacion contra valores criticos Engle-Granger usados en clase.",
+      stringsAsFactors = FALSE
+    )
+  )
+}
+
+# se construye imports_engle_granger con las instrucciones de este minibloque.
+imports_engle_granger <- run_engle_granger(
+  data = work_data,
+  model_key = "imports",
+  model_label = "Importaciones: comercio, PIB argentino e ITCRM",
+  dependent_var = "ln_imports_real",
+  regressors = c("ln_gdp_real", "ln_itcrm")
+)
+
+# se construye exports_engle_granger con las instrucciones de este minibloque.
+exports_engle_granger <- run_engle_granger(
+  data = work_data,
+  model_key = "exports",
+  model_label = "Exportaciones: comercio, PIB socios e ITCRM",
+  dependent_var = "ln_exports_real",
+  regressors = c("ln_pib_socios", "ln_itcrm")
+)
+
+# se unen filas para formar engle_granger_equations.
+engle_granger_equations <- rbind(
+  imports_engle_granger$equation,
+  exports_engle_granger$equation
+)
+
+# se unen filas para formar engle_granger_long_run_coefficients.
+engle_granger_long_run_coefficients <- rbind(
+  imports_engle_granger$coefficients,
+  exports_engle_granger$coefficients
+)
+
+# se unen filas para formar engle_granger_residual_tests.
+engle_granger_residual_tests <- rbind(
+  imports_engle_granger$residual_test,
+  exports_engle_granger$residual_test
+)
+
+# se unen filas para formar engle_granger_residuals.
+engle_granger_residuals <- rbind(
+  imports_engle_granger$residuals,
+  exports_engle_granger$residuals
+)
+
+# se reorganiza la estructura de datos en residuals_wide.
+residuals_wide <- reshape(
+  engle_granger_residuals,
+  idvar = c("quarter", "quarter_date"),
+  timevar = "model_key",
+  direction = "wide"
+)
+names(residuals_wide) <- gsub("residual\\.", "resid_", names(residuals_wide))
+
+# se cruza informacion para construir modeling_data.
+modeling_data <- merge(
+  work_data,
+  residuals_wide[, c("quarter_date", "resid_imports", "resid_exports")],
+  by = "quarter_date",
+  all.x = TRUE
+)
+modeling_data <- modeling_data[order(modeling_data$quarter_date), ]
+modeling_data$l1_resid_imports <- c(NA_real_, modeling_data$resid_imports[-nrow(modeling_data)])
+modeling_data$l1_resid_exports <- c(NA_real_, modeling_data$resid_exports[-nrow(modeling_data)])
+
+# se arma la tabla engle_granger_decision con resultados de este paso.
+engle_granger_decision <- data.frame(
+  model_key = engle_granger_residual_tests$model_key,
+  model_label = engle_granger_residual_tests$model_label,
+  use_ecm = engle_granger_residual_tests$rejects_unit_root_5pct,
+  cointegration_evidence = engle_granger_residual_tests$conclusion_5pct,
+  next_step = ifelse(
+    engle_granger_residual_tests$rejects_unit_root_5pct,
+    "estimar ECM con residuo Engle-Granger rezagado",
+    "estimar modelo en primeras diferencias sin ECM"
+  ),
+  stringsAsFactors = FALSE
+)
+
+# Run de corto plazo: estima el modelo en diferencias y, cuando corresponde,
+# incorpora el termino de correccion de error rezagado.
+# se define la funcion auxiliar run_short_run_model.
+run_short_run_model <- function(data, model_key, model_label, dependent_var,
+                                regressors, model_type) {
+  model_vars <- c(dependent_var, regressors)
+  model_data <- data[complete.cases(data[, model_vars]), c(required_metadata_vars, model_vars)]
+  model_data <- model_data[order(model_data$quarter_date), ]
+  fit <- lm(reformulate(regressors, response = dependent_var), data = model_data)
+
+  # se ejecuta este bloque amplio del procedimiento.
+  list(
+    fit = fit,
+    summary = data.frame(
+      model_key = model_key,
+      model_label = model_label,
+      model_type = model_type,
+      formula = format_model_formula(dependent_var, regressors),
+      n_obs = nobs(fit),
+      first_quarter = min(model_data$quarter),
+      last_quarter = max(model_data$quarter),
+      r_squared = summary(fit)$r.squared,
+      adj_r_squared = summary(fit)$adj.r.squared,
+      aic = AIC(fit),
+      bic = BIC(fit),
+      stringsAsFactors = FALSE
+    ),
+    coefficients = tidy_lm_coefficients_base(
+      fit = fit,
+      model_key = model_key,
+      model_label = model_label,
+      horizon = model_type
+    )
+  )
+}
+
+# se construye imports_short_run mediante un bloque de calculo extendido.
+imports_short_run <- if (
+  engle_granger_decision$use_ecm[engle_granger_decision$model_key == "imports"]
+) {
+  run_short_run_model(
+    data = modeling_data,
+    model_key = "imports_ecm",
+    model_label = "Importaciones - ECM",
+    dependent_var = "d_ln_imports_real",
+    regressors = c("d_ln_gdp_real", "d_ln_itcrm", "l1_resid_imports"),
+    model_type = "ecm"
+  )
+} else {
+  run_short_run_model(
+    data = modeling_data,
+    model_key = "imports_diff",
+    model_label = "Importaciones - primeras diferencias",
+    dependent_var = "d_ln_imports_real",
+    regressors = c("d_ln_gdp_real", "d_ln_itcrm"),
+    model_type = "short_run_diff"
+  )
+}
+
+# se construye exports_short_run mediante un bloque de calculo extendido.
+exports_short_run <- if (
+  engle_granger_decision$use_ecm[engle_granger_decision$model_key == "exports"]
+) {
+  run_short_run_model(
+    data = modeling_data,
+    model_key = "exports_ecm",
+    model_label = "Exportaciones - ECM",
+    dependent_var = "d_ln_exports_real",
+    regressors = c("d_ln_pib_socios", "d_ln_itcrm", "l1_resid_exports"),
+    model_type = "ecm"
+  )
+} else {
+  run_short_run_model(
+    data = modeling_data,
+    model_key = "exports_diff",
+    model_label = "Exportaciones - primeras diferencias",
+    dependent_var = "d_ln_exports_real",
+    regressors = c("d_ln_pib_socios", "d_ln_itcrm", "d_ln_commodity_price_index"),
+    model_type = "short_run_diff"
+  )
+}
+
+# se unen filas para formar short_run_model_summary.
+short_run_model_summary <- rbind(
+  imports_short_run$summary,
+  exports_short_run$summary
+)
+
+# se unen filas para formar short_run_coefficients.
+short_run_coefficients <- rbind(
+  imports_short_run$coefficients,
+  exports_short_run$coefficients
+)
+
+# se construye ecm_adjustment_terms con las instrucciones de este minibloque.
+ecm_adjustment_terms <- short_run_coefficients[
+  short_run_coefficients$term %in% c("l1_resid_imports", "l1_resid_exports"),
+]
+
+# se arma la tabla ecm_adjustment_summary con resultados de este paso.
+ecm_adjustment_summary <- data.frame(
+  model_key = ecm_adjustment_terms$model_key,
+  model_label = ecm_adjustment_terms$model_label,
+  adjustment_term = ecm_adjustment_terms$term,
+  adjustment_coefficient = ecm_adjustment_terms$estimate,
+  p_value = ecm_adjustment_terms$p_value,
+  adjustment_percent_per_quarter = ifelse(
+    ecm_adjustment_terms$estimate < 0,
+    abs(ecm_adjustment_terms$estimate) * 100,
+    NA_real_
+  ),
+  interpretation = ifelse(
+    ecm_adjustment_terms$estimate < 0,
+    "corrige una fraccion del desequilibrio por trimestre",
+    "no presenta signo de correccion hacia equilibrio"
+  ),
+  stringsAsFactors = FALSE
+)
+
+# se arma la tabla eg_ecm_elasticity_summary con resultados de este paso.
+eg_ecm_elasticity_summary <- data.frame(
+  flow = c("Importaciones", "Importaciones", "Exportaciones", "Exportaciones"),
+  variable = c("PIB", "TCR", "PIB socios", "TCR"),
+  long_run_term = c("ln_gdp_real", "ln_itcrm", "ln_pib_socios", "ln_itcrm"),
+  short_run_term = c("d_ln_gdp_real", "d_ln_itcrm", "d_ln_pib_socios", "d_ln_itcrm"),
+  stringsAsFactors = FALSE
+)
+
+# se agrega o actualiza la columna long_run_estimate en eg_ecm_elasticity_summary.
+eg_ecm_elasticity_summary$long_run_estimate <- NA_real_
+eg_ecm_elasticity_summary$short_run_estimate <- NA_real_
+eg_ecm_elasticity_summary$interpretation <- NA_character_
+
+# se recorre cada elemento necesario para completar este paso.
+for (i in seq_len(nrow(eg_ecm_elasticity_summary))) {
+  flow_key <- ifelse(eg_ecm_elasticity_summary$flow[i] == "Importaciones", "imports", "exports")
+  long_run_model_key <- flow_key
+  short_run_model_prefix <- ifelse(flow_key == "imports", "imports_", "exports_")
+
+  # se ejecuta este minibloque del procedimiento.
+  eg_ecm_elasticity_summary$long_run_estimate[i] <-
+    engle_granger_long_run_coefficients$estimate[
+      engle_granger_long_run_coefficients$model_key == long_run_model_key &
+        engle_granger_long_run_coefficients$term == eg_ecm_elasticity_summary$long_run_term[i]
+    ][1]
+
+  # se ejecuta este minibloque del procedimiento.
+  eg_ecm_elasticity_summary$short_run_estimate[i] <-
+    short_run_coefficients$estimate[
+      grepl(short_run_model_prefix, short_run_coefficients$model_key) &
+        short_run_coefficients$term == eg_ecm_elasticity_summary$short_run_term[i]
+    ][1]
+}
+
+# se agrega o actualiza la columna interpretation en eg_ecm_elasticity_summary.
+eg_ecm_elasticity_summary$interpretation <- c(
+  "Elasticidad ingreso positiva; ECM estimado por evidencia de cointegracion.",
+  "Elasticidad cambiaria negativa; ECM estimado por evidencia de cointegracion.",
+  "Elasticidad de corto plazo en diferencias; largo plazo solo indicativo.",
+  "Elasticidad de corto plazo en diferencias; largo plazo solo indicativo."
+)
+
+#********************************************************
+# 6A. Contraste Wickens-Breusch para Engle-Granger
+#********************************************************
+# Wickens-Breusch se implementa como ECM no restringido para recuperar
+# elasticidades de largo plazo por cociente entre niveles rezagados.
+wb_modeling_data <- modeling_data
+wb_modeling_data$l1_ln_imports_real <- c(
+  NA_real_,
+  wb_modeling_data$ln_imports_real[-nrow(wb_modeling_data)]
+)
+wb_modeling_data$l1_ln_gdp_real <- c(
+  NA_real_,
+  wb_modeling_data$ln_gdp_real[-nrow(wb_modeling_data)]
+)
+wb_modeling_data$l1_ln_itcrm <- c(
+  NA_real_,
+  wb_modeling_data$ln_itcrm[-nrow(wb_modeling_data)]
+)
+
+# se define la funcion auxiliar get_eg_long_run_estimate.
+get_eg_long_run_estimate <- function(model_key, term) {
+  value <- engle_granger_long_run_coefficients$estimate[
+    engle_granger_long_run_coefficients$model_key == model_key &
+      engle_granger_long_run_coefficients$term == term
+  ]
+  if (length(value) == 0) {
+    return(NA_real_)
+  }
+  as.numeric(value[1])
+}
+
+# se define la funcion auxiliar run_wickens_breusch_imports.
+run_wickens_breusch_imports <- function(data) {
+  model_vars <- c(
+    "d_ln_imports_real",
+    "d_ln_gdp_real",
+    "d_ln_itcrm",
+    "l1_ln_imports_real",
+    "l1_ln_gdp_real",
+    "l1_ln_itcrm"
+  )
+  model_data <- data[complete.cases(data[, model_vars]), c(required_metadata_vars, model_vars)]
+  model_data <- model_data[order(model_data$quarter_date), ]
+
+  fit <- tryCatch(
+    lm(
+      d_ln_imports_real ~ d_ln_gdp_real + d_ln_itcrm +
+        l1_ln_imports_real + l1_ln_gdp_real + l1_ln_itcrm,
+      data = model_data
+    ),
+    error = function(e) e
+  )
+
+  if (inherits(fit, "error")) {
+    return(data.frame(
+      system = "imports",
+      model_key = "imports_wickens_breusch",
+      variable = c("PIB", "TCR"),
+      engle_granger_term = c("ln_gdp_real", "ln_itcrm"),
+      wickens_breusch_level_term = c("l1_ln_gdp_real", "l1_ln_itcrm"),
+      engle_granger_estimate = c(
+        get_eg_long_run_estimate("imports", "ln_gdp_real"),
+        get_eg_long_run_estimate("imports", "ln_itcrm")
+      ),
+      wickens_breusch_estimate = NA_real_,
+      adjustment_coefficient = NA_real_,
+      sign_consistency = NA_character_,
+      relative_difference_percent = NA_real_,
+      n_obs = nrow(model_data),
+      first_quarter = ifelse(nrow(model_data) > 0, min(model_data$quarter), NA_character_),
+      last_quarter = ifelse(nrow(model_data) > 0, max(model_data$quarter), NA_character_),
+      status = "model_error",
+      message = fit$message,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  coefficient_table <- coef(fit)
+  adjustment <- as.numeric(coefficient_table["l1_ln_imports_real"])
+  wb_gdp <- -as.numeric(coefficient_table["l1_ln_gdp_real"]) / adjustment
+  wb_itcrm <- -as.numeric(coefficient_table["l1_ln_itcrm"]) / adjustment
+  eg_values <- c(
+    get_eg_long_run_estimate("imports", "ln_gdp_real"),
+    get_eg_long_run_estimate("imports", "ln_itcrm")
+  )
+  wb_values <- c(wb_gdp, wb_itcrm)
+
+  data.frame(
+    system = "imports",
+    model_key = "imports_wickens_breusch",
+    variable = c("PIB", "TCR"),
+    engle_granger_term = c("ln_gdp_real", "ln_itcrm"),
+    wickens_breusch_level_term = c("l1_ln_gdp_real", "l1_ln_itcrm"),
+    engle_granger_estimate = eg_values,
+    wickens_breusch_estimate = wb_values,
+    adjustment_coefficient = adjustment,
+    sign_consistency = ifelse(sign(eg_values) == sign(wb_values), "mismo signo", "cambia signo"),
+    relative_difference_percent = ifelse(
+      is.finite(eg_values) & eg_values != 0,
+      100 * (wb_values - eg_values) / abs(eg_values),
+      NA_real_
+    ),
+    n_obs = nobs(fit),
+    first_quarter = min(model_data$quarter),
+    last_quarter = max(model_data$quarter),
+    status = "ok",
+    message = paste(
+      "Elasticidades Wickens-Breusch calculadas desde ECM no restringido:",
+      "-coeficiente de nivel explicativo rezagado dividido por coeficiente",
+      "de variable dependiente rezagada."
+    ),
+    stringsAsFactors = FALSE
+  )
+}
+
+wickens_breusch_imports <- run_wickens_breusch_imports(wb_modeling_data)
+
+wickens_breusch_exports_note <- data.frame(
+  system = "exports",
+  model_key = "exports_wickens_breusch",
+  variable = c("PIB socios", "TCR"),
+  engle_granger_term = c("ln_pib_socios", "ln_itcrm"),
+  wickens_breusch_level_term = NA_character_,
+  engle_granger_estimate = c(
+    get_eg_long_run_estimate("exports", "ln_pib_socios"),
+    get_eg_long_run_estimate("exports", "ln_itcrm")
+  ),
+  wickens_breusch_estimate = NA_real_,
+  adjustment_coefficient = NA_real_,
+  sign_consistency = NA_character_,
+  relative_difference_percent = NA_real_,
+  n_obs = NA_integer_,
+  first_quarter = NA_character_,
+  last_quarter = NA_character_,
+  status = "not_applicable",
+  message = paste(
+    "No se calcula como especificacion principal porque Engle-Granger no",
+    "respalda cointegracion para exportaciones; el resultado de largo plazo",
+    "se conserva solo como indicativo."
+  ),
+  stringsAsFactors = FALSE
+)
+
+wickens_breusch_long_run_coefficients <- rbind(
+  wickens_breusch_imports,
+  wickens_breusch_exports_note
+)
+
+#********************************************************
+# 7. Seleccion de rezagos VAR
 #********************************************************
 # se construye var_lag_max con las instrucciones de este minibloque.
 var_lag_max <- 8
@@ -1702,7 +2443,7 @@ var_lag_exclusion_wald_results <- rbind(
 
 #********************************************************
 #********************************************************
-# 7. Cointegracion de Johansen
+# 8. Cointegracion de Johansen
 #********************************************************
 # se fija la constante dentro de la relacion de cointegracion.
 johansen_ecdet <- "const"
@@ -2373,7 +3114,7 @@ vecm_short_run_summary <- clean_empty_inference_columns(
 )
 
 #********************************************************
-# 7B. Autocorrelacion residual con script de clase vcorr_res.R
+# 8B. Autocorrelacion residual con script de clase vcorr_res.R
 #********************************************************
 # Run autocorrelacion de clase: estima un VAR y aplica vcorr_res.R para obtener
 # diagnosticos Q/BG de residuos en el formato usado en clase.
@@ -2511,7 +3252,7 @@ course_vcorr_results <- do.call(
 )
 
 #********************************************************
-# 7C. Heterocedasticidad residual con script VAR_white_no_cross.R
+# 8C. Heterocedasticidad residual con script VAR_white_no_cross.R
 #********************************************************
 # Run White no-cross: aplica el test de heterocedasticidad pedido por la consigna.
 run_course_white_no_cross <- function(system_name, matrix_data, p, type) {
@@ -2628,391 +3369,8 @@ course_white_no_cross_results <- rbind(
 )
 
 #********************************************************
-# 8. Engle-Granger y ECM
+# 8D. Decisiones VECM/VAR con retroalimentacion diagnostica
 #********************************************************
-# se define la funcion auxiliar format_model_formula.
-format_model_formula <- function(dependent_var, regressors) {
-  paste(dependent_var, "~", paste(regressors, collapse = " + "))
-}
-
-# se define la funcion auxiliar tidy_lm_coefficients_base.
-tidy_lm_coefficients_base <- function(fit, model_key, model_label, horizon) {
-  coef_table <- as.data.frame(summary(fit)$coefficients)
-  coef_table$term <- rownames(coef_table)
-  rownames(coef_table) <- NULL
-
-  # se ejecuta este bloque amplio del procedimiento.
-  data.frame(
-    model_key = model_key,
-    model_label = model_label,
-    horizon = horizon,
-    term = coef_table$term,
-    estimate = coef_table$Estimate,
-    std_error = coef_table$`Std. Error`,
-    t_statistic = coef_table$`t value`,
-    p_value = coef_table$`Pr(>|t|)`,
-    stringsAsFactors = FALSE
-  )
-}
-
-# se define la funcion auxiliar residual_adf_t_stat.
-residual_adf_t_stat <- function(residuals, lag_order) {
-  residuals <- as.numeric(residuals)
-  dy <- diff(residuals)
-  y_lag <- residuals[-length(residuals)]
-
-  # se arma la tabla adf_data con resultados de este paso.
-  adf_data <- data.frame(dy = dy, y_lag = y_lag)
-
-  # se evalua una condicion antes de decidir el siguiente paso.
-  if (lag_order > 0) {
-    for (lag_i in seq_len(lag_order)) {
-      adf_data[[paste0("dy_lag", lag_i)]] <- c(
-        rep(NA_real_, lag_i),
-        dy[seq_len(length(dy) - lag_i)]
-      )
-    }
-  }
-
-  # se calcula adf_data para usarlo en el paso siguiente.
-  adf_data <- adf_data[complete.cases(adf_data), ]
-
-  # se construye rhs con las instrucciones de este minibloque.
-  rhs <- if (lag_order > 0) {
-    paste(c("y_lag", paste0("dy_lag", seq_len(lag_order))), collapse = " + ")
-  } else {
-    "y_lag"
-  }
-
-  # se construye fit con las instrucciones de este minibloque.
-  fit <- lm(as.formula(paste0("dy ~ ", rhs, " - 1")), data = adf_data)
-  unname(summary(fit)$coefficients["y_lag", "t value"])
-}
-
-# se arma la tabla engle_granger_critical_values con resultados de este paso.
-engle_granger_critical_values <- data.frame(
-  q_series = c(2L, 2L, 2L, 3L, 3L, 3L),
-  reference_n_obs = c(50L, 100L, 200L, 50L, 100L, 200L),
-  critical_value_1pct = c(-4.32, -4.07, -4.00, -4.84, -4.45, -4.35),
-  critical_value_5pct = c(-3.67, -3.37, -3.37, -4.11, -3.93, -3.78),
-  critical_value_10pct = c(-3.28, -3.03, -3.02, -3.73, -3.59, -3.47),
-  stringsAsFactors = FALSE
-)
-
-# Run Engle-Granger: estima la relacion de largo plazo, guarda residuos y aplica
-# el ADF residual que define si corresponde continuar con un ECM.
-# se define la funcion auxiliar run_engle_granger.
-run_engle_granger <- function(data, model_key, model_label, dependent_var,
-                              regressors) {
-  model_vars <- c(dependent_var, regressors)
-  model_data <- data[complete.cases(data[, model_vars]), c(required_metadata_vars, model_vars)]
-  model_data <- model_data[order(model_data$quarter_date), ]
-
-  # se construye fit mediante un bloque de calculo extendido.
-  fit <- lm(reformulate(regressors, response = dependent_var), data = model_data)
-  residuals <- resid(fit)
-  n_obs <- length(residuals)
-  adf_lag <- trunc((n_obs - 1)^(1 / 3))
-  statistic <- residual_adf_t_stat(residuals, adf_lag)
-  q_series <- length(regressors) + 1L
-  reference_n_obs <- engle_granger_critical_values$reference_n_obs[
-    which.min(abs(engle_granger_critical_values$reference_n_obs - n_obs))
-  ]
-  critical_row <- engle_granger_critical_values[
-    engle_granger_critical_values$q_series == q_series &
-      engle_granger_critical_values$reference_n_obs == reference_n_obs,
-  ]
-
-  # se ejecuta este bloque amplio del procedimiento.
-  list(
-    fit = fit,
-    residuals = data.frame(
-      quarter = model_data$quarter,
-      quarter_date = model_data$quarter_date,
-      model_key = model_key,
-      residual = residuals,
-      stringsAsFactors = FALSE
-    ),
-    equation = data.frame(
-      model_key = model_key,
-      model_label = model_label,
-      method = "Engle-Granger first-stage OLS",
-      formula = format_model_formula(dependent_var, regressors),
-      n_obs = n_obs,
-      first_quarter = min(model_data$quarter),
-      last_quarter = max(model_data$quarter),
-      r_squared = summary(fit)$r.squared,
-      adj_r_squared = summary(fit)$adj.r.squared,
-      stringsAsFactors = FALSE
-    ),
-    coefficients = tidy_lm_coefficients_base(
-      fit = fit,
-      model_key = model_key,
-      model_label = model_label,
-      horizon = "long_run"
-    ),
-    residual_test = data.frame(
-      model_key = model_key,
-      model_label = model_label,
-      method = "Engle-Granger residual ADF without constant",
-      n_obs = n_obs,
-      adf_lag = adf_lag,
-      q_series = q_series,
-      reference_n_obs = reference_n_obs,
-      statistic = statistic,
-      critical_value_1pct = critical_row$critical_value_1pct,
-      critical_value_5pct = critical_row$critical_value_5pct,
-      critical_value_10pct = critical_row$critical_value_10pct,
-      rejects_unit_root_5pct = statistic < critical_row$critical_value_5pct,
-      conclusion_5pct = ifelse(
-        statistic < critical_row$critical_value_5pct,
-        "residuos estacionarios; evidencia de cointegracion",
-        "no rechaza raiz unitaria en residuos"
-      ),
-      note = "Comparacion contra valores criticos Engle-Granger usados en clase.",
-      stringsAsFactors = FALSE
-    )
-  )
-}
-
-# se construye imports_engle_granger con las instrucciones de este minibloque.
-imports_engle_granger <- run_engle_granger(
-  data = work_data,
-  model_key = "imports",
-  model_label = "Importaciones: comercio, PIB argentino e ITCRM",
-  dependent_var = "ln_imports_real",
-  regressors = c("ln_gdp_real", "ln_itcrm")
-)
-
-# se construye exports_engle_granger con las instrucciones de este minibloque.
-exports_engle_granger <- run_engle_granger(
-  data = work_data,
-  model_key = "exports",
-  model_label = "Exportaciones: comercio, PIB socios e ITCRM",
-  dependent_var = "ln_exports_real",
-  regressors = c("ln_pib_socios", "ln_itcrm")
-)
-
-# se unen filas para formar engle_granger_equations.
-engle_granger_equations <- rbind(
-  imports_engle_granger$equation,
-  exports_engle_granger$equation
-)
-
-# se unen filas para formar engle_granger_long_run_coefficients.
-engle_granger_long_run_coefficients <- rbind(
-  imports_engle_granger$coefficients,
-  exports_engle_granger$coefficients
-)
-
-# se unen filas para formar engle_granger_residual_tests.
-engle_granger_residual_tests <- rbind(
-  imports_engle_granger$residual_test,
-  exports_engle_granger$residual_test
-)
-
-# se unen filas para formar engle_granger_residuals.
-engle_granger_residuals <- rbind(
-  imports_engle_granger$residuals,
-  exports_engle_granger$residuals
-)
-
-# se reorganiza la estructura de datos en residuals_wide.
-residuals_wide <- reshape(
-  engle_granger_residuals,
-  idvar = c("quarter", "quarter_date"),
-  timevar = "model_key",
-  direction = "wide"
-)
-names(residuals_wide) <- gsub("residual\\.", "resid_", names(residuals_wide))
-
-# se cruza informacion para construir modeling_data.
-modeling_data <- merge(
-  work_data,
-  residuals_wide[, c("quarter_date", "resid_imports", "resid_exports")],
-  by = "quarter_date",
-  all.x = TRUE
-)
-modeling_data <- modeling_data[order(modeling_data$quarter_date), ]
-modeling_data$l1_resid_imports <- c(NA_real_, modeling_data$resid_imports[-nrow(modeling_data)])
-modeling_data$l1_resid_exports <- c(NA_real_, modeling_data$resid_exports[-nrow(modeling_data)])
-
-# se arma la tabla engle_granger_decision con resultados de este paso.
-engle_granger_decision <- data.frame(
-  model_key = engle_granger_residual_tests$model_key,
-  model_label = engle_granger_residual_tests$model_label,
-  use_ecm = engle_granger_residual_tests$rejects_unit_root_5pct,
-  cointegration_evidence = engle_granger_residual_tests$conclusion_5pct,
-  next_step = ifelse(
-    engle_granger_residual_tests$rejects_unit_root_5pct,
-    "estimar ECM con residuo Engle-Granger rezagado",
-    "estimar modelo en primeras diferencias sin ECM"
-  ),
-  stringsAsFactors = FALSE
-)
-
-# Run de corto plazo: estima el modelo en diferencias y, cuando corresponde,
-# incorpora el termino de correccion de error rezagado.
-# se define la funcion auxiliar run_short_run_model.
-run_short_run_model <- function(data, model_key, model_label, dependent_var,
-                                regressors, model_type) {
-  model_vars <- c(dependent_var, regressors)
-  model_data <- data[complete.cases(data[, model_vars]), c(required_metadata_vars, model_vars)]
-  model_data <- model_data[order(model_data$quarter_date), ]
-  fit <- lm(reformulate(regressors, response = dependent_var), data = model_data)
-
-  # se ejecuta este bloque amplio del procedimiento.
-  list(
-    fit = fit,
-    summary = data.frame(
-      model_key = model_key,
-      model_label = model_label,
-      model_type = model_type,
-      formula = format_model_formula(dependent_var, regressors),
-      n_obs = nobs(fit),
-      first_quarter = min(model_data$quarter),
-      last_quarter = max(model_data$quarter),
-      r_squared = summary(fit)$r.squared,
-      adj_r_squared = summary(fit)$adj.r.squared,
-      aic = AIC(fit),
-      bic = BIC(fit),
-      stringsAsFactors = FALSE
-    ),
-    coefficients = tidy_lm_coefficients_base(
-      fit = fit,
-      model_key = model_key,
-      model_label = model_label,
-      horizon = model_type
-    )
-  )
-}
-
-# se construye imports_short_run mediante un bloque de calculo extendido.
-imports_short_run <- if (
-  engle_granger_decision$use_ecm[engle_granger_decision$model_key == "imports"]
-) {
-  run_short_run_model(
-    data = modeling_data,
-    model_key = "imports_ecm",
-    model_label = "Importaciones - ECM",
-    dependent_var = "d_ln_imports_real",
-    regressors = c("d_ln_gdp_real", "d_ln_itcrm", "l1_resid_imports"),
-    model_type = "ecm"
-  )
-} else {
-  run_short_run_model(
-    data = modeling_data,
-    model_key = "imports_diff",
-    model_label = "Importaciones - primeras diferencias",
-    dependent_var = "d_ln_imports_real",
-    regressors = c("d_ln_gdp_real", "d_ln_itcrm"),
-    model_type = "short_run_diff"
-  )
-}
-
-# se construye exports_short_run mediante un bloque de calculo extendido.
-exports_short_run <- if (
-  engle_granger_decision$use_ecm[engle_granger_decision$model_key == "exports"]
-) {
-  run_short_run_model(
-    data = modeling_data,
-    model_key = "exports_ecm",
-    model_label = "Exportaciones - ECM",
-    dependent_var = "d_ln_exports_real",
-    regressors = c("d_ln_pib_socios", "d_ln_itcrm", "l1_resid_exports"),
-    model_type = "ecm"
-  )
-} else {
-  run_short_run_model(
-    data = modeling_data,
-    model_key = "exports_diff",
-    model_label = "Exportaciones - primeras diferencias",
-    dependent_var = "d_ln_exports_real",
-    regressors = c("d_ln_pib_socios", "d_ln_itcrm", "d_ln_commodity_price_index"),
-    model_type = "short_run_diff"
-  )
-}
-
-# se unen filas para formar short_run_model_summary.
-short_run_model_summary <- rbind(
-  imports_short_run$summary,
-  exports_short_run$summary
-)
-
-# se unen filas para formar short_run_coefficients.
-short_run_coefficients <- rbind(
-  imports_short_run$coefficients,
-  exports_short_run$coefficients
-)
-
-# se construye ecm_adjustment_terms con las instrucciones de este minibloque.
-ecm_adjustment_terms <- short_run_coefficients[
-  short_run_coefficients$term %in% c("l1_resid_imports", "l1_resid_exports"),
-]
-
-# se arma la tabla ecm_adjustment_summary con resultados de este paso.
-ecm_adjustment_summary <- data.frame(
-  model_key = ecm_adjustment_terms$model_key,
-  model_label = ecm_adjustment_terms$model_label,
-  adjustment_term = ecm_adjustment_terms$term,
-  adjustment_coefficient = ecm_adjustment_terms$estimate,
-  p_value = ecm_adjustment_terms$p_value,
-  adjustment_percent_per_quarter = ifelse(
-    ecm_adjustment_terms$estimate < 0,
-    abs(ecm_adjustment_terms$estimate) * 100,
-    NA_real_
-  ),
-  interpretation = ifelse(
-    ecm_adjustment_terms$estimate < 0,
-    "corrige una fraccion del desequilibrio por trimestre",
-    "no presenta signo de correccion hacia equilibrio"
-  ),
-  stringsAsFactors = FALSE
-)
-
-# se arma la tabla eg_ecm_elasticity_summary con resultados de este paso.
-eg_ecm_elasticity_summary <- data.frame(
-  flow = c("Importaciones", "Importaciones", "Exportaciones", "Exportaciones"),
-  variable = c("PIB", "TCR", "PIB socios", "TCR"),
-  long_run_term = c("ln_gdp_real", "ln_itcrm", "ln_pib_socios", "ln_itcrm"),
-  short_run_term = c("d_ln_gdp_real", "d_ln_itcrm", "d_ln_pib_socios", "d_ln_itcrm"),
-  stringsAsFactors = FALSE
-)
-
-# se agrega o actualiza la columna long_run_estimate en eg_ecm_elasticity_summary.
-eg_ecm_elasticity_summary$long_run_estimate <- NA_real_
-eg_ecm_elasticity_summary$short_run_estimate <- NA_real_
-eg_ecm_elasticity_summary$interpretation <- NA_character_
-
-# se recorre cada elemento necesario para completar este paso.
-for (i in seq_len(nrow(eg_ecm_elasticity_summary))) {
-  flow_key <- ifelse(eg_ecm_elasticity_summary$flow[i] == "Importaciones", "imports", "exports")
-  long_run_model_key <- flow_key
-  short_run_model_prefix <- ifelse(flow_key == "imports", "imports_", "exports_")
-
-  # se ejecuta este minibloque del procedimiento.
-  eg_ecm_elasticity_summary$long_run_estimate[i] <-
-    engle_granger_long_run_coefficients$estimate[
-      engle_granger_long_run_coefficients$model_key == long_run_model_key &
-        engle_granger_long_run_coefficients$term == eg_ecm_elasticity_summary$long_run_term[i]
-    ][1]
-
-  # se ejecuta este minibloque del procedimiento.
-  eg_ecm_elasticity_summary$short_run_estimate[i] <-
-    short_run_coefficients$estimate[
-      grepl(short_run_model_prefix, short_run_coefficients$model_key) &
-        short_run_coefficients$term == eg_ecm_elasticity_summary$short_run_term[i]
-    ][1]
-}
-
-# se agrega o actualiza la columna interpretation en eg_ecm_elasticity_summary.
-eg_ecm_elasticity_summary$interpretation <- c(
-  "Elasticidad ingreso positiva; ECM estimado por evidencia de cointegracion.",
-  "Elasticidad cambiaria negativa; ECM estimado por evidencia de cointegracion.",
-  "Elasticidad de corto plazo en diferencias; largo plazo solo indicativo.",
-  "Elasticidad de corto plazo en diferencias; largo plazo solo indicativo."
-)
-
 # se construye johansen_robustness_summary mediante un bloque de calculo extendido.
 johansen_robustness_summary <- johansen_rank_decision[, c(
   "system",
@@ -3260,7 +3618,677 @@ feedback_audit <- do.call(rbind, feedback_audit_rows)
 rownames(feedback_audit) <- NULL
 
 #********************************************************
-# 9. Exportacion
+# 9. VAR en diferencias para sistemas sin cointegracion robusta
+#********************************************************
+# se define el sistema operativo en diferencias para exportaciones.
+exports_var_diff_vars <- c(
+  "d_ln_exports_real",
+  "d_ln_pib_socios",
+  "d_ln_itcrm"
+)
+
+# se construye la matriz VAR en diferencias para exportaciones.
+exports_var_diff_matrix <- prepare_var_matrix(work_data, exports_var_diff_vars)
+exports_var_diff_lag <- get_preferred_var_lag("exports")
+exports_var_diff_type <- var_type
+
+# se estima el VAR en diferencias que opera como especificacion principal para
+# exportaciones cuando no se verifica cointegracion.
+exports_var_diff_fit <- tryCatch(
+  vars::VAR(
+    exports_var_diff_matrix,
+    p = exports_var_diff_lag,
+    type = exports_var_diff_type
+  ),
+  error = function(e) e
+)
+
+# se define la funcion auxiliar var_fit_failed_row.
+var_fit_failed_row <- function(system_name, model_key, stage, fit_error) {
+  data.frame(
+    system = system_name,
+    model_key = model_key,
+    stage = stage,
+    status = "var_error",
+    message = fit_error$message,
+    stringsAsFactors = FALSE
+  )
+}
+
+# se define la funcion auxiliar extract_var_equation_coefficients.
+extract_var_equation_coefficients <- function(fit, system_name, model_key,
+                                              equation_name) {
+  if (inherits(fit, "error")) {
+    return(var_fit_failed_row(system_name, model_key, "coefficients", fit))
+  }
+
+  fit_summary <- summary(fit)
+  equation_fit <- fit_summary$varresult[[equation_name]]
+  if (is.null(equation_fit)) {
+    return(data.frame(
+      system = system_name,
+      model_key = model_key,
+      equation = equation_name,
+      term = NA_character_,
+      estimate = NA_real_,
+      std_error = NA_real_,
+      statistic = NA_real_,
+      p_value = NA_real_,
+      status = "equation_not_found",
+      message = paste("No se encontro la ecuacion", equation_name),
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  coefficient_matrix <- if (is.list(equation_fit) &&
+                            is.matrix(equation_fit$coefficients)) {
+    equation_fit$coefficients
+  } else {
+    coef(summary(equation_fit))
+  }
+  coefficient_df <- data.frame(
+    system = system_name,
+    model_key = model_key,
+    equation = equation_name,
+    term = rownames(coefficient_matrix),
+    estimate = coefficient_matrix[, "Estimate"],
+    std_error = coefficient_matrix[, "Std. Error"],
+    statistic = coefficient_matrix[, "t value"],
+    p_value = coefficient_matrix[, "Pr(>|t|)"],
+    status = "ok",
+    message = "Coeficientes extraidos de la ecuacion de exportaciones del VAR en diferencias.",
+    stringsAsFactors = FALSE
+  )
+  rownames(coefficient_df) <- NULL
+  coefficient_df
+}
+
+# se define la funcion auxiliar extract_var_model_summary.
+extract_var_model_summary <- function(fit, system_name, model_key, matrix_data,
+                                      variables, lag, type) {
+  if (inherits(fit, "error")) {
+    return(var_fit_failed_row(system_name, model_key, "model_summary", fit))
+  }
+
+  data.frame(
+    system = system_name,
+    model_key = model_key,
+    variables = paste(variables, collapse = ", "),
+    var_lag = lag,
+    var_type = type,
+    n_input_obs = nrow(matrix_data),
+    n_estimation_obs = fit$obs,
+    first_quarter = work_data$quarter[
+      complete.cases(work_data[, variables])
+    ][1],
+    last_quarter = tail(
+      work_data$quarter[complete.cases(work_data[, variables])],
+      1
+    ),
+    status = "ok",
+    message = paste(
+      "VAR en diferencias estimado como especificacion operativa para",
+      "exportaciones sin cointegracion robusta."
+    ),
+    stringsAsFactors = FALSE
+  )
+}
+
+# se define la funcion auxiliar get_test_p_value.
+get_test_p_value <- function(test_object, path) {
+  value <- test_object
+  for (name in path) {
+    value <- value[[name]]
+    if (is.null(value)) {
+      return(NA_real_)
+    }
+  }
+  value <- as.numeric(value)
+  if (length(value) == 1) value else NA_real_
+}
+
+# se define la funcion auxiliar run_var_diff_diagnostics.
+run_var_diff_diagnostics <- function(fit, system_name, model_key,
+                                     diagnostic_lag = 12) {
+  if (inherits(fit, "error")) {
+    return(var_fit_failed_row(system_name, model_key, "diagnostics", fit))
+  }
+
+  lags_to_use <- min(diagnostic_lag, floor(fit$obs / 3))
+  pt_result <- tryCatch(
+    vars::serial.test(fit, lags.pt = lags_to_use, type = "PT.adjusted"),
+    error = function(e) e
+  )
+  bg_result <- tryCatch(
+    vars::serial.test(fit, lags.bg = lags_to_use, type = "BG"),
+    error = function(e) e
+  )
+  arch_result <- tryCatch(
+    vars::arch.test(fit, lags.multi = lags_to_use),
+    error = function(e) e
+  )
+  normality_result <- tryCatch(
+    vars::normality.test(fit),
+    error = function(e) e
+  )
+  root_values <- tryCatch(
+    vars::roots(fit, modulus = TRUE),
+    error = function(e) e
+  )
+
+  pt_p_value <- if (inherits(pt_result, "error")) {
+    NA_real_
+  } else {
+    as.numeric(pt_result$serial$p.value)
+  }
+  bg_p_value <- if (inherits(bg_result, "error")) {
+    NA_real_
+  } else {
+    as.numeric(bg_result$serial$p.value)
+  }
+  arch_p_value <- if (inherits(arch_result, "error")) {
+    NA_real_
+  } else {
+    get_test_p_value(arch_result, c("arch.mul", "p.value"))
+  }
+  jb_p_value <- if (inherits(normality_result, "error")) {
+    NA_real_
+  } else {
+    get_test_p_value(normality_result, c("jb.mul", "JB", "p.value"))
+  }
+  max_root_modulus <- if (inherits(root_values, "error")) {
+    NA_real_
+  } else {
+    max(as.numeric(root_values), na.rm = TRUE)
+  }
+
+  data.frame(
+    system = system_name,
+    model_key = model_key,
+    var_lag = fit$p,
+    diagnostic_lag = lags_to_use,
+    pt_adjusted_p_value = pt_p_value,
+    bg_p_value = bg_p_value,
+    arch_multivariate_p_value = arch_p_value,
+    jb_multivariate_p_value = jb_p_value,
+    max_root_modulus = max_root_modulus,
+    serial_pass_5pct = is.finite(pt_p_value) && is.finite(bg_p_value) &&
+      pt_p_value >= 0.05 && bg_p_value >= 0.05,
+    arch_pass_5pct = is.finite(arch_p_value) && arch_p_value >= 0.05,
+    normality_pass_5pct = is.finite(jb_p_value) && jb_p_value >= 0.05,
+    stability_pass = is.finite(max_root_modulus) && max_root_modulus < 1,
+    status = "ok",
+    message = paste(
+      "Diagnosticos VAR en diferencias: autocorrelacion, ARCH, normalidad",
+      "multivariada y estabilidad."
+    ),
+    stringsAsFactors = FALSE
+  )
+}
+
+# se define la funcion auxiliar extract_var_roots.
+extract_var_roots <- function(fit, system_name, model_key) {
+  if (inherits(fit, "error")) {
+    return(var_fit_failed_row(system_name, model_key, "roots", fit))
+  }
+
+  root_values <- tryCatch(
+    vars::roots(fit, modulus = TRUE),
+    error = function(e) e
+  )
+  if (inherits(root_values, "error")) {
+    return(var_fit_failed_row(system_name, model_key, "roots", root_values))
+  }
+
+  data.frame(
+    system = system_name,
+    model_key = model_key,
+    root_id = seq_along(root_values),
+    modulus = as.numeric(root_values),
+    stable_root = as.numeric(root_values) < 1,
+    status = "ok",
+    message = "Raices del VAR en diferencias; estabilidad si todos los modulos son menores que uno.",
+    stringsAsFactors = FALSE
+  )
+}
+
+var_diff_model_summary <- extract_var_model_summary(
+  fit = exports_var_diff_fit,
+  system_name = "exports",
+  model_key = "exports_var_diff",
+  matrix_data = exports_var_diff_matrix,
+  variables = exports_var_diff_vars,
+  lag = exports_var_diff_lag,
+  type = exports_var_diff_type
+)
+
+var_diff_exports_equation_coefficients <- extract_var_equation_coefficients(
+  fit = exports_var_diff_fit,
+  system_name = "exports",
+  model_key = "exports_var_diff",
+  equation_name = "d_ln_exports_real"
+)
+
+var_diff_diagnostics <- run_var_diff_diagnostics(
+  fit = exports_var_diff_fit,
+  system_name = "exports",
+  model_key = "exports_var_diff"
+)
+
+var_diff_stability_roots <- extract_var_roots(
+  fit = exports_var_diff_fit,
+  system_name = "exports",
+  model_key = "exports_var_diff"
+)
+
+#********************************************************
+# 9B. Diagnosticos finales de normalidad y estabilidad
+#********************************************************
+# se define la funcion auxiliar estimate_var_for_final_diagnostics.
+estimate_var_for_final_diagnostics <- function(matrix_data, p, type) {
+  tryCatch(
+    vars::VAR(matrix_data, p = p, type = type),
+    error = function(e) e
+  )
+}
+
+# se define la funcion auxiliar run_normality_stability_summary.
+run_normality_stability_summary <- function(system_name, model_key, model_label,
+                                            matrix_data, variables, p, type,
+                                            treatment_role, validity_note) {
+  fit <- estimate_var_for_final_diagnostics(matrix_data, p, type)
+
+  if (inherits(fit, "error")) {
+    return(data.frame(
+      system = system_name,
+      model_key = model_key,
+      model_label = model_label,
+      variables = paste(variables, collapse = ", "),
+      var_lag = p,
+      var_type = type,
+      treatment_role = treatment_role,
+      jb_multivariate_p_value = NA_real_,
+      normality_decision_5pct = NA_character_,
+      max_root_modulus = NA_real_,
+      stability_decision = NA_character_,
+      validity_note = validity_note,
+      status = "var_error",
+      message = fit$message,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  normality_result <- tryCatch(
+    vars::normality.test(fit),
+    error = function(e) e
+  )
+  root_values <- tryCatch(
+    vars::roots(fit, modulus = TRUE),
+    error = function(e) e
+  )
+
+  jb_p_value <- if (inherits(normality_result, "error")) {
+    NA_real_
+  } else {
+    get_test_p_value(normality_result, c("jb.mul", "JB", "p.value"))
+  }
+  max_root_modulus <- if (inherits(root_values, "error")) {
+    NA_real_
+  } else {
+    max(as.numeric(root_values), na.rm = TRUE)
+  }
+
+  normality_pass <- is.finite(jb_p_value) && jb_p_value >= 0.05
+  stability_pass <- is.finite(max_root_modulus) && max_root_modulus < 1
+
+  data.frame(
+    system = system_name,
+    model_key = model_key,
+    model_label = model_label,
+    variables = paste(variables, collapse = ", "),
+    var_lag = p,
+    var_type = type,
+    treatment_role = treatment_role,
+    jb_multivariate_p_value = jb_p_value,
+    normality_decision_5pct = ifelse(
+      normality_pass,
+      "no rechaza normalidad",
+      "rechaza normalidad"
+    ),
+    max_root_modulus = max_root_modulus,
+    stability_decision = ifelse(
+      stability_pass,
+      "estable",
+      "no estable"
+    ),
+    validity_note = validity_note,
+    status = "ok",
+    message = "Diagnostico final de normalidad multivariada y estabilidad VAR.",
+    stringsAsFactors = FALSE
+  )
+}
+
+normality_stability_summary <- rbind(
+  run_normality_stability_summary(
+    system_name = "imports",
+    model_key = "imports_levels_var_vec",
+    model_label = "Importaciones VAR/VEC en niveles",
+    matrix_data = imports_var_matrix,
+    variables = imports_system_vars,
+    p = get_preferred_var_lag("imports"),
+    type = var_type,
+    treatment_role = "VECM indicativo con ECM Engle-Granger como respaldo",
+    validity_note = paste(
+      "Johansen/VECM se reporta como extension multivariada; la lectura final",
+      "debe combinar normalidad, estabilidad y autocorrelacion residual."
+    )
+  ),
+  run_normality_stability_summary(
+    system_name = "exports",
+    model_key = "exports_levels_johansen_var",
+    model_label = "Exportaciones VAR/Johansen en niveles",
+    matrix_data = exports_var_matrix,
+    variables = exports_system_vars,
+    p = get_preferred_var_lag("exports"),
+    type = var_type,
+    treatment_role = "Ejercicio indicativo de Johansen en niveles",
+    validity_note = paste(
+      "Exportaciones no respalda cointegracion; el sistema en niveles se",
+      "conserva solo como ejercicio indicativo solicitado por la consigna."
+    )
+  ),
+  run_normality_stability_summary(
+    system_name = "exports",
+    model_key = "exports_var_diff",
+    model_label = "Exportaciones VAR en diferencias",
+    matrix_data = exports_var_diff_matrix,
+    variables = exports_var_diff_vars,
+    p = exports_var_diff_lag,
+    type = exports_var_diff_type,
+    treatment_role = "Especificacion operativa de corto plazo",
+    validity_note = paste(
+      "Modelo principal para exportaciones cuando no se verifica cointegracion;",
+      "sus coeficientes se interpretan como efectos dinamicos de corto plazo."
+    )
+  )
+)
+
+#********************************************************
+# 10. Extensiones de clase: IRF, FEVD, SVAR y LPIRF
+#********************************************************
+# Estos ejercicios reproducen la arquitectura de las clases VAR/IRF/SVAR y
+# proyecciones locales. Se reportan como extensiones indicativas y no sustituyen
+# la decision principal de VAR/VEC/ECM.
+class_extension_horizon <- 12
+
+# se define la funcion auxiliar extract_irf_table.
+extract_irf_table <- function(irf_object, system_name, model_key) {
+  if (inherits(irf_object, "error")) {
+    return(data.frame(
+      system = system_name,
+      model_key = model_key,
+      impulse = NA_character_,
+      response = NA_character_,
+      horizon = NA_integer_,
+      irf = NA_real_,
+      lower = NA_real_,
+      upper = NA_real_,
+      status = "irf_error",
+      message = irf_object$message,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  rows <- list()
+  for (impulse_name in names(irf_object$irf)) {
+    response_matrix <- as.matrix(irf_object$irf[[impulse_name]])
+    lower_matrix <- if (!is.null(irf_object$Lower[[impulse_name]])) {
+      as.matrix(irf_object$Lower[[impulse_name]])
+    } else {
+      matrix(NA_real_, nrow(response_matrix), ncol(response_matrix))
+    }
+    upper_matrix <- if (!is.null(irf_object$Upper[[impulse_name]])) {
+      as.matrix(irf_object$Upper[[impulse_name]])
+    } else {
+      matrix(NA_real_, nrow(response_matrix), ncol(response_matrix))
+    }
+    response_names <- colnames(response_matrix)
+    if (is.null(response_names)) {
+      response_names <- paste0("response_", seq_len(ncol(response_matrix)))
+    }
+
+    for (response_i in seq_len(ncol(response_matrix))) {
+      response_name <- response_names[response_i]
+      rows[[length(rows) + 1]] <- data.frame(
+        system = system_name,
+        model_key = model_key,
+        impulse = impulse_name,
+        response = response_name,
+        horizon = seq_len(nrow(response_matrix)) - 1L,
+        irf = as.numeric(response_matrix[, response_i]),
+        lower = as.numeric(lower_matrix[, response_i]),
+        upper = as.numeric(upper_matrix[, response_i]),
+        status = "ok",
+        message = "IRF calculada con vars::irf como en clase.",
+        stringsAsFactors = FALSE
+      )
+    }
+  }
+
+  do.call(rbind, rows)
+}
+
+# se define la funcion auxiliar extract_fevd_table.
+extract_fevd_table <- function(fevd_object, system_name, model_key) {
+  if (inherits(fevd_object, "error")) {
+    return(data.frame(
+      system = system_name,
+      model_key = model_key,
+      response = NA_character_,
+      shock = NA_character_,
+      horizon = NA_integer_,
+      share = NA_real_,
+      status = "fevd_error",
+      message = fevd_object$message,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  rows <- list()
+  for (response_name in names(fevd_object)) {
+    fevd_matrix <- as.matrix(fevd_object[[response_name]])
+    for (shock_name in colnames(fevd_matrix)) {
+      rows[[length(rows) + 1]] <- data.frame(
+        system = system_name,
+        model_key = model_key,
+        response = response_name,
+        shock = shock_name,
+        horizon = seq_len(nrow(fevd_matrix)),
+        share = as.numeric(fevd_matrix[, shock_name]),
+        status = "ok",
+        message = "Descomposicion de varianza calculada con vars::fevd como en clase.",
+        stringsAsFactors = FALSE
+      )
+    }
+  }
+
+  do.call(rbind, rows)
+}
+
+# se define la funcion auxiliar run_class_svar.
+run_class_svar <- function(fit, system_name, model_key) {
+  if (inherits(fit, "error")) {
+    return(data.frame(
+      system = system_name,
+      model_key = model_key,
+      variables = NA_character_,
+      identification = NA_character_,
+      status = "var_error",
+      message = fit$message,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  var_names <- fit$y.names
+  if (is.null(var_names) || length(var_names) == 0) {
+    var_names <- colnames(fit$y)
+  }
+  if (is.null(var_names) || length(var_names) == 0) {
+    var_names <- paste0("y", seq_len(ncol(fit$y)))
+  }
+
+  k_vars <- length(var_names)
+  amat <- diag(1, k_vars)
+  amat[lower.tri(amat)] <- NA
+
+  svar_fit <- tryCatch(
+    vars::SVAR(fit, estmethod = "scoring", Amat = amat),
+    error = function(e) e
+  )
+
+  if (inherits(svar_fit, "error")) {
+    return(data.frame(
+      system = system_name,
+      model_key = model_key,
+      variables = paste(var_names, collapse = ", "),
+      identification = "recursive A-model SVAR, lower-triangular A",
+      status = "svar_error",
+      message = svar_fit$message,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  data.frame(
+    system = system_name,
+    model_key = model_key,
+    variables = paste(var_names, collapse = ", "),
+    identification = "recursive A-model SVAR, lower-triangular A",
+    status = "ok",
+    message = "SVAR estimado con vars::SVAR; paquete svars disponible para extensiones SVAR.",
+    stringsAsFactors = FALSE
+  )
+}
+
+# se define la funcion auxiliar run_class_lpirfs.
+run_class_lpirfs <- function(matrix_data, system_name, model_key, lag_order,
+                             horizon) {
+  if (requireNamespace("doParallel", quietly = TRUE)) {
+    doParallel::stopImplicitCluster()
+  }
+  if (requireNamespace("foreach", quietly = TRUE)) {
+    foreach::registerDoSEQ()
+  }
+
+  lp_result <- tryCatch(
+    lpirfs::lp_lin(
+      endog_data = as.data.frame(matrix_data),
+      lags_endog_lin = lag_order,
+      trend = 0,
+      shock_type = 0,
+      confint = 1.96,
+      hor = horizon,
+      num_cores = 1
+    ),
+    error = function(e) e
+  )
+
+  if (inherits(lp_result, "error")) {
+    return(data.frame(
+      system = system_name,
+      model_key = model_key,
+      package = "lpirfs",
+      function_used = "lpirfs::lp_lin",
+      lag_order = lag_order,
+      horizon = horizon,
+      status = "lpirfs_error",
+      message = lp_result$message,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  data.frame(
+    system = system_name,
+    model_key = model_key,
+    package = "lpirfs",
+    function_used = "lpirfs::lp_lin",
+    lag_order = lag_order,
+    horizon = horizon,
+    status = "ok",
+    message = "Proyecciones locales calculadas con lpirfs::lp_lin como extension de clase.",
+    stringsAsFactors = FALSE
+  )
+}
+
+class_irf_object <- tryCatch(
+  vars::irf(
+    exports_var_diff_fit,
+    n.ahead = class_extension_horizon,
+    ortho = TRUE,
+    cumulative = TRUE,
+    boot = FALSE
+  ),
+  error = function(e) e
+)
+
+class_irf_results <- extract_irf_table(
+  class_irf_object,
+  system_name = "exports",
+  model_key = "exports_var_diff_class_irf"
+)
+
+class_fevd_object <- tryCatch(
+  vars::fevd(exports_var_diff_fit, n.ahead = class_extension_horizon),
+  error = function(e) e
+)
+
+class_fevd_results <- extract_fevd_table(
+  class_fevd_object,
+  system_name = "exports",
+  model_key = "exports_var_diff_class_fevd"
+)
+
+class_svar_status <- run_class_svar(
+  exports_var_diff_fit,
+  system_name = "exports",
+  model_key = "exports_var_diff_class_svar"
+)
+
+class_lpirfs_status <- run_class_lpirfs(
+  exports_var_diff_matrix,
+  system_name = "exports",
+  model_key = "exports_var_diff_class_lpirfs",
+  lag_order = exports_var_diff_lag,
+  horizon = class_extension_horizon
+)
+
+class_extensions_summary <- data.frame(
+  extension = c("IRF", "FEVD", "SVAR", "LPIRF"),
+  package = c("vars", "vars", "vars/svars", "lpirfs"),
+  function_used = c("vars::irf", "vars::fevd", "vars::SVAR", "lpirfs::lp_lin"),
+  system = "exports",
+  model_key = c(
+    "exports_var_diff_class_irf",
+    "exports_var_diff_class_fevd",
+    "exports_var_diff_class_svar",
+    "exports_var_diff_class_lpirfs"
+  ),
+  status = c(
+    unique(class_irf_results$status)[1],
+    unique(class_fevd_results$status)[1],
+    class_svar_status$status[1],
+    class_lpirfs_status$status[1]
+  ),
+  message = c(
+    unique(class_irf_results$message)[1],
+    unique(class_fevd_results$message)[1],
+    class_svar_status$message[1],
+    class_lpirfs_status$message[1]
+  ),
+  stringsAsFactors = FALSE
+)
+
+#********************************************************
+# 11. Exportacion
 #********************************************************
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
@@ -3290,6 +4318,22 @@ write.csv(
 write.csv(
   course_scripts_status,
   output_path("section_00_course_scripts_status.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  course_packages_status,
+  output_path("section_00_course_packages_status.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  course_workflow_alignment,
+  output_path("section_00_course_workflow_alignment.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -3558,10 +4602,100 @@ write.csv(
   fileEncoding = "UTF-8"
 )
 
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  var_diff_model_summary,
+  output_path("section_07_var_diff_model_summary.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  var_diff_exports_equation_coefficients,
+  output_path("section_07_var_diff_exports_equation_coefficients.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  var_diff_diagnostics,
+  output_path("section_07_var_diff_diagnostics.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  var_diff_stability_roots,
+  output_path("section_07_var_diff_stability_roots.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  normality_stability_summary,
+  output_path("section_08_normality_stability_summary.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  wickens_breusch_long_run_coefficients,
+  output_path("section_09_wickens_breusch_long_run_coefficients.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  class_irf_results,
+  output_path("section_10_class_irf_results.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  class_fevd_results,
+  output_path("section_10_class_fevd_results.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  class_svar_status,
+  output_path("section_10_class_svar_status.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  class_lpirfs_status,
+  output_path("section_10_class_lpirfs_status.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  class_extensions_summary,
+  output_path("section_10_class_extensions_summary.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
 # se arma la tabla output_manifest con resultados de este paso.
 output_manifest <- data.frame(
   file = c(
     "section_00_course_scripts_status.csv",
+    "section_00_course_packages_status.csv",
+    "section_00_course_workflow_alignment.csv",
     "section_01_outputs_manifest.csv",
     "section_01_model_sample.csv",
     "section_01_variable_check.csv",
@@ -3598,10 +4732,23 @@ output_manifest <- data.frame(
     "section_06_vecm_cointegration_vectors.csv",
     "section_06_vecm_adjustment_coefficients.csv",
     "section_06_vecm_short_run_summary.csv",
-    "section_06_feedback_audit.csv"
+    "section_06_feedback_audit.csv",
+    "section_07_var_diff_model_summary.csv",
+    "section_07_var_diff_exports_equation_coefficients.csv",
+    "section_07_var_diff_diagnostics.csv",
+    "section_07_var_diff_stability_roots.csv",
+    "section_08_normality_stability_summary.csv",
+    "section_09_wickens_breusch_long_run_coefficients.csv",
+    "section_10_class_irf_results.csv",
+    "section_10_class_fevd_results.csv",
+    "section_10_class_svar_status.csv",
+    "section_10_class_lpirfs_status.csv",
+    "section_10_class_extensions_summary.csv"
   ),
   description = c(
     "Estado de carga de scripts auxiliares provistos en clase",
+    "Estado de disponibilidad de paquetes utilizados durante la cursada",
+    "Mapa de alineacion entre arquitectura docente y bloques del script maestro",
     "Indice de salidas CSV generadas por el script maestro",
     "Definicion de muestra de trabajo",
     "Verificacion de variables requeridas",
@@ -3638,7 +4785,18 @@ output_manifest <- data.frame(
     "Vectores de cointegracion normalizados del VECM de importaciones",
     "Coeficientes de ajuste del VECM de importaciones",
     "Coeficientes deterministas y de corto plazo del VECM de importaciones",
-    "Auditoria de retroalimentacion entre diagnosticos y bloques posteriores"
+    "Auditoria de retroalimentacion entre diagnosticos y bloques posteriores",
+    "Resumen del VAR en diferencias de exportaciones como especificacion operativa",
+    "Coeficientes de la ecuacion de exportaciones del VAR en diferencias",
+    "Diagnosticos del VAR en diferencias: autocorrelacion, ARCH, normalidad y estabilidad",
+    "Raices de estabilidad del VAR en diferencias de exportaciones",
+    "Resumen final de normalidad multivariada y estabilidad por modelo",
+    "Contraste de elasticidades de largo plazo Engle-Granger y Wickens-Breusch",
+    "Funciones impulso-respuesta acumuladas calculadas con vars::irf",
+    "Descomposicion de varianza calculada con vars::fevd",
+    "Estado del ejercicio SVAR calculado con vars::SVAR y svars disponible",
+    "Estado del ejercicio de proyecciones locales calculado con lpirfs::lp_lin",
+    "Resumen de extensiones de clase IRF, FEVD, SVAR y LPIRF"
   ),
   stringsAsFactors = FALSE
 )
