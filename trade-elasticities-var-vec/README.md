@@ -109,23 +109,54 @@ model-ready panels are stored in `data/processed/`.
 
 ---
 
-## Tools
+## Course Tools and R Packages
 
-The empirical work will be developed in R.
+The empirical work is developed in R and follows the workflow used in the Time
+Series course. The master script checks the availability of the course packages
+and loads the auxiliary scripts provided in class.
 
-Likely packages include:
+### R packages used from the course workflow
 
-- `readxl`
-- `dplyr`
-- `ggplot2`
-- `urca`
-- `vars`
-- `tsDyn`
-- `tseries`
-- `lmtest`
-- `sandwich`
+- `dynlm`: dynamic linear models and class ADF workflows.
+- `forecast`: ARIMA and forecasting tools.
+- `ivreg`: instrumental variables routines.
+- `lmtest`: regression diagnostics and hypothesis tests.
+- `lpirfs`: local projections and impulse-response extensions.
+- `mFilter`: Hodrick-Prescott filtering.
+- `nlme`: GLS and maximum-likelihood models.
+- `readxl`: Excel input handling.
+- `sandwich`: robust covariance estimators.
+- `sarima`: SARIMA models.
+- `seasonal`: seasonal adjustment.
+- `strucchangeRcpp`: structural-break tools.
+- `urca`: unit roots, Engle-Granger, and Johansen cointegration.
+- `vars`: VAR, VECM-related workflows, IRF, FEVD, and SVAR routines.
 
-The final package list should be updated once the main script is developed.
+The assignment also references SVAR extensions. The script documents the
+availability of `svars` as an optional CRAN package, while the implemented SVAR
+checks rely on the available `vars` workflow.
+
+### Class scripts used
+
+The following scripts from the course are stored under `scripts/required/` and
+are loaded by the master script:
+
+- `Test.ADF_Ver.3.R`: class ADF unit-root test routine.
+- `vcorr_res.R`: residual autocorrelation diagnostics for VAR models.
+- `VAR_white_no_cross.R`: White no-cross heteroskedasticity test.
+- `VAR_lag_exclusion_wald.R`: Wald test for joint lag exclusion in VAR systems.
+
+The current load status of these scripts is exported by:
+
+```text
+outputs/00_setup/section_00_course_scripts_status.csv
+```
+
+The package availability check is exported by:
+
+```text
+outputs/00_setup/section_00_course_packages_status.csv
+```
 
 ---
 

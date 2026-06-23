@@ -2442,7 +2442,6 @@ var_lag_exclusion_wald_results <- rbind(
 )
 
 #********************************************************
-#********************************************************
 # 8. Cointegracion de Johansen
 #********************************************************
 # se fija la constante dentro de la relacion de cointegracion.
@@ -3747,6 +3746,19 @@ get_test_p_value <- function(test_object, path) {
   if (length(value) == 1) value else NA_real_
 }
 
+# se define la funcion auxiliar get_test_statistic_value.
+get_test_statistic_value <- function(test_object, path) {
+  value <- test_object
+  for (name in path) {
+    value <- value[[name]]
+    if (is.null(value)) {
+      return(NA_real_)
+    }
+  }
+  value <- as.numeric(value)
+  if (length(value) == 1) value else NA_real_
+}
+
 # se define la funcion auxiliar run_var_diff_diagnostics.
 run_var_diff_diagnostics <- function(fit, system_name, model_key,
                                      diagnostic_lag = 12) {
@@ -3781,20 +3793,40 @@ run_var_diff_diagnostics <- function(fit, system_name, model_key,
   } else {
     as.numeric(pt_result$serial$p.value)
   }
+  pt_statistic <- if (inherits(pt_result, "error")) {
+    NA_real_
+  } else {
+    as.numeric(pt_result$serial$statistic)
+  }
   bg_p_value <- if (inherits(bg_result, "error")) {
     NA_real_
   } else {
     as.numeric(bg_result$serial$p.value)
+  }
+  bg_statistic <- if (inherits(bg_result, "error")) {
+    NA_real_
+  } else {
+    as.numeric(bg_result$serial$statistic)
   }
   arch_p_value <- if (inherits(arch_result, "error")) {
     NA_real_
   } else {
     get_test_p_value(arch_result, c("arch.mul", "p.value"))
   }
+  arch_statistic <- if (inherits(arch_result, "error")) {
+    NA_real_
+  } else {
+    get_test_statistic_value(arch_result, c("arch.mul", "statistic"))
+  }
   jb_p_value <- if (inherits(normality_result, "error")) {
     NA_real_
   } else {
     get_test_p_value(normality_result, c("jb.mul", "JB", "p.value"))
+  }
+  jb_statistic <- if (inherits(normality_result, "error")) {
+    NA_real_
+  } else {
+    get_test_statistic_value(normality_result, c("jb.mul", "JB", "statistic"))
   }
   max_root_modulus <- if (inherits(root_values, "error")) {
     NA_real_
@@ -3807,9 +3839,13 @@ run_var_diff_diagnostics <- function(fit, system_name, model_key,
     model_key = model_key,
     var_lag = fit$p,
     diagnostic_lag = lags_to_use,
+    pt_adjusted_statistic = pt_statistic,
     pt_adjusted_p_value = pt_p_value,
+    bg_statistic = bg_statistic,
     bg_p_value = bg_p_value,
+    arch_multivariate_statistic = arch_statistic,
     arch_multivariate_p_value = arch_p_value,
+    jb_multivariate_statistic = jb_statistic,
     jb_multivariate_p_value = jb_p_value,
     max_root_modulus = max_root_modulus,
     serial_pass_5pct = is.finite(pt_p_value) && is.finite(bg_p_value) &&

@@ -3,8 +3,8 @@
 Applied time series econometrics project for estimating Argentina's foreign trade
 elasticities using cointegration methods and short-run dynamic models.
 
-The project corresponds to Practical Assignment 2 for the Time Series course in the
-Master's Program in Applied Economics at the University of Buenos Aires.
+The project corresponds to Practical Assignment 2 for the Time Series course in
+the Master's Program in Applied Economics at the University of Buenos Aires.
 
 ---
 
@@ -19,31 +19,33 @@ Master's Program in Applied Economics at the University of Buenos Aires.
 
 ## Overview
 
-This project studies the long-run and short-run relationships between Argentina's
-foreign trade flows and their macroeconomic determinants.
+This project studies the long-run and short-run relationships between
+Argentina's foreign trade flows and their macroeconomic determinants.
 
 The classical foreign trade equations relate:
 
 - Imports to domestic GDP and the real exchange rate.
 - Exports to global or trade-partner GDP and the real exchange rate.
 
-When variables are measured in natural logarithms, the estimated coefficients can be
-interpreted as trade elasticities. Because the relevant macroeconomic variables are
-typically non-stationary, the project focuses on testing for cointegration before
-interpreting long-run relationships.
+When variables are measured in natural logarithms, the estimated coefficients
+can be interpreted as trade elasticities. Because the relevant macroeconomic
+variables are typically non-stationary, the project tests for cointegration
+before interpreting long-run relationships.
 
 ---
 
 ## Main Objectives
 
-- Build a quarterly macroeconomic dataset for Argentina from 2004Q1 to 2025Q4.
+- Build a quarterly macroeconomic dataset for Argentina.
 - Analyze unit roots, integration order, and seasonality in the relevant series.
 - Estimate long-run import and export equations.
 - Test for cointegration using the Engle-Granger methodology.
-- Evaluate possible cointegration with structural breaks using the Gregory-Hansen test.
+- Evaluate possible cointegration with structural breaks using Gregory-Hansen
+  tests.
 - Estimate short-run trade elasticities through models in first differences.
 - Estimate error correction models when cointegration is supported.
-- Compare results with selected empirical references on Argentina's trade elasticities.
+- Compare results with selected empirical references on Argentina's trade
+  elasticities.
 
 ---
 
@@ -57,7 +59,7 @@ The assignment considers the following series:
 - Multilateral real exchange rate index.
 - Trade-partner GDP index.
 
-All core variables are expected to be analyzed in natural logarithms.
+All core variables are analyzed in natural logarithms.
 
 ---
 
@@ -83,43 +85,54 @@ trade-elasticities-cointegration/
 ├── README.md
 |
 ├── data/
-|   └── .gitkeep
-|
+│   ├── raw/
+│   └── processed/
+│
 ├── docs/
-|   ├── .gitkeep
-|   └── assignment_prompt.pdf
-|
+│   └── trade-elasticities-cointegration-guidelines.pdf
+│
 ├── figures/
-|   └── .gitkeep
-|
+│
 ├── outputs/
-|   └── .gitkeep
-|
+│   ├── 00_support/
+│   ├── 09_stationarity/
+│   ├── 10_cointegration/
+│   ├── 11_models/
+│   ├── 12_diagnostics/
+│   ├── 13_outputs_index/
+│   └── 14_reproducibility/
+│
 ├── report/
-|   └── .gitkeep
-|
+│   ├── trade-elasticities-cointegration-report.tex
+│   ├── trade-elasticities-cointegration-report.pdf
+│   └── trade-elasticities-cointegration-report_v2.docx
+│
 └── scripts/
-    └── .gitkeep
+    └── trade_elasticities_cointegration.R
 ```
 
 ---
 
-## Tools
+## Tools and R Packages
 
-The empirical work will be developed in R.
+The empirical work is developed in R. The project uses packages for data input,
+unit-root testing, cointegration, structural-break checks, regression
+diagnostics, and robust inference.
 
-Likely packages include:
+Main packages include:
 
 - `readxl`
-- `dplyr`
-- `ggplot2`
 - `urca`
-- `tseries`
 - `dynlm`
 - `lmtest`
 - `sandwich`
+- `strucchange`
+- `zoo`
+- `ggplot2`
+- `dplyr`
 
-The final package list will be updated once the empirical script is developed.
+The main script exports model tables, diagnostics, and reproducibility checks to
+the `outputs/` subfolders.
 
 ---
 

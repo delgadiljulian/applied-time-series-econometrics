@@ -50,6 +50,9 @@ applied-time-series-econometrics/
 │   ├── report/
 │   └── scripts/
 │
+├── local_clases_teorico_practicas/
+│   └── course reference material used locally
+│
 └── README.md
 ```
 
@@ -106,6 +109,7 @@ Analyzed variables include:
 - Imports
 - Real exchange rate
 - Global or trade-partner GDP
+- Commodity price index as an external short-run control
 
 ---
 
@@ -117,14 +121,24 @@ Analyzed variables include:
 
 ### Main Packages
 
+- dynlm
 - forecast
-- seasonal
-- tseries
-- ggplot2
+- ivreg
+- lmtest
+- lpirfs
+- mFilter
+- nlme
 - readxl
-- dplyr
+- sandwich
+- sarima
+- seasonal
+- strucchangeRcpp
 - urca
 - vars
+
+Some project scripts also use project-specific data wrangling and reporting
+utilities. The VAR/VEC project documents the course package and script checks in
+`trade-elasticities-var-vec/README.md`.
 
 ---
 
@@ -139,6 +153,7 @@ The repository follows a reproducible econometric workflow based on:
 5. Residual diagnostics
 6. Forecast generation
 7. Out-of-sample evaluation
+8. Cointegration and VAR/VEC diagnostics where required
 
 Forecast accuracy is evaluated using metrics such as:
 
