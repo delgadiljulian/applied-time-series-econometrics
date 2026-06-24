@@ -1819,6 +1819,14 @@ wb_modeling_data$l1_ln_gdp_real <- c(
   NA_real_,
   wb_modeling_data$ln_gdp_real[-nrow(wb_modeling_data)]
 )
+wb_modeling_data$l1_ln_exports_real <- c(
+  NA_real_,
+  wb_modeling_data$ln_exports_real[-nrow(wb_modeling_data)]
+)
+wb_modeling_data$l1_ln_pib_socios <- c(
+  NA_real_,
+  wb_modeling_data$ln_pib_socios[-nrow(wb_modeling_data)]
+)
 wb_modeling_data$l1_ln_itcrm <- c(
   NA_real_,
   wb_modeling_data$ln_itcrm[-nrow(wb_modeling_data)]
@@ -1922,35 +1930,95 @@ run_wickens_breusch_imports <- function(data) {
 
 wickens_breusch_imports <- run_wickens_breusch_imports(wb_modeling_data)
 
-wickens_breusch_exports_note <- data.frame(
-  system = "exports",
-  model_key = "exports_wickens_breusch",
-  variable = c("PIB socios", "TCR"),
-  engle_granger_term = c("ln_pib_socios", "ln_itcrm"),
-  wickens_breusch_level_term = NA_character_,
-  engle_granger_estimate = c(
+# se define la funcion auxiliar run_wickens_breusch_exports.
+run_wickens_breusch_exports <- function(data) {
+  model_vars <- c(
+    "d_ln_exports_real",
+    "d_ln_pib_socios",
+    "d_ln_itcrm",
+    "l1_ln_exports_real",
+    "l1_ln_pib_socios",
+    "l1_ln_itcrm"
+  )
+  model_data <- data[complete.cases(data[, model_vars]), c(required_metadata_vars, model_vars)]
+  model_data <- model_data[order(model_data$quarter_date), ]
+
+  fit <- tryCatch(
+    lm(
+      d_ln_exports_real ~ d_ln_pib_socios + d_ln_itcrm +
+        l1_ln_exports_real + l1_ln_pib_socios + l1_ln_itcrm,
+      data = model_data
+    ),
+    error = function(e) e
+  )
+
+  if (inherits(fit, "error")) {
+    return(data.frame(
+      system = "exports",
+      model_key = "exports_wickens_breusch",
+      variable = c("PIB socios", "TCR"),
+      engle_granger_term = c("ln_pib_socios", "ln_itcrm"),
+      wickens_breusch_level_term = c("l1_ln_pib_socios", "l1_ln_itcrm"),
+      engle_granger_estimate = c(
+        get_eg_long_run_estimate("exports", "ln_pib_socios"),
+        get_eg_long_run_estimate("exports", "ln_itcrm")
+      ),
+      wickens_breusch_estimate = NA_real_,
+      adjustment_coefficient = NA_real_,
+      sign_consistency = NA_character_,
+      relative_difference_percent = NA_real_,
+      n_obs = nrow(model_data),
+      first_quarter = ifelse(nrow(model_data) > 0, min(model_data$quarter), NA_character_),
+      last_quarter = ifelse(nrow(model_data) > 0, max(model_data$quarter), NA_character_),
+      status = "model_error",
+      message = fit$message,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  coefficient_table <- coef(fit)
+  adjustment <- as.numeric(coefficient_table["l1_ln_exports_real"])
+  wb_pib_socios <- -as.numeric(coefficient_table["l1_ln_pib_socios"]) / adjustment
+  wb_itcrm <- -as.numeric(coefficient_table["l1_ln_itcrm"]) / adjustment
+  eg_values <- c(
     get_eg_long_run_estimate("exports", "ln_pib_socios"),
     get_eg_long_run_estimate("exports", "ln_itcrm")
-  ),
-  wickens_breusch_estimate = NA_real_,
-  adjustment_coefficient = NA_real_,
-  sign_consistency = NA_character_,
-  relative_difference_percent = NA_real_,
-  n_obs = NA_integer_,
-  first_quarter = NA_character_,
-  last_quarter = NA_character_,
-  status = "not_applicable",
-  message = paste(
-    "No se calcula como especificacion principal porque Engle-Granger no",
-    "respalda cointegracion para exportaciones; el resultado de largo plazo",
-    "se conserva solo como indicativo."
-  ),
-  stringsAsFactors = FALSE
-)
+  )
+  wb_values <- c(wb_pib_socios, wb_itcrm)
+
+  data.frame(
+    system = "exports",
+    model_key = "exports_wickens_breusch",
+    variable = c("PIB socios", "TCR"),
+    engle_granger_term = c("ln_pib_socios", "ln_itcrm"),
+    wickens_breusch_level_term = c("l1_ln_pib_socios", "l1_ln_itcrm"),
+    engle_granger_estimate = eg_values,
+    wickens_breusch_estimate = wb_values,
+    adjustment_coefficient = adjustment,
+    sign_consistency = ifelse(sign(eg_values) == sign(wb_values), "mismo signo", "cambia signo"),
+    relative_difference_percent = ifelse(
+      is.finite(eg_values) & eg_values != 0,
+      100 * (wb_values - eg_values) / abs(eg_values),
+      NA_real_
+    ),
+    n_obs = nobs(fit),
+    first_quarter = min(model_data$quarter),
+    last_quarter = max(model_data$quarter),
+    status = "indicative",
+    message = paste(
+      "Elasticidades Wickens-Breusch calculadas con fines indicativos,",
+      "segun consigna TP3, aunque Engle-Granger no respalda cointegracion",
+      "para exportaciones."
+    ),
+    stringsAsFactors = FALSE
+  )
+}
+
+wickens_breusch_exports <- run_wickens_breusch_exports(wb_modeling_data)
 
 wickens_breusch_long_run_coefficients <- rbind(
   wickens_breusch_imports,
-  wickens_breusch_exports_note
+  wickens_breusch_exports
 )
 
 #********************************************************

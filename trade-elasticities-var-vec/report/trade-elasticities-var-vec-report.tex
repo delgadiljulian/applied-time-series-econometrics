@@ -50,7 +50,6 @@
 \renewcommand{\tablename}{Tabla}
 \captionsetup[table]{name=Tabla}
 
-\newcommand{\pendiente}[1]{\textcolor{red}{[Pendiente: #1]}}
 \newcommand{\reportheader}{%
 	\begin{minipage}{\textwidth}
 		\vspace{6pt}
@@ -191,15 +190,22 @@
 	\section{Marco teórico económico}
 	\label{sec:marco-teorico}
 	
-	El punto de partida son las ecuaciones tradicionales de demanda de importaciones
-	y exportaciones. Para importaciones, la relación básica puede escribirse como:
+	El punto de partida son las ecuaciones tradicionales de demanda de
+	importaciones y exportaciones. En ambos casos, el comercio exterior se modela
+	como una demanda real que depende de una variable de escala y de un precio
+	relativo. Para importaciones, la variable de escala es el nivel de actividad
+	interno: cuando aumenta el producto, crecen el consumo, la inversión y la
+	producción que requieren bienes finales, insumos y bienes de capital
+	importados. La relación básica puede escribirse como:
 	
 	\begin{equation}
 		M_t = f(Y_t, TCR_t),
 	\end{equation}
 	
 	donde $M_t$ representa las importaciones reales, $Y_t$ el producto interno y
-	$TCR_t$ el tipo de cambio real. En logaritmos, la especificación empírica queda:
+	$TCR_t$ el tipo de cambio real. En este informe, $TCR_t$ corresponde al ITCRM,
+	por lo que un aumento del índice se interpreta como una depreciación real. En
+	logaritmos, la especificación empírica queda:
 	
 	\begin{equation}
 		\log(M_t) = \alpha_0 + \alpha_1 \log(Y_t) +
@@ -207,8 +213,21 @@
 		\label{eq:importaciones-largo-plazo}
 	\end{equation}
 	
-	Para exportaciones, la ecuación clásica vincula las ventas externas con la
-	demanda internacional y el tipo de cambio real:
+	Bajo esta convención, se espera $\alpha_1>0$ y $\alpha_2<0$. El primer signo
+	refleja que una economía más grande demanda más importaciones. El segundo
+	refleja que una depreciación real encarece los bienes importados en términos
+	relativos y, por lo tanto, tiende a reducir su demanda. La magnitud de
+	$\alpha_1$ es especialmente importante para economías con restricción externa:
+	si las importaciones crecen más que proporcionalmente al producto, una fase de
+	expansión puede generar rápidamente mayores necesidades de divisas.
+
+	Para exportaciones, la variable de escala relevante no es el producto interno
+	sino la demanda externa. En el informe, $Y_t^*$ resume el nivel de actividad de
+	los principales socios comerciales y funciona como aproximación al tamaño del
+	mercado enfrentado por las exportaciones argentinas. Por ello, no debe
+	interpretarse como exportaciones, sino como una variable explicativa de la
+	demanda por exportaciones. La ecuación clásica vincula las ventas externas con
+	esa demanda internacional y con el tipo de cambio real:
 	
 	\begin{equation}
 		\log(X_t) = \beta_0 + \beta_1 \log(Y_t^*) +
@@ -216,44 +235,47 @@
 		\label{eq:exportaciones-largo-plazo}
 	\end{equation}
 	
-	donde $X_t$ son las exportaciones reales e $Y_t^*$ representa el producto global
-	o de los principales socios comerciales.
-	
-	En estas ecuaciones, $\alpha_1$ mide la elasticidad ingreso de las importaciones
-	y $\beta_1$ la elasticidad de las exportaciones respecto de la demanda externa.
-	Los coeficientes asociados al tipo de cambio real capturan la sensibilidad de
-	los flujos comerciales ante cambios en precios relativos. En principio, se
-	espera que las importaciones respondan positivamente al producto interno y que
-	las exportaciones respondan positivamente a la demanda externa. El signo del
-	tipo de cambio real depende de la definición utilizada para el índice y debe
-	interpretarse de forma consistente con esa convención.
-	
-	Desde el punto de vista macroeconómico, estas elasticidades son relevantes
-	porque permiten evaluar la relación entre crecimiento económico y restricción
-	externa. Si las importaciones presentan una elasticidad ingreso elevada, una
-	expansión del producto interno tiende a aumentar de manera significativa la
-	demanda de divisas asociada a compras externas. En cambio, si las exportaciones
-	responden con menor intensidad al crecimiento de la demanda externa o al tipo de
-	cambio real, la economía puede enfrentar dificultades para generar las divisas
-	necesarias para sostener un proceso de crecimiento.
-	
-	En este sentido, la comparación entre elasticidades de importaciones y
-	exportaciones permite analizar si existe una asimetría estructural en el comercio
-	exterior argentino. Una elasticidad ingreso de las importaciones superior a la
-	elasticidad de las exportaciones respecto de la demanda externa implica que, ante
-	un proceso de expansión, las compras externas pueden crecer más rápido que las
-	ventas externas. Este patrón es consistente con la literatura sobre restricción
-	externa y con la idea de que el crecimiento argentino puede verse limitado por
-	la disponibilidad de divisas.
+	donde $X_t$ son las exportaciones reales. En principio, se espera $\beta_1>0$:
+	cuando los socios comerciales crecen, aumenta la demanda potencial por bienes y
+	servicios argentinos. También se espera $\beta_2>0$ si una depreciación real
+	mejora la competitividad-precio de las exportaciones. Sin embargo, este efecto
+	puede ser menos estable que el de la demanda externa cuando las exportaciones
+	están concentradas en bienes primarios, manufacturas con bajo margen de
+	sustitución o sectores cuya oferta responde lentamente.
+
+	En estas ecuaciones, $\alpha_1$ mide la elasticidad ingreso de las
+	importaciones y $\beta_1$ la elasticidad de las exportaciones respecto de la
+	demanda externa. Los coeficientes asociados al tipo de cambio real capturan la
+	sensibilidad de los flujos comerciales ante cambios en precios relativos. Como
+	las variables se expresan en logaritmos, los coeficientes pueden leerse como
+	elasticidades de largo plazo cuando existe una relación de cointegración
+	económicamente válida.
+
+	La comparación entre elasticidades permite analizar una posible asimetría
+	estructural del comercio exterior argentino. Si la elasticidad ingreso de las
+	importaciones es superior a la elasticidad de las exportaciones respecto de la
+	demanda externa, una expansión del producto interno puede hacer crecer las
+	compras externas más rápido que las ventas externas. Este patrón es consistente
+	con la literatura sobre restricción externa: el crecimiento puede quedar
+	limitado por la capacidad de generar divisas suficientes para financiar las
+	importaciones asociadas al propio proceso de expansión.
 	
 	El tipo de cambio real cumple un papel adicional como precio relativo entre
-	bienes domésticos y externos. Una depreciación real debería, en principio,
-	encarecer las importaciones y mejorar la competitividad de las exportaciones.
-	Sin embargo, la magnitud de estas respuestas depende de la estructura productiva,
-	del contenido importado de la actividad, de la composición sectorial de las
-	exportaciones y de las condiciones de demanda internacional. Por ello, el efecto
-	del tipo de cambio real puede ser menor o más inestable que el efecto del ingreso
-	o de la demanda externa.
+	bienes domésticos y externos. Una depreciación real debería encarecer las
+	importaciones y mejorar la competitividad de las exportaciones, pero la magnitud
+	de esas respuestas depende de la estructura productiva, del contenido importado
+	de la actividad, de la composición sectorial de las exportaciones y de las
+	condiciones de demanda internacional. Por ello, el efecto del $TCR_t$ puede ser
+	menor o más inestable que el efecto del ingreso o de la demanda externa.
+
+	Finalmente, para el sistema de exportaciones se considera el precio
+	internacional de commodities, $P_t^c$, como variable de contexto. Dado el peso
+	de los bienes primarios y sus derivados en la canasta exportadora argentina, un
+	aumento de precios internacionales puede elevar el valor y los incentivos de
+	exportación. En el análisis empírico, esta variable se utiliza como control de
+	corto plazo y como referencia descriptiva, mientras que las relaciones centrales
+	del informe se mantienen en torno a \(M_t\), \(X_t\), \(Y_t\), \(Y_t^*\) y
+	\(TCR_t\).
 	
 	% -------------------------------
 	% 3. Marco metodológico
@@ -280,7 +302,9 @@
 	el orden de integración de las series y la existencia de cointegración. Por
 	ello, el trabajo distingue explícitamente entre elasticidades de largo plazo,
 	asociadas a vectores de cointegración, y elasticidades de corto plazo, asociadas
-	a modelos en diferencias.
+	a modelos en diferencias. Cuando alguna condición previa no se cumple de forma
+	plena, el resultado se conserva solo como evidencia indicativa y no como
+	estimación central de equilibrio.
 	
 	\subsection{Transformaciones y especificación de elasticidades}
 	\label{subsec:metodologia-transformaciones}
@@ -294,7 +318,8 @@
 	\end{equation}
 	
 	Esta transformación permite interpretar los coeficientes de las relaciones en
-	niveles como elasticidades. Las variaciones trimestrales se aproximan mediante
+	niveles como elasticidades, siempre que la relación en niveles sea
+	econométricamente válida. Las variaciones trimestrales se aproximan mediante
 	primeras diferencias logarítmicas:
 	
 	\begin{equation}
@@ -312,6 +337,9 @@
 		= w_{BR}\ln(PIB_{BR,t}) + w_{US}\ln(PIB_{US,t})
 		\label{eq:tp3-pib-socios}
 	\end{equation}
+	donde las ponderaciones \(w_{BR}\) y \(w_{US}\) resumen la importancia relativa
+	de Brasil y Estados Unidos como socios comerciales en la construcción del
+	indicador de demanda externa.
 	
 	La especificación de largo plazo para importaciones es la presentada en
 	\eqref{eq:importaciones-largo-plazo}. En esa ecuación, el coeficiente asociado
@@ -336,9 +364,12 @@
 	aplicar pruebas de cointegración en sentido estricto.
 	
 	La primera aproximación a la cointegración es la metodología de Engle-Granger.
-	En esta estrategia se estiman las ecuaciones de largo plazo para importaciones y
-	exportaciones y luego se evalúa la estacionariedad de sus residuos. Para
-	importaciones, el residuo estimado se define como:
+	En esta estrategia se estiman por MCO las ecuaciones de largo plazo para
+	importaciones y exportaciones y luego se evalúa la estacionariedad de sus
+	residuos mediante una prueba ADF residual sin constante. La comparación se hace
+	contra valores críticos específicos para Engle-Granger, no contra los valores
+	críticos Dickey-Fuller estándar. Para importaciones, el residuo estimado se
+	define como:
 	
 	\begin{equation}
 		\widehat{u}_t
@@ -385,6 +416,24 @@
 		= |\widehat{\lambda}| \times 100
 		\label{eq:tp3-velocidad-ajuste}
 	\end{equation}
+
+	Como verificación adicional del bloque uniecuacional, se utiliza una
+	especificación tipo Wickens-Breusch para recuperar elasticidades de largo plazo
+	desde un ECM no restringido. En esa representación, la ecuación incluye la
+	variable dependiente y los regresores en niveles rezagados junto con sus
+	diferencias contemporáneas. Si el coeficiente de la variable dependiente
+	rezagada es \(\rho\) y el coeficiente de un regresor rezagado \(x_{t-1}\) es
+	\(\delta\), la elasticidad de largo plazo implícita se calcula como:
+
+	\begin{equation}
+		\eta_x^{WB} = -\frac{\widehat{\delta}}{\widehat{\rho}}
+		\label{eq:wickens-breusch-elasticidad}
+	\end{equation}
+
+	Esta verificación se interpreta como contraste de robustez frente a
+	Engle-Granger. No reemplaza la prueba residual de cointegración: cuando no hay
+	evidencia de cointegración, las elasticidades de largo plazo se reportan solo
+	como referencia indicativa.
 	
 	\subsection{Johansen, VECM y VAR en diferencias}
 	\label{subsec:metodologia-johansen-var}
@@ -393,8 +442,11 @@
 	Johansen. Para cada flujo comercial se define un sistema de variables en
 	niveles. El sistema de importaciones se compone de
 	\(\ln(M_t)\), \(\ln(Y_t)\) y \(\ln(TCR_t)\). El sistema de exportaciones se
-	compone de \(\ln(X_t)\), \(\ln(Y_t^*)\) y \(\ln(TCR_t)\). En cada caso,
-	el punto de partida es un VAR de orden \(p\):
+	compone de \(\ln(X_t)\), \(\ln(Y_t^*)\) y \(\ln(TCR_t)\). Dado que Johansen
+	requiere variables compatibles con \(I(1)\), cualquier sistema que incluya una
+	variable clasificada como estacionaria en niveles se interpreta con cautela y se
+	conserva como ejercicio indicativo. En cada caso, el punto de partida es un VAR
+	de orden \(p\):
 	
 	\begin{equation}
 		\mathbf{y}_t
@@ -438,8 +490,9 @@
 	responden ante desvíos del equilibrio.
 	
 	El rango de cointegración se determina mediante las pruebas de traza y de máximo
-	autovalor. La prueba de traza evalúa la hipótesis nula de que el número de
-	vectores de cointegración es menor o igual que \(r\):
+	autovalor, considerando especificaciones determinísticas alternativas para
+	evaluar la sensibilidad de la decisión. La prueba de traza evalúa la hipótesis
+	nula de que el número de vectores de cointegración es menor o igual que \(r\):
 	
 	\begin{equation}
 		LR_{\text{traza}}(r)
@@ -459,7 +512,9 @@
 	La cantidad de rezagos del VAR se selecciona mediante criterios de información
 	y diagnóstico de residuos. Como criterio general se consideran AIC, HQ y BIC,
 	con especial atención a especificaciones parsimoniosas por el tamaño de la
-	muestra trimestral. El BIC se define como:
+	muestra trimestral. La selección inicial se retroalimenta luego con
+	diagnósticos de autocorrelación residual, de modo que el rezago final no surge
+	solo del criterio de información. El BIC se define como:
 	
 	\begin{equation}
 		BIC(p) = -2\ln(\widehat{L}_p) + k_p\ln(T)
@@ -485,29 +540,31 @@
 	\end{equation}
 	
 	En este último caso, los coeficientes se interpretan como respuestas dinámicas
-	de corto plazo y no como elasticidades de equilibrio. Esta distinción es
-	central para el informe: la interpretación económica depende del resultado de
-	las pruebas de integración y cointegración.
+	de corto plazo entre tasas de variación y no como elasticidades de equilibrio.
+	Esta distinción es central para el informe: la interpretación económica depende
+	del resultado de las pruebas de integración y cointegración.
 	
 	\subsection{Diagnósticos y criterio de interpretación}
 	\label{subsec:metodologia-diagnosticos}
 	
 	Finalmente, los modelos estimados se evalúan mediante diagnósticos de
-	autocorrelación residual, normalidad, estabilidad y consistencia de signos. En
-	los sistemas VAR/VEC, la estabilidad resulta necesaria para interpretar la
-	dinámica del sistema y, eventualmente, funciones impulso-respuesta o
-	descomposiciones de varianza. La comparación final entre Engle-Granger, ECM,
-	Johansen, VECM y VAR en diferencias permite clasificar los resultados como
-	evidencia robusta de largo plazo, evidencia de corto plazo o resultados
-	meramente indicativos cuando los supuestos no se cumplen plenamente.
+	autocorrelación residual, heterocedasticidad, normalidad, estabilidad y
+	consistencia de signos. En los sistemas VAR/VEC, la estabilidad resulta
+	necesaria para interpretar la dinámica del sistema y, eventualmente, funciones
+	impulso-respuesta o descomposiciones de varianza. La comparación final entre
+	Engle-Granger, ECM, Wickens-Breusch, Johansen, VECM y VAR en diferencias
+	permite clasificar los resultados como evidencia robusta de largo plazo,
+	evidencia de corto plazo o resultados meramente indicativos cuando los supuestos
+	no se cumplen plenamente.
 	
 	La consigna del TP 3 solicita utilizar, cuando corresponda, las herramientas de
 	clase para raíces unitarias, autocorrelación, heterocedasticidad y exclusión de
-	rezagos. En este informe se documenta el uso de \texttt{Test.ADF.Ver.3.R} y
-	\texttt{vcorr\_res.R} cuando esas rutinas están disponibles en la carpeta de
-	trabajo. Para las pruebas auxiliares cuyos scripts originales no se encuentran
-	en los materiales locales, se deja identificado el diagnóstico equivalente que
-	debe incorporarse antes de cerrar la versión final del informe.
+	rezagos. En este informe se documenta el uso de \path{Test.ADF.Ver.3.R},
+	\path{vcorr_res.R}, \path{VAR_lag_exclusion_wald.R} y
+	\path{VAR_white_no_cross.R}, complementado con funciones de los paquetes
+	\texttt{urca} y \texttt{vars}. La decisión final no se basa en un único test:
+	combina evidencia de integración, cointegración, ajuste dinámico y diagnóstico
+	residual.
 	
 	% -------------------------------
 	% 4. Datos
@@ -522,9 +579,9 @@
 	N.\textdegree~2, dado que el enunciado del TP 3 indica explícitamente que debe
 	continuarse el análisis de elasticidades del comercio exterior incorporando la
 	metodología VAR/VEC. Para mantener el ejercicio autocontenido, los archivos
-	originales y las bases procesadas se copiaron dentro de la carpeta
-	\texttt{trade-elasticities-var-vec/data/}. Los insumos originales se conservan
-	en \texttt{data/raw/}, mientras que las bases listas para análisis econométrico
+	originales y las bases procesadas se copiaron dentro del directorio de datos
+	del proyecto. Los insumos originales se conservan en \texttt{data/raw/},
+	mientras que las bases listas para análisis econométrico
 	se ubican en \texttt{data/processed/}.
 	
 	La base principal de trabajo es el archivo:
@@ -634,30 +691,6 @@
 		\item Incorporar extensiones indicativas de clase: IRF, FEVD, SVAR y LPIRF.
 		\item Comparar elasticidades de largo plazo, corto plazo y evidencia dinámica.
 	\end{enumerate}
-	
-	\begin{table}[H]
-		\centering
-		\caption{Arquitectura de clase aplicada en el script.}
-		\label{tab:arquitectura-clase-aplicada}
-		\scriptsize
-		\begin{tabular}{clp{7.6cm}}
-			\toprule
-			Paso & Bloque del script & Evidencia generada \\
-			\midrule
-			1 & Paquetes de cursada & \path{00_setup/section_00_course_packages_status.csv} \\
-			2 & Datos y objetos \texttt{ts} & \path{01_data_descriptives/section_01_model_sample.csv} \\
-			3 & Gráficos y descriptivos & Figuras de niveles y primeras diferencias \\
-			4 & ADF de clase & \path{02_unit_roots/section_02_course_adf_ver3_results.csv} \\
-			5 & Engle-Granger y ECM & \path{05_engle_granger_ecm/section_05_*} \\
-			6 & Wickens-Breusch & \path{09_wickens_breusch/section_09_wickens_breusch_long_run_coefficients.csv} \\
-			7 & VARselect y VAR & \path{03_var_lags/section_03_var_lag_selection.csv} \\
-			8 & Diagnósticos VAR de clase & \path{03_var_lags/section_03_var_lag_exclusion_wald.csv}; \path{04_johansen_diagnostics/section_04_course_*} \\
-			9 & Johansen y VECM & \path{04_johansen_diagnostics/section_04_johansen_*}; \path{06_vecm_decisions/section_06_vecm_*} \\
-			10 & VAR en diferencias & \path{07_var_differences/section_07_var_diff_*} \\
-			11 & IRF, FEVD, SVAR y LPIRF & \path{10_class_extensions/section_10_class_*} \\
-			\bottomrule
-		\end{tabular}
-	\end{table}
 	
 	\autoref{tab:sistemas-iniciales-var-vec} define los dos sistemas de variables
 	que se utilizan como punto de partida para las estimaciones VAR/VEC de
@@ -1159,14 +1192,17 @@
 	
 	\autoref{tab:wickens-breusch-importaciones} contrasta las elasticidades de
 	largo plazo de Engle-Granger con las obtenidas a partir de una especificación
-	ECM no restringida tipo Wickens-Breusch. Este ejercicio se interpreta solo para
-	importaciones, porque es el sistema donde el ADF sobre residuos respalda
-	cointegración. En exportaciones, la relación de largo plazo se mantiene como
-	indicativa y no se calcula Wickens-Breusch como especificación principal.
+	ECM no restringida tipo Wickens-Breusch. En importaciones, el ejercicio opera
+	como contraste de robustez porque el ADF sobre residuos respalda cointegración.
+	En exportaciones, se reporta con fines indicativos, de acuerdo con la consigna
+	del TP 3, aun cuando Engle-Granger no confirma una relación de largo plazo. Sin
+	esa instrucción, la comparación Wickens-Breusch para \(X_t\) quedaría excluida
+	como especificación principal; aquí se conserva para documentar el ejercicio
+	completo solicitado y distinguir entre resultados válidos e indicativos.
 	
 	\begin{table}[H]
 		\centering
-		\caption{Comparación Engle-Granger y Wickens-Breusch para importaciones.}
+		\caption{Comparación Engle-Granger y Wickens-Breusch.}
 		\label{tab:wickens-breusch-importaciones}
 		\scriptsize
 		\resizebox{\textwidth}{!}{%
@@ -1178,15 +1214,18 @@
 				Mismo signo y mayor magnitud; refuerza la elasticidad ingreso positiva, con diferencia cuantitativa relevante. \\
 				\(M_t\) & Importaciones & ITCRM (\(TCR_t\)) & -0.399 & -0.109 &
 				Mismo signo, pero menor magnitud; confirma dirección negativa con sensibilidad al método. \\
-				\(X_t\) & Exportaciones & PIB socios (\(Y_t^*\)) / ITCRM (\(TCR_t\)) & Largo plazo indicativo & No aplica &
-				No se calcula como resultado principal porque Engle-Granger no respalda cointegración. \\
+				\(X_t\) & Exportaciones & PIB socios (\(Y_t^*\)) & 0.720 & 0.651 &
+				Mismo signo y magnitud cercana; resultado indicativo porque no hay cointegración Engle-Granger. \\
+				\(X_t\) & Exportaciones & ITCRM (\(TCR_t\)) & 0.159 & 0.182 &
+				Mismo signo y magnitud cercana; lectura indicativa, no elasticidad de equilibrio validada. \\
 				\bottomrule
 			\end{tabular}
 		}
 		\caption*{\footnotesize Nota: Wickens-Breusch se calcula desde un ECM no
 			restringido como \(-\theta_x/\theta_y\), donde \(\theta_y\) es el coeficiente
-			del nivel rezagado de la variable dependiente. El coeficiente de ajuste estimado
-			para importaciones es \(-0.570\). Fuente:
+			del nivel rezagado de la variable dependiente. Los coeficientes de ajuste
+			estimados son \(-0.570\) para importaciones y \(-0.718\) para exportaciones.
+			Los resultados de exportaciones se reportan solo con fines indicativos. Fuente:
 			\path{09_wickens_breusch/section_09_wickens_breusch_long_run_coefficients.csv}.}
 	\end{table}
 	
@@ -1198,7 +1237,12 @@
 	económica: las importaciones responden positivamente al producto y
 	negativamente al tipo de cambio real, con una sensibilidad mayor al ingreso que
 	al precio relativo. La diferencia entre magnitudes confirma, además, que el
-	enfoque de dos etapas puede ser sensible a la especificación.
+	enfoque de dos etapas puede ser sensible a la especificación. En exportaciones,
+	Wickens-Breusch entrega elasticidades de 0.651 para \(Y_t^*\) y 0.182 para
+	\(TCR_t\), cercanas a las de Engle-Granger. Sin embargo, como la prueba
+	residual no confirma cointegración, estos valores se conservan solo como
+	evidencia indicativa y no desplazan al VAR en diferencias como especificación
+	operativa.
 	
 	\autoref{tab:velocidad-ajuste-ecm} reporta el término de corrección del error
 	del ECM estimado para importaciones, único sistema con evidencia Engle-Granger
@@ -1601,14 +1645,13 @@
 	en el bloque multivariado. Para exportaciones no se presenta una tabla VECM
 	equivalente porque la decisión operativa queda en diferencias. La auditoría
 	reproducible del script confirma, además, que el rezago final ajustado por
-	diagnóstico se utiliza efectivamente en los bloques posteriores; el detalle se
-	reporta en \autoref{tab:auditoria-retroalimentacion}.
+	diagnóstico se utiliza efectivamente en los bloques posteriores.
 	
 	\subsubsection{Diagnósticos residuales del sistema}
 	\label{subsubsec:diagnosticos-residuales-var}
 	
 	\autoref{tab:wald-exclusion-lags} reporta el test Wald de exclusión conjunta de
-	rezagos implementado en \texttt{VAR\_lag\_exclusion\_wald.R}. La hipótesis nula
+	rezagos implementado en \path{VAR_lag_exclusion_wald.R}. La hipótesis nula
 	es que todos los coeficientes asociados al rezago evaluado son conjuntamente
 	cero en el sistema VAR. Esta prueba no define por sí sola el número de rezagos,
 	pero permite verificar si la estructura dinámica final conserva bloques de
@@ -1685,11 +1728,11 @@
 	son 0.0864 y 0.0851. Al 5\%, no se rechaza la ausencia de autocorrelación
 	residual, de modo que el aumento desde el rezago base 1 hasta el rezago final 4
 	cumple su objetivo diagnóstico. Esto respalda el uso del VAR en diferencias
-	como especificación operativa de corto plazo, aunque todavía resta revisar la
-	heterocedasticidad y la normalidad.
+	como especificación operativa de corto plazo; los diagnósticos de
+	heterocedasticidad y normalidad se incorporan en los contrastes siguientes.
 	
 	\autoref{tab:diagnostico-white-no-cross} resume el test White no-cross de
-	heterocedasticidad residual implementado en \texttt{VAR\_white\_no\_cross.R}.
+	heterocedasticidad residual implementado en \path{VAR_white_no_cross.R}.
 	Se reportan los resultados por ecuación y el contraste conjunto del sistema.
 	
 	\begin{table}[H]
@@ -1936,10 +1979,9 @@ estructurales.
 	\label{subsec:comparacion-literatura}
 	
 \autoref{tab:comparacion-literatura} organiza la comparación entre los
-resultados propios y las referencias aplicadas exigidas por la consigna. La
-fila de Bus y Nicolini-Llosa (2007) se mantiene marcada como pendiente porque
-aún falta completar la extracción exacta del artículo, pero la discusión puede
-avanzar con las referencias disponibles.
+resultados propios y las referencias aplicadas disponibles. La lectura se
+concentra en los trabajos cuya fuente pudo verificarse y cuyas elasticidades
+son comparables con las estimaciones del informe.
 
 \begin{table}[H]
 \centering
@@ -1953,11 +1995,10 @@ Referencia / método & Importaciones & Exportaciones & Comentario \\
 \midrule
 Engle-Granger / ECM & \(Y_t\): 1.518; \(TCR_t\): -0.399; ajuste ECM: -0.525 & \(Y_t^*\): 0.720; \(TCR_t\): 0.159 & Importaciones con cointegración; exportaciones solo indicativo en largo plazo. \\
 Johansen / VECM & \(Y_t\): 3.535; \(TCR_t\): 0.148; ajuste \(\Delta \ln M_t\): 0.088 & Rango 0; sin VECM principal & Extensión multivariada indicativa para importaciones; exportaciones se mantiene como VAR en diferencias. \\
-Berrettoni y Castresana (2008) & \(Y_t\): 2.76; \(TCR_t\): -0.34; corto plazo \(Y_t\): 2.88; \(TCR_t\): -0.21 & \(Y_t^*\): 1.84; \(TCR_t\): 0.30; corto plazo \(Y_t^*\): 1.56; \(TCR_t\): 0.08 & MCE para 1993--2008; comercio responde más al ingreso que al TCR, con mayor elasticidad ingreso en importaciones. \\
-Bus y Nicolini-Llosa (2007) & \pendiente{} & No aplica & Referencia mencionada en el assignment; falta revisar el artículo exacto. \\
-Duarte, Nicolini-Llosa y Payá (2007) & \(Y_t\): 3.52; \(TCR_t\): -0.36 (EG); \(Y_t\): 3.29; \(TCR_t\): -0.56 (Johansen); corto plazo \(Y_t\): 2.38; \(TCR_t\): -0.15; ajuste: -0.23 & No aplica & Demanda agregada de importaciones, 1970Q1--2005Q4; PDF disponible relacionado, pero distinto de la cita Bus y Nicolini-Llosa del assignment. \\
-Zack y Sotelsek (2016) & Demanda externa: 1.72; \(TCR_t\): -0.30; corto plazo demanda: 3.21; \(TCR_t\): -0.28; ajuste: -0.15 & \(Y_t^*\): 0.85; \(TCR_t\): 0.07; corto plazo \(Y_t^*\) rez. 3: 1.50; \(TCR_t\) rez. 5: 0.13; ajuste: -0.80 & MCE agregado y por socios, 1996--2013; importaciones tienen elasticidad ingreso casi doble que exportaciones y el TCR tiene efecto limitado. \\
-Song, Witt y Li (2008) & No aplica directo & No aplica directo & Referencia metodológica: demanda, elasticidades, cointegración, ECM, VAR/VEC, IRF y pronóstico; no estima comercio argentino. \\
+Berrettoni y Castresana \cite{berrettoni_castresana_2008} & \(Y_t\): 2.76; \(TCR_t\): -0.34; corto plazo \(Y_t\): 2.88; \(TCR_t\): -0.21 & \(Y_t^*\): 1.84; \(TCR_t\): 0.30; corto plazo \(Y_t^*\): 1.56; \(TCR_t\): 0.08 & MCE para 1993--2008; comercio responde más al ingreso que al TCR, con mayor elasticidad ingreso en importaciones. \\
+Duarte, Nicolini-Llosa y Payá \cite{duarte_nicolini_llosa_paya_2007} & \(Y_t\): 3.52; \(TCR_t\): -0.36 (EG); \(Y_t\): 3.29; \(TCR_t\): -0.56 (Johansen); corto plazo \(Y_t\): 2.38; \(TCR_t\): -0.15; ajuste: -0.23 & No aplica & Demanda agregada de importaciones, 1970Q1--2005Q4. \\
+Zack y Sotelsek \cite{zack_sotelsek_2016} & Demanda externa: 1.72; \(TCR_t\): -0.30; corto plazo demanda: 3.21; \(TCR_t\): -0.28; ajuste: -0.15 & \(Y_t^*\): 0.85; \(TCR_t\): 0.07; corto plazo \(Y_t^*\) rez. 3: 1.50; \(TCR_t\) rez. 5: 0.13; ajuste: -0.80 & MCE agregado y por socios, 1996--2013; importaciones tienen elasticidad ingreso casi doble que exportaciones y el TCR tiene efecto limitado. \\
+Song, Witt y Li \cite{song_witt_li_2008} & No aplica directo & No aplica directo & Referencia metodológica: demanda, elasticidades, cointegración, ECM, VAR/VEC, IRF y pronóstico; no estima comercio argentino. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2060,9 +2101,9 @@ Song, Witt y Li (2008) & No aplica directo & No aplica directo & Referencia meto
 	esa lectura, pero no reemplaza al ECM por las advertencias de rango y
 	diagnóstico. Tercero, exportaciones debe interpretarse principalmente desde el
 	corto plazo: \(Y_t^*\) tiene efectos positivos rezagados, mientras que el
-	\(TCR_t\) muestra una señal más débil. La referencia pendiente de Bus y
-	Nicolini-Llosa (2007) permitirá completar la tabla, pero no altera esta
-	lectura general con la evidencia actualmente disponible.
+	\(TCR_t\) muestra una señal más débil. En conjunto, la evidencia actualmente
+	disponible alcanza para sostener la lectura general sin depender de una
+	referencia no verificada.
 	
 	% -------------------------------
 	% 8. Conclusiones
@@ -2124,175 +2165,66 @@ Song, Witt y Li (2008) & No aplica directo & No aplica directo & Referencia meto
 	% Bibliografía
 	% -------------------------------
 	\begin{thebibliography}{99}
-		
+
 		\bibitem{berrettoni_castresana_2008}
 		Berrettoni, D. y Castresana, S. (2008).
 		\textit{Elasticidades de comercio de la Argentina para el período 1993--2008}.
 		Revista del CEI: Comercio Exterior e Integración, Nro. 16, 85--97.
-		
-		\bibitem{bus_nicolini_llosa_2007}
-		Bus, A. G. y Nicolini-Llosa, J. L. (2007).
-		\textit{Importaciones de Argentina, una estimación econométrica}.
-		XLII Reunión Anual de la Asociación Argentina de Economía Política, Bahía
-		Blanca, 14--16 de noviembre.
-		
+
 		\bibitem{duarte_nicolini_llosa_paya_2007}
 		Duarte, A., Nicolini-Llosa, J. L. y Payá, I. (2007).
 		\textit{Estimating Argentina's imports elasticities}.
 		Lancaster University Management School Working Paper 2007/009.
-		
+
 		\bibitem{enders_2014}
 		Enders, W. (2014).
 		\textit{Applied Econometric Time Series}.
 		4ta ed. Wiley.
-		
+
 		\bibitem{engle_granger_1987}
 		Engle, R. F. y Granger, C. W. J. (1987).
 		\textit{Co-integration and error correction: representation, estimation, and
 			testing}.
 		Econometrica, 55(2), 251--276.
-		
+
 		\bibitem{fabris_2026}
 		Fabris, J. (2026).
 		\textit{Modelos Econométricos Aplicados: Series de Tiempo}.
 		Notas de clase, Universidad de Buenos Aires, Facultad de Ciencias Económicas.
-		
+
 		\bibitem{hamilton_1994}
 		Hamilton, J. D. (1994).
 		\textit{Time Series Analysis}.
 		Princeton University Press.
-		
+
 		\bibitem{johansen_1995}
 		Johansen, S. (1995).
 		\textit{Likelihood-Based Inference in Cointegrated Vector Autoregressive Models}.
 		Oxford University Press.
-		
+
 		\bibitem{lutkepohl_2005}
 		Lütkepohl, H. (2005).
 		\textit{New Introduction to Multiple Time Series Analysis}.
 		Springer.
-		
+
 		\bibitem{pfaff_2008}
 		Pfaff, B. (2008).
 		\textit{Analysis of Integrated and Cointegrated Time Series with R}.
 		2da ed. Springer.
-		
+
 		\bibitem{song_witt_li_2008}
 		Song, H., Witt, S. F. y Li, G. (2008).
 		\textit{The advanced econometrics of tourism demand}.
 		Routledge.
-		
+
 		\bibitem{zack_sotelsek_2016}
 		Zack, G. y Sotelsek, D. (2016).
 		\textit{Las posibilidades de crecimiento de la Argentina a partir de una
 			estimación de sus elasticidades de comercio exterior}.
 		Revista de Economía Política de Buenos Aires, Universidad de Buenos Aires,
 		Facultad de Ciencias Económicas.
-		
+
 	\end{thebibliography}
 	
-	% -------------------------------
-	% Anexos
-	% -------------------------------
-	\appendix
-	\section{Anexos}
-	\label{sec:anexos}
-	
-	\subsection{Salidas econométricas}
-	\label{subsec:salidas-econometricas}
-	
-	\autoref{tab:auditoria-retroalimentacion} verifica que el rezago final ajustado
-	por diagnóstico residual se utiliza efectivamente en los bloques posteriores del
-	script. Esta tabla proviene de
-	\path{06_vecm_decisions/section_06_feedback_audit.csv}.
-	
-	\begin{table}[H]
-		\centering
-		\caption{Auditoría de retroalimentación de rezagos en el script.}
-		\label{tab:auditoria-retroalimentacion}
-		\scriptsize
-		\begin{tabular}{cllccc}
-			\toprule
-			Símbolo & Sistema & Bloque posterior & Rezago base & Rezago usado & Usa rezago final \\
-			\midrule
-			\(M_t\) & Importaciones & Wald de exclusión de rezagos & 4 & 4 & Sí \\
-			\(M_t\) & Importaciones & Johansen & 4 & 4 & Sí \\
-			\(M_t\) & Importaciones & Autocorrelación residual \texttt{vcorr\_res} & 4 & 4 & Sí \\
-			\(M_t\) & Importaciones & White no-cross & 4 & 4 & Sí \\
-			\(M_t\) & Importaciones & Decisión final VAR/VEC & 4 & 4 & Sí \\
-			\(X_t\) & Exportaciones & Wald de exclusión de rezagos & 1 & 4 & Sí \\
-			\(X_t\) & Exportaciones & Johansen & 1 & 4 & Sí \\
-			\(X_t\) & Exportaciones & Autocorrelación residual \texttt{vcorr\_res} & 1 & 4 & Sí \\
-			\(X_t\) & Exportaciones & White no-cross & 1 & 4 & Sí \\
-			\(X_t\) & Exportaciones & Decisión final VAR/VEC & 1 & 4 & Sí \\
-			\bottomrule
-		\end{tabular}
-		\caption*{\footnotesize Nota: el rezago base corresponde a la selección SC/BIC.
-			El rezago usado corresponde al rezago final luego de retroalimentar la selección
-			con diagnósticos de autocorrelación residual.}
-	\end{table}
-	
-	\autoref{tab:extensiones-clase-anexo} resume las extensiones de clase que se
-	ejecutan sobre el VAR en diferencias de exportaciones. Se reportan en anexos
-	porque funcionan como ejercicios complementarios de dinámica, no como insumo
-	central para la decisión entre VECM y VAR.
-	
-	\begin{table}[H]
-		\centering
-		\caption{Extensiones de clase ejecutadas sobre el VAR en diferencias.}
-		\label{tab:extensiones-clase-anexo}
-		\small
-		\begin{tabular}{llllp{5.4cm}}
-			\toprule
-			Extensión & Paquete & Función & Sistema & Lectura \\
-			\midrule
-			IRF & \texttt{vars} & \texttt{vars::irf} & Exportaciones & Funciones impulso-respuesta calculadas como ejercicio dinámico de clase. \\
-			FEVD & \texttt{vars} & \texttt{vars::fevd} & Exportaciones & Descomposición de varianza calculada para el VAR operativo. \\
-			SVAR & \texttt{vars/svars} & \texttt{vars::SVAR} & Exportaciones & SVAR estimado como extensión; \texttt{svars} queda documentado como paquete disponible para ampliaciones. \\
-			LPIRF & \texttt{lpirfs} & \texttt{lpirfs::lp\_lin} & Exportaciones & Proyecciones locales calculadas como contraste adicional de clase. \\
-			\bottomrule
-		\end{tabular}
-		\caption*{\footnotesize Fuente:
-			\path{10_class_extensions/section_10_class_extensions_summary.csv}.}
-	\end{table}
-	
-	\autoref{tab:raices-var-diferencias-anexo} documenta las raíces de estabilidad
-	del VAR en diferencias utilizado para exportaciones. Todas las raíces tienen
-	módulo menor que uno, por lo que el sistema cumple la condición de estabilidad.
-	
-	\begin{table}[H]
-		\centering
-		\caption{Raíces de estabilidad del VAR en diferencias de exportaciones.}
-		\label{tab:raices-var-diferencias-anexo}
-		\small
-		\begin{tabular}{cccc}
-			\toprule
-			Raíz & Módulo & Estable & Modelo \\
-			\midrule
-			1 & 0.9173 & Sí & VAR en diferencias \\
-			2 & 0.9105 & Sí & VAR en diferencias \\
-			3 & 0.9105 & Sí & VAR en diferencias \\
-			4 & 0.6184 & Sí & VAR en diferencias \\
-			5 & 0.6184 & Sí & VAR en diferencias \\
-			6 & 0.5891 & Sí & VAR en diferencias \\
-			7 & 0.5891 & Sí & VAR en diferencias \\
-			8 & 0.5861 & Sí & VAR en diferencias \\
-			9 & 0.5861 & Sí & VAR en diferencias \\
-			10 & 0.5405 & Sí & VAR en diferencias \\
-			11 & 0.5405 & Sí & VAR en diferencias \\
-			12 & 0.4916 & Sí & VAR en diferencias \\
-			\bottomrule
-		\end{tabular}
-		\caption*{\footnotesize Fuente:
-			\path{07_var_differences/section_07_var_diff_stability_roots.csv}.}
-	\end{table}
-	
-	\subsection{Reproducibilidad}
-	\label{subsec:reproducibilidad}
-	
-	El código, los datos procesados, las salidas del script y el informe se
-	encuentran disponibles en el repositorio
-	\href{https://github.com/delgadiljulian/applied-time-series-econometrics}
-	{delgadiljulian/applied-time-series-econometrics}.
 	
 \end{document}
