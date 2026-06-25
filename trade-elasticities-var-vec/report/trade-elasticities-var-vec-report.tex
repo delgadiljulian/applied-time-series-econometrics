@@ -50,6 +50,15 @@
 \renewcommand{\tablename}{Tabla}
 \captionsetup[table]{name=Tabla}
 
+\newcommand{\pendingbanner}[1]{%
+	\par\smallskip
+	\noindent{\color{red}\fbox{%
+		\begin{minipage}{0.96\textwidth}
+			\textbf{PENDIENTE:} #1
+		\end{minipage}}}
+	\par\smallskip
+}
+
 \newcommand{\reportheader}{%
 	\begin{minipage}{\textwidth}
 		\vspace{6pt}
@@ -164,13 +173,15 @@
 	El informe extiende el análisis desarrollado en el Trabajo Práctico
 	N.\textdegree~2. En lugar de reemplazar la estrategia Engle-Granger/ECM, la
 	incorpora como referencia uniecuacional y la contrasta con herramientas
-	multivariadas VAR/VEC. La muestra de trabajo cubre el período 2004T1--2022T4,
-	lo que permite mantener la comparabilidad con el ejercicio previo. La estrategia
-	empírica avanza en cuatro pasos: primero se analiza el orden de integración de
-	las series; luego se evalúa la cointegración mediante Engle-Granger y Johansen;
-	después se estiman elasticidades de largo plazo cuando hay evidencia de
-	equilibrio; finalmente, se estiman relaciones de corto plazo mediante ECM, VECM
-	o VAR en diferencias según corresponda.
+	multivariadas VAR/VEC. La ventana de datos cubre el período 2004T1--2025T4 y
+	cada serie o sistema se estima con las observaciones completas disponibles
+	dentro de esa cobertura, manteniendo la comparabilidad con el ejercicio previo
+	en las ecuaciones de comercio. La estrategia empírica avanza en cuatro pasos:
+	primero se analiza el orden de integración de las series; luego se evalúa la
+	cointegración mediante Engle-Granger y Johansen; después se estiman
+	elasticidades de largo plazo cuando hay evidencia de equilibrio; finalmente, se
+	estiman relaciones de corto plazo mediante ECM, VECM o VAR en diferencias según
+	corresponda.
 	
 	La lectura central de los resultados es deliberadamente prudente. Para
 	importaciones, la evidencia es más consistente: las pruebas respaldan una
@@ -574,6 +585,8 @@
 	
 	\subsection{Fuentes, base procesada y muestra}
 	\label{subsec:datos-fuentes-muestra}
+
+	\pendingbanner{Actualizar esta subsección con la regla final de muestra: variables completas hasta 2025Q4 y sistemas limitados a 2022Q4 cuando importaciones, exportaciones o PIB argentino recortan la muestra. Usar \path{01_data_descriptives/section_01_variable_coverage.csv} y \path{01_data_descriptives/section_01_system_samples.csv}.}
 	
 	El trabajo utiliza las series construidas para el Trabajo Práctico
 	N.\textdegree~2, dado que el enunciado del TP 3 indica explícitamente que debe
@@ -610,21 +623,22 @@
 	base incluye primeras diferencias logarítmicas, tasas de crecimiento y rezagos
 	de las variables principales. Esta estructura permite utilizar un mismo archivo
 	para las pruebas de raíz unitaria, la replicación de la etapa Engle-Granger/ECM
-	del TP 2 y la estimación posterior de sistemas VAR/VEC. La muestra de trabajo
-	inicial se define entre 2004Q1 y 2022Q4, con 76 observaciones trimestrales. Este
-	cierre replica la muestra econométrica empleada en el informe anterior, aunque
-	la base conserva cobertura extendida hasta 2025Q4 para eventuales ejercicios de
-	sensibilidad.
+	del TP 2 y la estimación posterior de sistemas VAR/VEC. La ventana base se
+	define entre 2004Q1 y 2025Q4, con 88 observaciones trimestrales en el archivo
+	procesado. A partir de esa cobertura, cada serie o sistema utiliza las
+	observaciones completas disponibles para evitar descartar información de series
+	que sí continúan hasta 2025.
 	
 	\subsection{Variables de análisis}
 	\label{subsec:datos-variables}
 	
 	\autoref{tab:variables} resume las variables principales del análisis, sus
 	transformaciones y el uso econométrico previsto. Luego,
-	\autoref{tab:muestra-base} documenta la muestra utilizada en esta primera fase
-	del trabajo. La base procesada contiene 88 trimestres en su cobertura extendida,
-	pero las variables reales de comercio y producto utilizadas en la muestra
-	econométrica presentan 76 observaciones completas entre 2004Q1 y 2022Q4.
+	\autoref{tab:muestra-base} documenta la ventana base utilizada en esta primera
+	fase del trabajo. La base procesada contiene 88 trimestres; dentro de esa
+	ventana, las variables reales de comercio y producto presentan 76 observaciones
+	completas entre 2004Q1 y 2022Q4, mientras que ITCRM, PIB de socios y commodities
+	conservan cobertura hasta 2025Q4.
 	
 	\begin{table}[H]
 		\centering
@@ -656,8 +670,8 @@
 			\midrule
 			\texttt{trade\_elasticities\_var\_vec\_panel}\\
 			\texttt{\_transformed\_2004\_2025.csv}
-			& 2004Q1 & 2022Q4 &
-			76 observaciones trimestrales; cierre preferido para replicar el TP 2. \\
+			& 2004Q1 & 2025Q4 &
+			88 observaciones trimestrales; cada serie o sistema usa sus datos completos disponibles. \\
 			\bottomrule
 		\end{tabular}
 	\end{table}
@@ -694,7 +708,12 @@
 	
 	\autoref{tab:sistemas-iniciales-var-vec} define los dos sistemas de variables
 	que se utilizan como punto de partida para las estimaciones VAR/VEC de
-	importaciones y exportaciones.
+	importaciones y exportaciones. Aunque el archivo procesado cubre 2004Q1--2025Q4,
+	los sistemas de comercio quedan acotados a 2004Q1--2022Q4 porque las series de
+	importaciones, exportaciones y PIB argentino presentan observaciones completas
+	hasta ese trimestre. En cambio, las series de ITCRM, PIB de socios y commodities
+	sí se utilizan con su cobertura completa cuando se analizan de manera individual
+	o como controles.
 	
 	\begin{table}[H]
 		\centering
@@ -713,6 +732,10 @@
 			& 2004Q1 & 2022Q4 & 76 \\
 			\bottomrule
 		\end{tabular}
+		\caption*{\footnotesize Nota: el fin 2022Q4 corresponde a la intersección
+			completa de cada sistema VAR/VEC. \texttt{ln\_itcrm},
+			\texttt{ln\_pib\_socios} y \texttt{ln\_commodity\_price\_index} conservan
+			cobertura completa hasta 2025Q4 en el archivo procesado.}
 	\end{table}
 	
 	La selección de rezagos se realiza con un máximo de ocho rezagos trimestrales y
@@ -755,9 +778,10 @@
 	la evolución económica de las variables utilizadas en las ecuaciones de comercio
 	exterior. Por otro lado, anticipa los problemas econométricos que luego deben
 	tratarse formalmente: persistencia en niveles, volatilidad en diferencias y
-	posibles cambios de régimen. La muestra base cubre 2004T1--2022T4, con 76
-	observaciones trimestrales, y mantiene la comparabilidad con el ejercicio
-	uniecuacional del TP 2.
+	posibles cambios de régimen. La ventana base cubre 2004T1--2025T4, con 88
+	observaciones trimestrales en el archivo procesado. En los modelos de comercio,
+	la muestra efectiva queda determinada por las observaciones completas de cada
+	sistema.
 	
 	\autoref{fig:niveles-importaciones} y \autoref{fig:niveles-exportaciones}
 	presentan las series centrales en niveles logarítmicos, separadas según el
@@ -851,6 +875,8 @@
 	
 	\subsection{Pruebas de integración}
 	\label{subsec:resultados-integracion}
+
+	\pendingbanner{Revisar esta sección con la clasificación integrada de raíces unitarias. Incorporar la sensibilidad de \(Y_t\), la clasificación \(I(0)\) de \(X_t\) y el uso de commodities como control externo/robustez. Usar \path{02_unit_roots/section_02_unit_root_classification.csv}.}
 	
 	El paso siguiente consiste en determinar si las series deben tratarse como
 	estacionarias en niveles o como procesos integrados. Esta decisión no es
@@ -993,6 +1019,8 @@
 	
 	\subsection{Resultados Engle-Granger y ECM}
 	\label{subsec:resultados-eg-ecm}
+
+	\pendingbanner{Actualizar el bloque Engle-Granger/ECM con las salidas nuevas: exportaciones ampliadas con commodities, decisión de modelado por sistema y elasticidades comparables. Usar \path{05_engle_granger_ecm/section_05_modeling_decision_notes.csv}, \path{05_engle_granger_ecm/section_05_eg_ecm_elasticity_summary.csv} y \path{09_wickens_breusch/section_09_wickens_breusch_long_run_coefficients.csv}.}
 	
 	Esta subsección retoma la estrategia uniecuacional del TP 2 y la utiliza como
 	punto de comparación para la extensión VAR/VEC. El procedimiento de
@@ -1355,6 +1383,8 @@
 	
 	\subsection{Resultados Johansen y VECM}
 	\label{subsec:resultados-johansen-vec}
+
+	\pendingbanner{Revisar esta sección manteniendo los sistemas clásicos como base. Dejar claro que exportaciones ampliadas con commodities no reemplaza el Johansen/VECM clásico y, si se menciona, debe quedar como robustez/control externo. Verificar consistencia con \path{06_vecm_decisions/section_06_var_vec_treatment_decision.csv}.}
 	
 	La extensión multivariada permite contrastar la evidencia uniecuacional de
 	Engle-Granger con pruebas de cointegración basadas en sistemas VAR. A diferencia
@@ -1942,6 +1972,8 @@ estructurales.
 	% -------------------------------
 	\section{Comparación de resultados}
 	\label{sec:comparacion}
+
+	\pendingbanner{Agregar una tabla o párrafo guía con la jerarquización final de modelos: principal, robustez, sensibilidad e indicativo. Usar \path{11_model_hierarchy/section_11_model_hierarchy.csv} como mapa para decidir qué queda en cuerpo, qué queda como robustez y qué va solo como lectura indicativa.}
 	
 	\subsection{Criterio de comparación entre metodologías}
 	\label{subsec:comparacion-metodologias}
@@ -2110,6 +2142,8 @@ Song, Witt y Li \cite{song_witt_li_2008} & No aplica directo & No aplica directo
 	% -------------------------------
 	\section{Conclusiones}
 	\label{sec:conclusiones}
+
+	\pendingbanner{Reescribir conclusiones después de actualizar tablas y comparación: importaciones como resultado principal con ECM; exportaciones como resultado operativo en diferencias; commodities como robustez; Johansen/VECM como sensibilidad o evidencia indicativa según sistema.}
 	
 	El informe estimó elasticidades del comercio exterior argentino combinando
 	herramientas uniecuacionales y multivariadas de series de tiempo. La evidencia

@@ -7,6 +7,12 @@
 # Elasticidades del comercio exterior argentino
 # Extension multivariada VAR/VEC
 #
+# Integrantes:
+# Andrea Chasi
+# Christian Arias
+# Leonardo Avila
+# Julian Delgadillo Marin
+#
 # Fase base:
 # 1. Cargar panel transformado.
 # 2. Definir muestra de trabajo.
@@ -75,7 +81,8 @@ output_subdirs <- c(
   section_07 = "07_var_differences",
   section_08 = "08_final_diagnostics",
   section_09 = "09_wickens_breusch",
-  section_10 = "10_class_extensions"
+  section_10 = "10_class_extensions",
+  section_11 = "11_model_hierarchy"
 )
 
 # se crea la carpeta necesaria si todavia no existe.
@@ -431,11 +438,10 @@ panel_data$year <- as.integer(panel_data$year)
 panel_data$q <- as.integer(panel_data$q)
 panel_data <- panel_data[order(panel_data$quarter_date), ]
 
-# La muestra preferida replica el cierre usado en el TP 2. Si se decide ampliar
-# el TP 3 a toda la cobertura disponible, cambiar a as.Date("2025-10-01").
+# La muestra preferida usa toda la cobertura disponible hasta 2025Q4.
 # se construye model_sample_start con las instrucciones de este minibloque.
 model_sample_start <- as.Date("2004-01-01")
-model_sample_end_preferred <- as.Date("2022-10-01")
+model_sample_end_preferred <- as.Date("2025-10-01")
 
 # se define el vector required_metadata_vars usado en este bloque.
 required_metadata_vars <- c("quarter", "year", "q", "quarter_date")
@@ -472,9 +478,9 @@ if (length(missing_required_vars) > 0) {
   )
 }
 
-# se construye complete_key_rows con las instrucciones de este minibloque.
-complete_key_rows <- complete.cases(panel_data[, c(required_level_vars, required_diff_vars)])
-available_sample_end <- max(panel_data$quarter_date[complete_key_rows], na.rm = TRUE)
+# se identifica la cobertura disponible del panel sin imponer una muestra comun
+# completa para todas las series.
+available_sample_end <- max(panel_data$quarter_date, na.rm = TRUE)
 model_sample_end <- min(model_sample_end_preferred, available_sample_end)
 
 # se construye work_data con las instrucciones de este minibloque.
@@ -506,7 +512,8 @@ model_sample_definition <- data.frame(
   input_file = input_panel_file,
   note = paste(
     "Muestra base TP3 para ADF y preparacion VAR/VEC;",
-    "el cierre preferido replica TP2 y puede ampliarse a 2025Q4 si se decide."
+    "cada serie o sistema usa las observaciones completas disponibles dentro",
+    "de la cobertura 2004Q1-2025Q4."
   ),
   stringsAsFactors = FALSE
 )
@@ -528,6 +535,14 @@ exports_system_vars <- c(
   "ln_itcrm"
 )
 
+# se define el vector exports_augmented_system_vars usado como robustez.
+exports_augmented_system_vars <- c(
+  "ln_exports_real",
+  "ln_pib_socios",
+  "ln_itcrm",
+  "ln_commodity_price_index"
+)
+
 # se construye imports_system_data con las instrucciones de este minibloque.
 imports_system_data <- work_data[
   complete.cases(work_data[, imports_system_vars]),
@@ -539,6 +554,68 @@ exports_system_data <- work_data[
   complete.cases(work_data[, exports_system_vars]),
   c(required_metadata_vars, exports_system_vars)
 ]
+
+# se construye exports_augmented_system_data con las instrucciones de este minibloque.
+exports_augmented_system_data <- work_data[
+  complete.cases(work_data[, exports_augmented_system_vars]),
+  c(required_metadata_vars, exports_augmented_system_vars)
+]
+
+# se define la funcion auxiliar para documentar cobertura por variable.
+variable_coverage_row <- function(variable, variable_label, transformation, analysis_use) {
+  # se evalua una condicion antes de decidir el siguiente paso.
+  if (!variable %in% names(work_data)) {
+    return(data.frame(
+      variable = variable,
+      variable_label = variable_label,
+      transformation = transformation,
+      analysis_use = analysis_use,
+      first_quarter = NA_character_,
+      last_quarter = NA_character_,
+      n_non_missing = NA_integer_,
+      uses_full_2004_2025_window = NA,
+      limiting_note = "Variable no disponible en la base procesada.",
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  # se identifican observaciones no faltantes dentro de la ventana base.
+  non_missing_rows <- !is.na(work_data[[variable]])
+  n_non_missing <- sum(non_missing_rows)
+  first_quarter <- if (n_non_missing > 0) min(work_data$quarter[non_missing_rows]) else NA_character_
+  last_quarter <- if (n_non_missing > 0) max(work_data$quarter[non_missing_rows]) else NA_character_
+  uses_full_window <- n_non_missing == nrow(work_data) &&
+    first_quarter == min(work_data$quarter) &&
+    last_quarter == max(work_data$quarter)
+
+  # se arma la fila de cobertura.
+  data.frame(
+    variable = variable,
+    variable_label = variable_label,
+    transformation = transformation,
+    analysis_use = analysis_use,
+    first_quarter = first_quarter,
+    last_quarter = last_quarter,
+    n_non_missing = n_non_missing,
+    uses_full_2004_2025_window = uses_full_window,
+    limiting_note = ifelse(
+      uses_full_window,
+      "Usa la cobertura completa 2004Q1-2025Q4.",
+      "La muestra efectiva queda acotada por datos faltantes dentro de la ventana base."
+    ),
+    stringsAsFactors = FALSE
+  )
+}
+
+# se define la funcion auxiliar para identificar variables que limitan un sistema.
+limiting_variables_for_system <- function(system_vars) {
+  non_missing_counts <- vapply(
+    system_vars,
+    function(v) sum(!is.na(work_data[[v]])),
+    integer(1)
+  )
+  paste(names(non_missing_counts)[non_missing_counts == min(non_missing_counts)], collapse = ", ")
+}
 
 # se replican los objetos ts por sistema que el docente usa antes de estimar VAR.
 imports_ts_levels <- ts(
@@ -554,16 +631,126 @@ exports_ts_levels <- ts(
 
 # se arma la tabla system_sample_summary con resultados de este paso.
 system_sample_summary <- data.frame(
-  system = c("imports", "exports"),
+  system = c("imports", "exports", "exports_augmented"),
   variables = c(
     paste(imports_system_vars, collapse = ", "),
-    paste(exports_system_vars, collapse = ", ")
+    paste(exports_system_vars, collapse = ", "),
+    paste(exports_augmented_system_vars, collapse = ", ")
   ),
-  first_quarter = c(min(imports_system_data$quarter), min(exports_system_data$quarter)),
-  last_quarter = c(max(imports_system_data$quarter), max(exports_system_data$quarter)),
-  n_quarters = c(nrow(imports_system_data), nrow(exports_system_data)),
+  first_quarter = c(
+    min(imports_system_data$quarter),
+    min(exports_system_data$quarter),
+    min(exports_augmented_system_data$quarter)
+  ),
+  last_quarter = c(
+    max(imports_system_data$quarter),
+    max(exports_system_data$quarter),
+    max(exports_augmented_system_data$quarter)
+  ),
+  n_quarters = c(
+    nrow(imports_system_data),
+    nrow(exports_system_data),
+    nrow(exports_augmented_system_data)
+  ),
+  sample_rule = c(
+    "Interseccion completa de variables endogenas del sistema de importaciones.",
+    "Interseccion completa de variables endogenas del sistema de exportaciones.",
+    "Robustez de exportaciones con commodities como control externo."
+  ),
+  limiting_variables = c(
+    limiting_variables_for_system(imports_system_vars),
+    limiting_variables_for_system(exports_system_vars),
+    limiting_variables_for_system(exports_augmented_system_vars)
+  ),
+  full_window_available_vars = c(
+    paste(imports_system_vars[
+      vapply(imports_system_vars, function(v) sum(!is.na(work_data[[v]])) == nrow(work_data), logical(1))
+    ], collapse = ", "),
+    paste(exports_system_vars[
+      vapply(exports_system_vars, function(v) sum(!is.na(work_data[[v]])) == nrow(work_data), logical(1))
+    ], collapse = ", "),
+    paste(exports_augmented_system_vars[
+      vapply(exports_augmented_system_vars, function(v) sum(!is.na(work_data[[v]])) == nrow(work_data), logical(1))
+    ], collapse = ", ")
+  ),
   stringsAsFactors = FALSE
 )
+
+# se arma la tabla variable_coverage con resultados de este paso.
+variable_coverage <- do.call(rbind, list(
+  variable_coverage_row(
+    "ln_imports_real",
+    "Importaciones reales",
+    "log_level",
+    "Sistema de importaciones; Engle-Granger; VAR/VEC"
+  ),
+  variable_coverage_row(
+    "ln_exports_real",
+    "Exportaciones reales",
+    "log_level",
+    "Sistema de exportaciones; Engle-Granger; VAR/VEC"
+  ),
+  variable_coverage_row(
+    "ln_gdp_real",
+    "PIB real Argentina",
+    "log_level",
+    "Ingreso domestico para importaciones"
+  ),
+  variable_coverage_row(
+    "ln_itcrm",
+    "Tipo de cambio real multilateral",
+    "log_level",
+    "Precio relativo en importaciones y exportaciones"
+  ),
+  variable_coverage_row(
+    "ln_pib_socios",
+    "PIB de socios comerciales",
+    "log_level",
+    "Demanda externa para exportaciones"
+  ),
+  variable_coverage_row(
+    "ln_commodity_price_index",
+    "Indice de precios de commodities",
+    "log_level",
+    "Control externo y futura especificacion ampliada de exportaciones"
+  ),
+  variable_coverage_row(
+    "d_ln_imports_real",
+    "Importaciones reales",
+    "log_difference",
+    "Dinamica de corto plazo de importaciones"
+  ),
+  variable_coverage_row(
+    "d_ln_exports_real",
+    "Exportaciones reales",
+    "log_difference",
+    "Dinamica de corto plazo de exportaciones"
+  ),
+  variable_coverage_row(
+    "d_ln_gdp_real",
+    "PIB real Argentina",
+    "log_difference",
+    "Dinamica de corto plazo de ingreso domestico"
+  ),
+  variable_coverage_row(
+    "d_ln_itcrm",
+    "Tipo de cambio real multilateral",
+    "log_difference",
+    "Dinamica de corto plazo de precios relativos"
+  ),
+  variable_coverage_row(
+    "d_ln_pib_socios",
+    "PIB de socios comerciales",
+    "log_difference",
+    "Dinamica de corto plazo de demanda externa"
+  ),
+  variable_coverage_row(
+    "d_ln_commodity_price_index",
+    "Indice de precios de commodities",
+    "log_difference",
+    "Dinamica de corto plazo de condiciones externas"
+  )
+))
 
 # se arma la tabla variable_check con resultados de este paso.
 variable_check <- data.frame(
@@ -1419,6 +1606,144 @@ course_adf_results <- do.call(
   })
 )
 
+# se define la funcion auxiliar para recuperar una fila ADF formal.
+get_urca_adf_row <- function(series_key, transformation) {
+  adf_urca_results[
+    adf_urca_results$series_key == series_key &
+      adf_urca_results$transformation == transformation,
+  ][1, ]
+}
+
+# se define la funcion auxiliar para recuperar una fila ADF de clase.
+get_course_adf_row <- function(series_key, transformation) {
+  course_adf_results[
+    course_adf_results$series_key == series_key &
+      course_adf_results$transformation == transformation,
+  ][1, ]
+}
+
+# se define la funcion auxiliar para recuperar cobertura por variable.
+get_variable_coverage_row <- function(variable) {
+  variable_coverage[variable_coverage$variable == variable, ][1, ]
+}
+
+# se define la funcion auxiliar para traducir conclusiones ADF en orden operativo.
+classify_adf_order <- function(level_rejects, diff_rejects) {
+  if (isTRUE(level_rejects)) {
+    return("I(0)")
+  }
+  if (identical(level_rejects, FALSE) && isTRUE(diff_rejects)) {
+    return("I(1)")
+  }
+  "indeterminado"
+}
+
+# se define la funcion auxiliar para clasificar uso econometrico recomendado.
+recommended_integration_use <- function(series_key, urca_order_5pct,
+                                        course_order_10pct) {
+  if (series_key == "commodities") {
+    return(paste(
+      "usar como control externo o robustez;",
+      "no tratar como variable central del vector de cointegracion"
+    ))
+  }
+  if (series_key == "exports" && urca_order_5pct == "I(0)") {
+    return(paste(
+      "serie dependiente con clasificacion I(0) en ADF;",
+      "leer cointegracion con prudencia y contrastar con primeras diferencias"
+    ))
+  }
+  if (urca_order_5pct == "I(1)" && course_order_10pct == "indeterminado") {
+    return(paste(
+      "usar como I(1) con respaldo urca;",
+      "documentar sensibilidad del script de clase"
+    ))
+  }
+  if (urca_order_5pct == "I(1)" && course_order_10pct == "I(1)") {
+    return("usar como variable I(1) en pruebas de cointegracion")
+  }
+  if (urca_order_5pct == "I(0)" || course_order_10pct == "I(0)") {
+    return(paste(
+      "clasificacion sensible;",
+      "usar en cointegracion solo con lectura prudente"
+    ))
+  }
+  "revisar antes de usar en cointegracion"
+}
+
+# se arma la tabla unit_root_classification con resultados de este paso.
+unit_root_classification <- do.call(
+  rbind,
+  lapply(seq_len(nrow(adf_specs)), function(i) {
+    spec <- adf_specs[i, ]
+    level_urca <- get_urca_adf_row(spec$series_key, "log_level")
+    diff_urca <- get_urca_adf_row(spec$series_key, "log_difference")
+    level_course <- get_course_adf_row(spec$series_key, "log_level")
+    diff_course <- get_course_adf_row(spec$series_key, "log_difference")
+    level_coverage <- get_variable_coverage_row(spec$level_var)
+    diff_coverage <- get_variable_coverage_row(spec$diff_var)
+
+    urca_level_reject_5pct <- level_urca$statistic < level_urca$critical_5pct
+    urca_diff_reject_5pct <- diff_urca$statistic < diff_urca$critical_5pct
+    urca_level_reject_10pct <- level_urca$statistic < level_urca$critical_10pct
+    urca_diff_reject_10pct <- diff_urca$statistic < diff_urca$critical_10pct
+    course_level_reject_5pct <- level_course$tau_statistic < level_urca$critical_5pct
+    course_diff_reject_5pct <- diff_course$tau_statistic < diff_urca$critical_5pct
+    course_level_reject_10pct <- level_course$tau_statistic < level_urca$critical_10pct
+    course_diff_reject_10pct <- diff_course$tau_statistic < diff_urca$critical_10pct
+
+    urca_order_5pct <- classify_adf_order(
+      urca_level_reject_5pct,
+      urca_diff_reject_5pct
+    )
+    course_order_10pct <- classify_adf_order(
+      course_level_reject_10pct,
+      course_diff_reject_10pct
+    )
+    agreement_status <- ifelse(
+      urca_order_5pct == course_order_10pct,
+      "coinciden",
+      "sensible a criterio o rezagos"
+    )
+
+    data.frame(
+      series_key = spec$series_key,
+      series_label = spec$series_label,
+      level_variable = spec$level_var,
+      diff_variable = spec$diff_var,
+      level_first_quarter = level_coverage$first_quarter,
+      level_last_quarter = level_coverage$last_quarter,
+      level_n_obs = level_coverage$n_non_missing,
+      diff_first_quarter = diff_coverage$first_quarter,
+      diff_last_quarter = diff_coverage$last_quarter,
+      diff_n_obs = diff_coverage$n_non_missing,
+      urca_level_statistic = level_urca$statistic,
+      urca_level_reject_5pct = urca_level_reject_5pct,
+      urca_level_reject_10pct = urca_level_reject_10pct,
+      urca_diff_statistic = diff_urca$statistic,
+      urca_diff_reject_5pct = urca_diff_reject_5pct,
+      urca_diff_reject_10pct = urca_diff_reject_10pct,
+      urca_order_5pct = urca_order_5pct,
+      course_level_tau = level_course$tau_statistic,
+      course_level_lag = level_course$selected_lag,
+      course_level_reject_5pct = course_level_reject_5pct,
+      course_level_reject_10pct = course_level_reject_10pct,
+      course_diff_tau = diff_course$tau_statistic,
+      course_diff_lag = diff_course$selected_lag,
+      course_diff_reject_5pct = course_diff_reject_5pct,
+      course_diff_reject_10pct = course_diff_reject_10pct,
+      course_order_10pct = course_order_10pct,
+      agreement_status = agreement_status,
+      recommended_use = recommended_integration_use(
+        spec$series_key,
+        urca_order_5pct,
+        course_order_10pct
+      ),
+      stringsAsFactors = FALSE
+    )
+  })
+)
+
 #********************************************************
 # 6. Engle-Granger y ECM
 #********************************************************
@@ -1495,7 +1820,8 @@ engle_granger_critical_values <- data.frame(
 # el ADF residual que define si corresponde continuar con un ECM.
 # se define la funcion auxiliar run_engle_granger.
 run_engle_granger <- function(data, model_key, model_label, dependent_var,
-                              regressors) {
+                              regressors, critical_q_series = length(regressors) + 1L,
+                              residual_test_note = "Comparacion contra valores criticos Engle-Granger usados en clase.") {
   model_vars <- c(dependent_var, regressors)
   model_data <- data[complete.cases(data[, model_vars]), c(required_metadata_vars, model_vars)]
   model_data <- model_data[order(model_data$quarter_date), ]
@@ -1506,7 +1832,7 @@ run_engle_granger <- function(data, model_key, model_label, dependent_var,
   n_obs <- length(residuals)
   adf_lag <- trunc((n_obs - 1)^(1 / 3))
   statistic <- residual_adf_t_stat(residuals, adf_lag)
-  q_series <- length(regressors) + 1L
+  q_series <- critical_q_series
   reference_n_obs <- engle_granger_critical_values$reference_n_obs[
     which.min(abs(engle_granger_critical_values$reference_n_obs - n_obs))
   ]
@@ -1561,7 +1887,7 @@ run_engle_granger <- function(data, model_key, model_label, dependent_var,
         "residuos estacionarios; evidencia de cointegracion",
         "no rechaza raiz unitaria en residuos"
       ),
-      note = "Comparacion contra valores criticos Engle-Granger usados en clase.",
+      note = residual_test_note,
       stringsAsFactors = FALSE
     )
   )
@@ -1585,28 +1911,47 @@ exports_engle_granger <- run_engle_granger(
   regressors = c("ln_pib_socios", "ln_itcrm")
 )
 
+# se construye exports_augmented_engle_granger con las instrucciones de este minibloque.
+exports_augmented_engle_granger <- run_engle_granger(
+  data = work_data,
+  model_key = "exports_augmented",
+  model_label = "Exportaciones ampliadas: PIB socios, ITCRM y commodities",
+  dependent_var = "ln_exports_real",
+  regressors = c("ln_pib_socios", "ln_itcrm", "ln_commodity_price_index"),
+  critical_q_series = 3L,
+  residual_test_note = paste(
+    "Especificacion de robustez: commodities se incorpora como control externo.",
+    "La comparacion residual usa valores criticos para las variables I(1)",
+    "principales, por lo que la decision es indicativa."
+  )
+)
+
 # se unen filas para formar engle_granger_equations.
 engle_granger_equations <- rbind(
   imports_engle_granger$equation,
-  exports_engle_granger$equation
+  exports_engle_granger$equation,
+  exports_augmented_engle_granger$equation
 )
 
 # se unen filas para formar engle_granger_long_run_coefficients.
 engle_granger_long_run_coefficients <- rbind(
   imports_engle_granger$coefficients,
-  exports_engle_granger$coefficients
+  exports_engle_granger$coefficients,
+  exports_augmented_engle_granger$coefficients
 )
 
 # se unen filas para formar engle_granger_residual_tests.
 engle_granger_residual_tests <- rbind(
   imports_engle_granger$residual_test,
-  exports_engle_granger$residual_test
+  exports_engle_granger$residual_test,
+  exports_augmented_engle_granger$residual_test
 )
 
 # se unen filas para formar engle_granger_residuals.
 engle_granger_residuals <- rbind(
   imports_engle_granger$residuals,
-  exports_engle_granger$residuals
+  exports_engle_granger$residuals,
+  exports_augmented_engle_granger$residuals
 )
 
 # se reorganiza la estructura de datos en residuals_wide.
@@ -1621,13 +1966,22 @@ names(residuals_wide) <- gsub("residual\\.", "resid_", names(residuals_wide))
 # se cruza informacion para construir modeling_data.
 modeling_data <- merge(
   work_data,
-  residuals_wide[, c("quarter_date", "resid_imports", "resid_exports")],
+  residuals_wide[, c(
+    "quarter_date",
+    "resid_imports",
+    "resid_exports",
+    "resid_exports_augmented"
+  )],
   by = "quarter_date",
   all.x = TRUE
 )
 modeling_data <- modeling_data[order(modeling_data$quarter_date), ]
 modeling_data$l1_resid_imports <- c(NA_real_, modeling_data$resid_imports[-nrow(modeling_data)])
 modeling_data$l1_resid_exports <- c(NA_real_, modeling_data$resid_exports[-nrow(modeling_data)])
+modeling_data$l1_resid_exports_augmented <- c(
+  NA_real_,
+  modeling_data$resid_exports_augmented[-nrow(modeling_data)]
+)
 
 # se arma la tabla engle_granger_decision con resultados de este paso.
 engle_granger_decision <- data.frame(
@@ -1639,6 +1993,93 @@ engle_granger_decision <- data.frame(
     engle_granger_residual_tests$rejects_unit_root_5pct,
     "estimar ECM con residuo Engle-Granger rezagado",
     "estimar modelo en primeras diferencias sin ECM"
+  ),
+  stringsAsFactors = FALSE
+)
+
+# se define la funcion auxiliar para condensar clasificacion de raices por variable.
+unit_root_note_for <- function(series_key) {
+  row <- unit_root_classification[
+    unit_root_classification$series_key == series_key,
+  ][1, ]
+  paste0(
+    row$series_label,
+    ": ",
+    row$urca_order_5pct,
+    " por urca; ",
+    row$course_order_10pct,
+    " por script de clase; ",
+    row$recommended_use
+  )
+}
+
+# se define la funcion auxiliar para recuperar la muestra de cada sistema.
+system_sample_note_for <- function(system_key) {
+  row <- system_sample_summary[
+    system_sample_summary$system == system_key,
+  ][1, ]
+  paste0(
+    row$first_quarter,
+    "-",
+    row$last_quarter,
+    "; ",
+    row$n_quarters,
+    " observaciones; variables limitantes: ",
+    row$limiting_variables
+  )
+}
+
+# se arma la tabla modeling_decision_notes para conectar muestra, raices y modelo.
+modeling_decision_notes <- data.frame(
+  model_key = c("imports", "exports", "exports_augmented"),
+  model_label = c(
+    "Importaciones: comercio, PIB argentino e ITCRM",
+    "Exportaciones: comercio, PIB socios e ITCRM",
+    "Exportaciones ampliadas: PIB socios, ITCRM y commodities"
+  ),
+  role = c("sistema principal", "sistema principal", "robustez con control externo"),
+  system_sample = c(
+    system_sample_note_for("imports"),
+    system_sample_note_for("exports"),
+    system_sample_note_for("exports_augmented")
+  ),
+  unit_root_assessment = c(
+    paste(
+      unit_root_note_for("imports"),
+      unit_root_note_for("gdp_arg"),
+      unit_root_note_for("itcrm"),
+      sep = " | "
+    ),
+    paste(
+      unit_root_note_for("exports"),
+      unit_root_note_for("pib_socios"),
+      unit_root_note_for("itcrm"),
+      sep = " | "
+    ),
+    paste(
+      unit_root_note_for("exports"),
+      unit_root_note_for("pib_socios"),
+      unit_root_note_for("itcrm"),
+      unit_root_note_for("commodities"),
+      sep = " | "
+    )
+  ),
+  engle_granger_decision = engle_granger_decision$next_step[
+    match(c("imports", "exports", "exports_augmented"), engle_granger_decision$model_key)
+  ],
+  interpretation_note = c(
+    paste(
+      "Sistema apto para lectura de cointegracion/ECM;",
+      "el PIB argentino se usa como I(1) con respaldo urca y sensibilidad documentada."
+    ),
+    paste(
+      "La variable dependiente aparece como I(0) en ADF;",
+      "el resultado de cointegracion se reporta con cautela y se privilegia la lectura en diferencias."
+    ),
+    paste(
+      "Especificacion de robustez;",
+      "commodities entra como control externo y no reemplaza el sistema clasico de exportaciones."
+    )
   ),
   stringsAsFactors = FALSE
 )
@@ -1720,26 +2161,66 @@ exports_short_run <- if (
     model_key = "exports_diff",
     model_label = "Exportaciones - primeras diferencias",
     dependent_var = "d_ln_exports_real",
-    regressors = c("d_ln_pib_socios", "d_ln_itcrm", "d_ln_commodity_price_index"),
+    regressors = c("d_ln_pib_socios", "d_ln_itcrm"),
     model_type = "short_run_diff"
+  )
+}
+
+# se construye exports_augmented_short_run mediante un bloque de calculo extendido.
+exports_augmented_short_run <- if (
+  engle_granger_decision$use_ecm[
+    engle_granger_decision$model_key == "exports_augmented"
+  ]
+) {
+  run_short_run_model(
+    data = modeling_data,
+    model_key = "exports_augmented_ecm",
+    model_label = "Exportaciones ampliadas - ECM",
+    dependent_var = "d_ln_exports_real",
+    regressors = c(
+      "d_ln_pib_socios",
+      "d_ln_itcrm",
+      "d_ln_commodity_price_index",
+      "l1_resid_exports_augmented"
+    ),
+    model_type = "ecm_robustness"
+  )
+} else {
+  run_short_run_model(
+    data = modeling_data,
+    model_key = "exports_augmented_diff",
+    model_label = "Exportaciones ampliadas - primeras diferencias",
+    dependent_var = "d_ln_exports_real",
+    regressors = c(
+      "d_ln_pib_socios",
+      "d_ln_itcrm",
+      "d_ln_commodity_price_index"
+    ),
+    model_type = "short_run_diff_robustness"
   )
 }
 
 # se unen filas para formar short_run_model_summary.
 short_run_model_summary <- rbind(
   imports_short_run$summary,
-  exports_short_run$summary
+  exports_short_run$summary,
+  exports_augmented_short_run$summary
 )
 
 # se unen filas para formar short_run_coefficients.
 short_run_coefficients <- rbind(
   imports_short_run$coefficients,
-  exports_short_run$coefficients
+  exports_short_run$coefficients,
+  exports_augmented_short_run$coefficients
 )
 
 # se construye ecm_adjustment_terms con las instrucciones de este minibloque.
 ecm_adjustment_terms <- short_run_coefficients[
-  short_run_coefficients$term %in% c("l1_resid_imports", "l1_resid_exports"),
+  short_run_coefficients$term %in% c(
+    "l1_resid_imports",
+    "l1_resid_exports",
+    "l1_resid_exports_augmented"
+  ),
 ]
 
 # se arma la tabla ecm_adjustment_summary con resultados de este paso.
@@ -1764,10 +2245,60 @@ ecm_adjustment_summary <- data.frame(
 
 # se arma la tabla eg_ecm_elasticity_summary con resultados de este paso.
 eg_ecm_elasticity_summary <- data.frame(
-  flow = c("Importaciones", "Importaciones", "Exportaciones", "Exportaciones"),
-  variable = c("PIB", "TCR", "PIB socios", "TCR"),
-  long_run_term = c("ln_gdp_real", "ln_itcrm", "ln_pib_socios", "ln_itcrm"),
-  short_run_term = c("d_ln_gdp_real", "d_ln_itcrm", "d_ln_pib_socios", "d_ln_itcrm"),
+  flow = c(
+    "Importaciones",
+    "Importaciones",
+    "Exportaciones",
+    "Exportaciones",
+    "Exportaciones ampliadas",
+    "Exportaciones ampliadas",
+    "Exportaciones ampliadas"
+  ),
+  variable = c(
+    "PIB",
+    "TCR",
+    "PIB socios",
+    "TCR",
+    "PIB socios",
+    "TCR",
+    "Commodities"
+  ),
+  long_run_model_key = c(
+    "imports",
+    "imports",
+    "exports",
+    "exports",
+    "exports_augmented",
+    "exports_augmented",
+    "exports_augmented"
+  ),
+  short_run_model_prefix = c(
+    "^imports_",
+    "^imports_",
+    "^exports_(ecm|diff)",
+    "^exports_(ecm|diff)",
+    "^exports_augmented_",
+    "^exports_augmented_",
+    "^exports_augmented_"
+  ),
+  long_run_term = c(
+    "ln_gdp_real",
+    "ln_itcrm",
+    "ln_pib_socios",
+    "ln_itcrm",
+    "ln_pib_socios",
+    "ln_itcrm",
+    "ln_commodity_price_index"
+  ),
+  short_run_term = c(
+    "d_ln_gdp_real",
+    "d_ln_itcrm",
+    "d_ln_pib_socios",
+    "d_ln_itcrm",
+    "d_ln_pib_socios",
+    "d_ln_itcrm",
+    "d_ln_commodity_price_index"
+  ),
   stringsAsFactors = FALSE
 )
 
@@ -1778,21 +2309,21 @@ eg_ecm_elasticity_summary$interpretation <- NA_character_
 
 # se recorre cada elemento necesario para completar este paso.
 for (i in seq_len(nrow(eg_ecm_elasticity_summary))) {
-  flow_key <- ifelse(eg_ecm_elasticity_summary$flow[i] == "Importaciones", "imports", "exports")
-  long_run_model_key <- flow_key
-  short_run_model_prefix <- ifelse(flow_key == "imports", "imports_", "exports_")
-
   # se ejecuta este minibloque del procedimiento.
   eg_ecm_elasticity_summary$long_run_estimate[i] <-
     engle_granger_long_run_coefficients$estimate[
-      engle_granger_long_run_coefficients$model_key == long_run_model_key &
+      engle_granger_long_run_coefficients$model_key ==
+        eg_ecm_elasticity_summary$long_run_model_key[i] &
         engle_granger_long_run_coefficients$term == eg_ecm_elasticity_summary$long_run_term[i]
     ][1]
 
   # se ejecuta este minibloque del procedimiento.
   eg_ecm_elasticity_summary$short_run_estimate[i] <-
     short_run_coefficients$estimate[
-      grepl(short_run_model_prefix, short_run_coefficients$model_key) &
+      grepl(
+        eg_ecm_elasticity_summary$short_run_model_prefix[i],
+        short_run_coefficients$model_key
+      ) &
         short_run_coefficients$term == eg_ecm_elasticity_summary$short_run_term[i]
     ][1]
 }
@@ -1802,7 +2333,10 @@ eg_ecm_elasticity_summary$interpretation <- c(
   "Elasticidad ingreso positiva; ECM estimado por evidencia de cointegracion.",
   "Elasticidad cambiaria negativa; ECM estimado por evidencia de cointegracion.",
   "Elasticidad de corto plazo en diferencias; largo plazo solo indicativo.",
-  "Elasticidad de corto plazo en diferencias; largo plazo solo indicativo."
+  "Elasticidad de corto plazo en diferencias; largo plazo solo indicativo.",
+  "Robustez de exportaciones con commodities como control externo.",
+  "Robustez de exportaciones con commodities como control externo.",
+  "Control externo de commodities; no se interpreta como variable I(1) del vector de cointegracion."
 )
 
 #********************************************************
@@ -1830,6 +2364,10 @@ wb_modeling_data$l1_ln_pib_socios <- c(
 wb_modeling_data$l1_ln_itcrm <- c(
   NA_real_,
   wb_modeling_data$ln_itcrm[-nrow(wb_modeling_data)]
+)
+wb_modeling_data$l1_ln_commodity_price_index <- c(
+  NA_real_,
+  wb_modeling_data$ln_commodity_price_index[-nrow(wb_modeling_data)]
 )
 
 # se define la funcion auxiliar get_eg_long_run_estimate.
@@ -2016,9 +2554,119 @@ run_wickens_breusch_exports <- function(data) {
 
 wickens_breusch_exports <- run_wickens_breusch_exports(wb_modeling_data)
 
+# se define la funcion auxiliar run_wickens_breusch_exports_augmented.
+run_wickens_breusch_exports_augmented <- function(data) {
+  model_vars <- c(
+    "d_ln_exports_real",
+    "d_ln_pib_socios",
+    "d_ln_itcrm",
+    "d_ln_commodity_price_index",
+    "l1_ln_exports_real",
+    "l1_ln_pib_socios",
+    "l1_ln_itcrm",
+    "l1_ln_commodity_price_index"
+  )
+  model_data <- data[complete.cases(data[, model_vars]), c(required_metadata_vars, model_vars)]
+  model_data <- model_data[order(model_data$quarter_date), ]
+
+  fit <- tryCatch(
+    lm(
+      d_ln_exports_real ~ d_ln_pib_socios + d_ln_itcrm +
+        d_ln_commodity_price_index + l1_ln_exports_real +
+        l1_ln_pib_socios + l1_ln_itcrm + l1_ln_commodity_price_index,
+      data = model_data
+    ),
+    error = function(e) e
+  )
+
+  if (inherits(fit, "error")) {
+    return(data.frame(
+      system = "exports_augmented",
+      model_key = "exports_augmented_wickens_breusch",
+      variable = c("PIB socios", "TCR", "Commodities"),
+      engle_granger_term = c(
+        "ln_pib_socios",
+        "ln_itcrm",
+        "ln_commodity_price_index"
+      ),
+      wickens_breusch_level_term = c(
+        "l1_ln_pib_socios",
+        "l1_ln_itcrm",
+        "l1_ln_commodity_price_index"
+      ),
+      engle_granger_estimate = c(
+        get_eg_long_run_estimate("exports_augmented", "ln_pib_socios"),
+        get_eg_long_run_estimate("exports_augmented", "ln_itcrm"),
+        get_eg_long_run_estimate("exports_augmented", "ln_commodity_price_index")
+      ),
+      wickens_breusch_estimate = NA_real_,
+      adjustment_coefficient = NA_real_,
+      sign_consistency = NA_character_,
+      relative_difference_percent = NA_real_,
+      n_obs = nrow(model_data),
+      first_quarter = ifelse(nrow(model_data) > 0, min(model_data$quarter), NA_character_),
+      last_quarter = ifelse(nrow(model_data) > 0, max(model_data$quarter), NA_character_),
+      status = "model_error",
+      message = fit$message,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  coefficient_table <- coef(fit)
+  adjustment <- as.numeric(coefficient_table["l1_ln_exports_real"])
+  wb_pib_socios <- -as.numeric(coefficient_table["l1_ln_pib_socios"]) / adjustment
+  wb_itcrm <- -as.numeric(coefficient_table["l1_ln_itcrm"]) / adjustment
+  wb_commodities <- -as.numeric(coefficient_table["l1_ln_commodity_price_index"]) / adjustment
+  eg_values <- c(
+    get_eg_long_run_estimate("exports_augmented", "ln_pib_socios"),
+    get_eg_long_run_estimate("exports_augmented", "ln_itcrm"),
+    get_eg_long_run_estimate("exports_augmented", "ln_commodity_price_index")
+  )
+  wb_values <- c(wb_pib_socios, wb_itcrm, wb_commodities)
+
+  data.frame(
+    system = "exports_augmented",
+    model_key = "exports_augmented_wickens_breusch",
+    variable = c("PIB socios", "TCR", "Commodities"),
+    engle_granger_term = c(
+      "ln_pib_socios",
+      "ln_itcrm",
+      "ln_commodity_price_index"
+    ),
+    wickens_breusch_level_term = c(
+      "l1_ln_pib_socios",
+      "l1_ln_itcrm",
+      "l1_ln_commodity_price_index"
+    ),
+    engle_granger_estimate = eg_values,
+    wickens_breusch_estimate = wb_values,
+    adjustment_coefficient = adjustment,
+    sign_consistency = ifelse(sign(eg_values) == sign(wb_values), "mismo signo", "cambia signo"),
+    relative_difference_percent = ifelse(
+      is.finite(eg_values) & eg_values != 0,
+      100 * (wb_values - eg_values) / abs(eg_values),
+      NA_real_
+    ),
+    n_obs = nobs(fit),
+    first_quarter = min(model_data$quarter),
+    last_quarter = max(model_data$quarter),
+    status = "robustness",
+    message = paste(
+      "Robustez Wickens-Breusch para exportaciones ampliadas;",
+      "commodities se interpreta como control externo."
+    ),
+    stringsAsFactors = FALSE
+  )
+}
+
+wickens_breusch_exports_augmented <- run_wickens_breusch_exports_augmented(
+  wb_modeling_data
+)
+
 wickens_breusch_long_run_coefficients <- rbind(
   wickens_breusch_imports,
-  wickens_breusch_exports
+  wickens_breusch_exports,
+  wickens_breusch_exports_augmented
 )
 
 #********************************************************
@@ -4118,6 +4766,214 @@ normality_stability_summary <- rbind(
 )
 
 #********************************************************
+# 11. Jerarquizacion final de modelos
+#********************************************************
+# Esta tabla sintetiza el uso recomendado de cada bloque estimado para el
+# informe: resultado principal, robustez, sensibilidad o evidencia indicativa.
+
+# se define la funcion auxiliar para obtener una celda de una tabla.
+get_table_value <- function(table, key_column, key_value, value_column,
+                            default = NA_character_) {
+  value <- table[table[[key_column]] == key_value, value_column]
+  if (length(value) == 0 || all(is.na(value))) {
+    return(default)
+  }
+  as.character(value[1])
+}
+
+# se define la funcion auxiliar para resumir significancia de corto plazo.
+short_run_significance_note <- function(model_key) {
+  rows <- short_run_coefficients[
+    short_run_coefficients$model_key == model_key &
+      short_run_coefficients$term != "(Intercept)",
+  ]
+  if (nrow(rows) == 0) {
+    return("sin coeficientes de corto plazo disponibles")
+  }
+  significant_10pct <- rows$term[rows$p_value < 0.10]
+  if (length(significant_10pct) == 0) {
+    return("sin coeficientes significativos al 10%")
+  }
+  paste("significativos al 10%:", paste(significant_10pct, collapse = ", "))
+}
+
+# se define la funcion auxiliar para resumir Wickens-Breusch por sistema.
+wickens_breusch_note <- function(system_name) {
+  rows <- wickens_breusch_long_run_coefficients[
+    wickens_breusch_long_run_coefficients$system == system_name,
+  ]
+  if (nrow(rows) == 0) {
+    return("sin salida Wickens-Breusch")
+  }
+  paste(
+    unique(rows$status),
+    paste(unique(rows$sign_consistency), collapse = ", "),
+    sep = "; signos: "
+  )
+}
+
+# se define la funcion auxiliar para recuperar diagnosticos finales.
+final_diagnostic_note <- function(model_key) {
+  row <- normality_stability_summary[
+    normality_stability_summary$model_key == model_key,
+  ][1, ]
+  if (nrow(row) == 0 || is.na(row$model_key)) {
+    return("sin diagnostico final de normalidad/estabilidad")
+  }
+  paste(
+    row$normality_decision_5pct,
+    paste("estabilidad", row$stability_decision),
+    sep = "; "
+  )
+}
+
+# se arma la tabla model_hierarchy para guiar la lectura del informe.
+model_hierarchy <- data.frame(
+  hierarchy_rank = seq_len(8),
+  system = c(
+    "imports",
+    "imports",
+    "exports",
+    "exports",
+    "exports_augmented",
+    "imports",
+    "exports",
+    "exports_augmented"
+  ),
+  model_key = c(
+    "imports_ecm",
+    "imports_levels_var_vec",
+    "exports_diff",
+    "exports_levels_johansen_var",
+    "exports_augmented_diff",
+    "imports_wickens_breusch",
+    "exports_wickens_breusch",
+    "exports_augmented_wickens_breusch"
+  ),
+  model_family = c(
+    "Engle-Granger/ECM",
+    "Johansen/VECM",
+    "Primeras diferencias",
+    "Johansen en niveles",
+    "Primeras diferencias con commodities",
+    "Wickens-Breusch",
+    "Wickens-Breusch",
+    "Wickens-Breusch con commodities"
+  ),
+  hierarchy_class = c(
+    "principal",
+    "sensibilidad",
+    "principal",
+    "indicativo",
+    "robustez",
+    "robustez",
+    "indicativo",
+    "robustez"
+  ),
+  cointegration_criterion = c(
+    get_table_value(
+      engle_granger_decision,
+      "model_key",
+      "imports",
+      "cointegration_evidence"
+    ),
+    get_table_value(
+      var_vec_treatment_decision,
+      "system",
+      "imports",
+      "recommended_var_vec_treatment"
+    ),
+    get_table_value(
+      engle_granger_decision,
+      "model_key",
+      "exports",
+      "cointegration_evidence"
+    ),
+    get_table_value(
+      var_vec_treatment_decision,
+      "system",
+      "exports",
+      "recommended_var_vec_treatment"
+    ),
+    get_table_value(
+      engle_granger_decision,
+      "model_key",
+      "exports_augmented",
+      "cointegration_evidence"
+    ),
+    "elasticidades de largo plazo comparadas contra Engle-Granger",
+    "elasticidades indicativas; Engle-Granger no respalda cointegracion",
+    "elasticidades de robustez con commodities como control externo"
+  ),
+  diagnostic_criterion = c(
+    "modelo uniecuacional; revisar significancia y signo del termino de ajuste",
+    get_table_value(
+      var_vec_treatment_decision,
+      "system",
+      "imports",
+      "diagnostic_validity_status"
+    ),
+    get_table_value(
+      var_diff_diagnostics,
+      "model_key",
+      "exports_var_diff",
+      "message"
+    ),
+    get_table_value(
+      var_vec_treatment_decision,
+      "system",
+      "exports",
+      "diagnostic_validity_status"
+    ),
+    "robustez uniecuacional; comparar AIC y coeficiente de commodities",
+    wickens_breusch_note("imports"),
+    wickens_breusch_note("exports"),
+    wickens_breusch_note("exports_augmented")
+  ),
+  stability_criterion = c(
+    "no aplica directamente al ECM uniecuacional",
+    final_diagnostic_note("imports_levels_var_vec"),
+    final_diagnostic_note("exports_var_diff"),
+    final_diagnostic_note("exports_levels_johansen_var"),
+    "no aplica directamente al modelo uniecuacional ampliado",
+    "no aplica directamente al calculo Wickens-Breusch",
+    "no aplica directamente al calculo Wickens-Breusch",
+    "no aplica directamente al calculo Wickens-Breusch"
+  ),
+  significance_criterion = c(
+    short_run_significance_note("imports_ecm"),
+    "rango Johansen por traza; maximo autovalor no confirma",
+    short_run_significance_note("exports_diff"),
+    "Johansen no encuentra rango de cointegracion",
+    short_run_significance_note("exports_augmented_diff"),
+    wickens_breusch_note("imports"),
+    wickens_breusch_note("exports"),
+    wickens_breusch_note("exports_augmented")
+  ),
+  sign_criterion = c(
+    "PIB positivo y TCR negativo en largo plazo Engle-Granger",
+    "elasticidad PIB positiva; TCR VECM no coincide plenamente con Engle-Granger",
+    "PIB socios positivo en corto plazo; TCR corto plazo negativo y no robusto",
+    "sin soporte de cointegracion; signos solo indicativos",
+    "commodities positivo; PIB socios y TCR de corto plazo no robustos",
+    "mismo signo que Engle-Granger en PIB y TCR",
+    "mismo signo que Engle-Granger en PIB socios y TCR; lectura indicativa",
+    "mismo signo que Engle-Granger en PIB socios, TCR y commodities"
+  ),
+  report_use = c(
+    "usar como resultado central de importaciones",
+    "presentar como extension multivariada/sensibilidad, no reemplazo del ECM",
+    "usar como resultado central operativo de exportaciones",
+    "mencionar solo como evidencia indicativa de ausencia de cointegracion",
+    "usar como robustez de exportaciones por inclusion de commodities",
+    "usar para comparar elasticidades de largo plazo de importaciones",
+    "mantener en apendice o nota metodologica",
+    "usar como robustez complementaria de commodities"
+  ),
+  stringsAsFactors = FALSE
+)
+
+#********************************************************
 # 10. Extensiones de clase: IRF, FEVD, SVAR y LPIRF
 #********************************************************
 # Estos ejercicios reproducen la arquitectura de las clases VAR/IRF/SVAR y
@@ -4412,6 +5268,14 @@ write.csv(
 
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
+  variable_coverage,
+  output_path("section_01_variable_coverage.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
   system_sample_summary,
   output_path("section_01_system_samples.csv"),
   row.names = FALSE,
@@ -4502,6 +5366,14 @@ write.csv(
 write.csv(
   course_adf_results,
   output_path("section_02_course_adf_ver3_results.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
+  unit_root_classification,
+  output_path("section_02_unit_root_classification.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -4628,6 +5500,14 @@ write.csv(
 
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
+  modeling_decision_notes,
+  output_path("section_05_modeling_decision_notes.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
   short_run_model_summary,
   output_path("section_05_ecm_short_run_model_summary.csv"),
   row.names = FALSE,
@@ -4748,6 +5628,14 @@ write.csv(
 
 # se exporta esta salida a CSV para documentar los resultados.
 write.csv(
+  model_hierarchy,
+  output_path("section_11_model_hierarchy.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+# se exporta esta salida a CSV para documentar los resultados.
+write.csv(
   wickens_breusch_long_run_coefficients,
   output_path("section_09_wickens_breusch_long_run_coefficients.csv"),
   row.names = FALSE,
@@ -4803,6 +5691,7 @@ output_manifest <- data.frame(
     "section_01_outputs_manifest.csv",
     "section_01_model_sample.csv",
     "section_01_variable_check.csv",
+    "section_01_variable_coverage.csv",
     "section_01_system_samples.csv",
     "section_01_descriptive_statistics.csv",
     "section_01_descriptive_seasonality_by_quarter.csv",
@@ -4812,6 +5701,7 @@ output_manifest <- data.frame(
     "section_02_unit_root_adf_urca_results.csv",
     "section_02_unit_root_adf_urca_order_summary.csv",
     "section_02_course_adf_ver3_results.csv",
+    "section_02_unit_root_classification.csv",
     "section_03_var_lag_selection.csv",
     "section_03_var_lag_criteria.csv",
     "section_03_var_lag_decision.csv",
@@ -4827,6 +5717,7 @@ output_manifest <- data.frame(
     "section_05_engle_granger_long_run_coefficients.csv",
     "section_05_engle_granger_residual_tests.csv",
     "section_05_engle_granger_decision.csv",
+    "section_05_modeling_decision_notes.csv",
     "section_05_ecm_short_run_model_summary.csv",
     "section_05_ecm_short_run_coefficients.csv",
     "section_05_ecm_adjustment_summary.csv",
@@ -4847,7 +5738,8 @@ output_manifest <- data.frame(
     "section_10_class_fevd_results.csv",
     "section_10_class_svar_status.csv",
     "section_10_class_lpirfs_status.csv",
-    "section_10_class_extensions_summary.csv"
+    "section_10_class_extensions_summary.csv",
+    "section_11_model_hierarchy.csv"
   ),
   description = c(
     "Estado de carga de scripts auxiliares provistos en clase",
@@ -4856,6 +5748,7 @@ output_manifest <- data.frame(
     "Indice de salidas CSV generadas por el script maestro",
     "Definicion de muestra de trabajo",
     "Verificacion de variables requeridas",
+    "Cobertura efectiva por variable dentro de la ventana base",
     "Subconjuntos para sistemas de importaciones y exportaciones",
     "Estadisticas descriptivas de niveles logaritmicos y primeras diferencias",
     "Resumen por trimestre de primeras diferencias para revisar estacionalidad",
@@ -4865,6 +5758,7 @@ output_manifest <- data.frame(
     "Resultados ADF formales con urca::ur.df",
     "Resumen formal de orden de integracion con urca::ur.df",
     "Resultados ADF capturados desde Test.ADF.Ver.3.R",
+    "Clasificacion integrada de raices unitarias y uso econometrico recomendado",
     "Rezagos VAR sugeridos por AIC, HQ, SC/BIC y FPE",
     "Valores de criterios de informacion para rezagos VAR candidatos",
     "Decision base de rezagos VAR usando SC/BIC como criterio principal",
@@ -4880,6 +5774,7 @@ output_manifest <- data.frame(
     "Coeficientes de largo plazo Engle-Granger",
     "Pruebas ADF sobre residuos Engle-Granger",
     "Decision operativa para ECM o primeras diferencias",
+    "Notas de decision que conectan muestra, raices unitarias y estrategia de modelado",
     "Resumen de modelos ECM o primeras diferencias",
     "Coeficientes de modelos ECM o primeras diferencias",
     "Velocidad de ajuste del ECM",
@@ -4900,7 +5795,8 @@ output_manifest <- data.frame(
     "Descomposicion de varianza calculada con vars::fevd",
     "Estado del ejercicio SVAR calculado con vars::SVAR y svars disponible",
     "Estado del ejercicio de proyecciones locales calculado con lpirfs::lp_lin",
-    "Resumen de extensiones de clase IRF, FEVD, SVAR y LPIRF"
+    "Resumen de extensiones de clase IRF, FEVD, SVAR y LPIRF",
+    "Jerarquizacion final de modelos: principal, robustez, sensibilidad o indicativo"
   ),
   stringsAsFactors = FALSE
 )
