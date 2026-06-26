@@ -180,6 +180,52 @@ output_relative_path <- function(file_name) {
   file_name
 }
 
+# muestra objetos en consola con el comportamiento normal de R.
+show_step_result <- function(title, object) {
+
+  cat("\n")
+  cat("============================================================\n")
+  cat("RESULTADO:", title, "\n")
+  cat("============================================================\n")
+
+  if (is.null(object)) {
+    cat("Objeto NULL.\n")
+    return(invisible(NULL))
+  }
+
+  if (inherits(object, "data.frame")) {
+    cat("Filas:", nrow(object), "| Columnas:", ncol(object), "\n\n")
+    print(object, row.names = FALSE)
+    cat("\n")
+    return(invisible(NULL))
+  }
+
+  print(object)
+  cat("\n")
+  invisible(NULL)
+}
+
+print_console_table <- function(object, file) {
+  show_step_result(basename(file), object)
+}
+
+export_csv <- function(x, file, ...) {
+  print_console_table(x, file)
+  readr::write_csv(x, file, ...)
+}
+
+export_xlsx <- function(x, path, ...) {
+  if (is.list(x) && !inherits(x, "data.frame")) {
+    for (sheet_name in names(x)) {
+      show_step_result(paste0(basename(path), " :: ", sheet_name), x[[sheet_name]])
+    }
+  } else {
+    print_console_table(x, path)
+  }
+
+  writexl::write_xlsx(x, path, ...)
+}
+
 #********************************************************
 # 3.1 CONFIGURACIÓN GLOBAL DEL MODELO
 #********************************************************
@@ -243,6 +289,8 @@ global_model_config <- tibble(
     "porcentaje excluido en extremos para busqueda Gregory-Hansen"
   )
 )
+
+show_step_result("Configuracion global del modelo", global_model_config)
 
 #********************************************************
 # 4. ARCHIVOS DE ENTRADA
@@ -447,7 +495,7 @@ arg_trade_missing <- arg_trade_processed %>%
   )
 
 # se informa en consola el estado de la corrida.
-print(arg_trade_missing)
+show_step_result("INDEC - valores faltantes", arg_trade_missing)
 
 # Exportar a Stata.
 write_dta(
@@ -456,7 +504,7 @@ write_dta(
 )
 
 # Exportar copia CSV.
-write_csv(
+export_csv(
   arg_trade_processed,
   file.path(processed_data_dir, "arg_trade_data_2004_2025.csv")
 )
@@ -549,7 +597,7 @@ itcrm_missing <- itcrm_quarterly %>%
   )
 
 # se informa en consola el estado de la corrida.
-print(itcrm_missing)
+show_step_result("ITCRM - valores faltantes", itcrm_missing)
 
 # Exportar a Stata.
 write_dta(
@@ -558,7 +606,7 @@ write_dta(
 )
 
 # Exportar copia CSV.
-write_csv(
+export_csv(
   itcrm_quarterly,
   file.path(processed_data_dir, "arg_itcrm_quarterly_2004_2025.csv")
 )
@@ -634,7 +682,7 @@ usa_gdp_missing <- usa_gdp_quarterly %>%
   )
 
 # se informa en consola el estado de la corrida.
-print(usa_gdp_missing)
+show_step_result("PIB EEUU - valores faltantes", usa_gdp_missing)
 
 # Exportar a Stata.
 write_dta(
@@ -643,7 +691,7 @@ write_dta(
 )
 
 # Exportar copia CSV.
-write_csv(
+export_csv(
   usa_gdp_quarterly,
   file.path(processed_data_dir, "usa_real_gdp_quarterly_2004_2025.csv")
 )
@@ -719,7 +767,7 @@ brazil_gdp_missing <- brazil_gdp_quarterly %>%
   )
 
 # se informa en consola el estado de la corrida.
-print(brazil_gdp_missing)
+show_step_result("PIB Brasil - valores faltantes", brazil_gdp_missing)
 
 # Exportar a Stata.
 write_dta(
@@ -728,7 +776,7 @@ write_dta(
 )
 
 # Exportar copia CSV.
-write_csv(
+export_csv(
   brazil_gdp_quarterly,
   file.path(processed_data_dir, "brazil_real_gdp_quarterly_2004_2025.csv")
 )
@@ -828,7 +876,7 @@ commodity_missing <- commodity_quarterly %>%
   )
 
 # se informa en consola el estado de la corrida.
-print(commodity_missing)
+show_step_result("Commodity Price Index - valores faltantes", commodity_missing)
 
 # Exportar a Stata.
 write_dta(
@@ -837,7 +885,7 @@ write_dta(
 )
 
 # Exportar copia CSV.
-write_csv(
+export_csv(
   commodity_quarterly,
   file.path(processed_data_dir, "world_bank_commodity_index_quarterly_2004_2025.csv")
 )
@@ -979,7 +1027,7 @@ panel_missing <- trade_elasticities_panel %>%
   )
 
 # se informa en consola el estado de la corrida.
-print(panel_missing)
+show_step_result("Panel base - valores faltantes por variable", panel_missing)
 
 # Trimestres con algun faltante.
 panel_missing_by_quarter <- trade_elasticities_panel %>%
@@ -988,7 +1036,7 @@ panel_missing_by_quarter <- trade_elasticities_panel %>%
   select(quarter, quarter_date, missing_values)
 
 # se informa en consola el estado de la corrida.
-print(panel_missing_by_quarter)
+show_step_result("Panel base - valores faltantes por trimestre", panel_missing_by_quarter)
 
 # Base con casos completos para la etapa econometrica.
 trade_elasticities_panel_complete <- trade_elasticities_panel %>%
@@ -1003,7 +1051,7 @@ write_dta(
 )
 
 # se exporta esta salida para documentar los resultados.
-write_csv(
+export_csv(
   trade_elasticities_panel,
   file.path(processed_data_dir, "trade_elasticities_panel_2004_2025.csv")
 )
@@ -1015,7 +1063,7 @@ write_dta(
 )
 
 # se exporta esta salida para documentar los resultados.
-write_csv(
+export_csv(
   trade_elasticities_panel_complete,
   file.path(processed_data_dir, "trade_elasticities_panel_complete_cases.csv")
 )
@@ -1107,6 +1155,8 @@ pib_socios_traceability <- tibble(
   )
 )
 
+show_step_result("PIB socios - trazabilidad de ponderadores", pib_socios_traceability)
+
 # se construye weight_brazil_norm con las instrucciones de este minibloque.
 weight_brazil_norm <- pib_socios_weights$weight_brazil_norm
 weight_usa_norm <- pib_socios_weights$weight_usa_norm
@@ -1182,7 +1232,7 @@ transformed_missing <- trade_elasticities_panel_transformed %>%
   )
 
 # se informa en consola el estado de la corrida.
-print(transformed_missing)
+show_step_result("Panel transformado - valores faltantes", transformed_missing)
 
 # Base transformada con casos completos.
 trade_elasticities_panel_transformed_complete <- trade_elasticities_panel_transformed %>%
@@ -1197,7 +1247,7 @@ write_dta(
 )
 
 # se exporta esta salida para documentar los resultados.
-write_csv(
+export_csv(
   trade_elasticities_panel_transformed,
   file.path(processed_data_dir, "trade_elasticities_panel_transformed_2004_2025.csv")
 )
@@ -1209,7 +1259,7 @@ write_dta(
 )
 
 # se exporta esta salida para documentar los resultados.
-write_csv(
+export_csv(
   trade_elasticities_panel_transformed_complete,
   file.path(processed_data_dir, "trade_elasticities_panel_transformed_complete_cases.csv")
 )
@@ -1620,7 +1670,7 @@ stationarity_sample_summary <- stationarity_specs %>%
   ungroup()
 
 # se informa en consola el estado de la corrida.
-print(stationarity_sample_summary)
+show_step_result("Estacionariedad - muestra por variable", stationarity_sample_summary)
 
 # Funcion auxiliar para capturar resultados de tests sin detener el script.
 safe_stationarity_test <- function(test_call) {
@@ -1758,8 +1808,8 @@ stationarity_tests <- stationarity_specs %>%
   )
 
 # se informa en consola el estado de la corrida.
-print(stationarity_tests)
-print(seasonality_diagnostics)
+show_step_result("Pruebas de estacionariedad", stationarity_tests)
+show_step_result("Diagnostico de estacionalidad", seasonality_diagnostics)
 
 # sintetizar ADF/PP/KPSS y marcar evidencia estacionaria,
 # no estacionaria o mixta para cada transformacion.
@@ -1818,7 +1868,7 @@ stationarity_decisions_by_transform <- stationarity_tests %>%
   )
 
 # se informa en consola el estado de la corrida.
-print(stationarity_decisions_by_transform)
+show_step_result("Decision de estacionariedad por transformacion", stationarity_decisions_by_transform)
 
 # resumir si cada serie parece I(0), I(1) o no
 # concluyente antes de pasar a cointegracion.
@@ -1864,10 +1914,10 @@ stationarity_order_summary <- stationarity_decisions_by_transform %>%
   )
 
 # se informa en consola el estado de la corrida.
-print(stationarity_order_summary)
+show_step_result("Orden de integracion", stationarity_order_summary)
 
 # Exportar resultados en Excel para lectura rapida en informe/anexo.
-write_xlsx(
+export_xlsx(
   list(
     model_sample = model_sample_definition,
     sample = stationarity_sample_summary,
@@ -2353,12 +2403,12 @@ cointegration_decision_summary <- engle_granger_tests %>%
   )
 
 # se informa en consola el estado de la corrida.
-print(cointegration_equation_summary)
-print(cointegration_long_run_coefficients)
-print(engle_granger_tests)
-print(engle_granger_critical_comparison)
-print(gregory_hansen_tests)
-print(cointegration_decision_summary)
+show_step_result("Cointegracion - ecuaciones Engle-Granger", cointegration_equation_summary)
+show_step_result("Cointegracion - coeficientes de largo plazo", cointegration_long_run_coefficients)
+show_step_result("Cointegracion - pruebas Engle-Granger", engle_granger_tests)
+show_step_result("Cointegracion - comparacion con valores criticos", engle_granger_critical_comparison)
+show_step_result("Cointegracion - Gregory-Hansen", gregory_hansen_tests)
+show_step_result("Cointegracion - decision final", cointegration_decision_summary)
 
 # unir los residuos de cointegracion al panel y crear sus
 # rezagos, que funcionan como termino de correccion del error.
@@ -2386,7 +2436,7 @@ trade_elasticities_panel_modeling_dta <- read_dta(
 # guardar las salidas de largo plazo, tests y residuos en
 # un Excel de lectura directa para el informe/anexo.
 # Exportar resultados de cointegracion en tablas separadas.
-write_xlsx(
+export_xlsx(
   list(
     model_sample = model_sample_definition,
     equations = cointegration_equation_summary,
@@ -2413,7 +2463,7 @@ trade_elasticities_residuals_view <- trade_elasticities_panel_modeling_dta %>%
   )
 
 # se informa en consola el estado de la corrida.
-print(head(trade_elasticities_residuals_view, 10))
+show_step_result("Residuos Engle-Granger - primeras 10 filas", head(trade_elasticities_residuals_view, 10))
 tail(names(trade_elasticities_panel_modeling_dta), 10)
 
 #********************************************************
@@ -2524,6 +2574,8 @@ structural_dummies_summary <- tibble(
     included_in_models = TRUE
   )
 
+show_step_result("Dummies estructurales", structural_dummies_summary)
+
 # traducir la decision de cointegracion en una regla
 # operativa para estimar o no modelos ECM.
 # Decision operativa: incluir ECM solo cuando la seccion 10 encontro evidencia
@@ -2535,6 +2587,8 @@ modeling_cointegration_decision <- cointegration_decision_summary %>%
     cointegration_evidence,
     next_step
   )
+
+show_step_result("Decision de modelacion segun cointegracion", modeling_cointegration_decision)
 
 # definir, por flujo comercial, variable dependiente,
 # regresores contemporaneos, regresores rezagables y termino ECM.
@@ -2727,6 +2781,8 @@ selected_lags <- lag_selection_results %>%
     selected_lag_bic = lag_order,
     selected_by = "BIC"
   )
+
+show_step_result("Rezagos seleccionados por BIC", selected_lags)
 
 # construir la tabla maestra de especificaciones que
 # alimenta la estimacion automatica de modelos.
@@ -3650,35 +3706,35 @@ literature_comparison_template <- bind_rows(
 )
 
 # se informa en consola el estado de la corrida.
-print(lag_selection_results)
-print(econometric_model_specs)
-print(econometric_model_summary)
-print(econometric_model_coefficients)
-print(econometric_model_diagnostics)
-print(exports_commodity_sensitivity_summary)
-print(model_multicollinearity_vif)
-print(external_regressor_correlation)
-print(ecm_adjustment_summary)
-print(economic_interpretation_summary)
-print(expected_signs_check)
-print(literature_comparison_template)
+show_step_result("Modelos - seleccion de rezagos", lag_selection_results)
+show_step_result("Modelos - especificaciones", econometric_model_specs)
+show_step_result("Modelos - resumen de estimacion", econometric_model_summary)
+show_step_result("Modelos - coeficientes", econometric_model_coefficients)
+show_step_result("Modelos - diagnosticos", econometric_model_diagnostics)
+show_step_result("Exportaciones - sensibilidad con commodities", exports_commodity_sensitivity_summary)
+show_step_result("Modelos - VIF multicolinealidad", model_multicollinearity_vif)
+show_step_result("Modelos - correlacion de regresores externos", external_regressor_correlation)
+show_step_result("ECM - terminos de ajuste", ecm_adjustment_summary)
+show_step_result("Modelos - interpretacion economica", economic_interpretation_summary)
+show_step_result("Modelos - chequeo de signos esperados", expected_signs_check)
+show_step_result("Literatura - plantilla de comparacion", literature_comparison_template)
 
 # exportar trazabilidad de PIBSOCIOS tambien como CSV
 # independiente para consulta rapida.
-write_csv(
+export_csv(
   pib_socios_traceability,
   output_path("pib_socios_traceability.csv")
 )
 
 # se exporta esta salida para documentar los resultados.
-write_csv(
+export_csv(
   literature_comparison_template,
   output_path("literature_comparison_template.csv")
 )
 
 # exportar todas las salidas de modelacion en hojas
 # separadas para revisar especificaciones, coeficientes y diagnosticos.
-write_xlsx(
+export_xlsx(
   list(
     model_sample = model_sample_definition,
     specifications = econometric_model_specs %>%
@@ -3897,14 +3953,14 @@ diagnostics_report_guide <- tibble(
 )
 
 # se informa en consola el estado de la corrida.
-print(diagnostic_tests_reference)
-print(model_diagnostics_summary)
-print(diagnostic_flags_long)
-print(model_diagnostic_interpretation)
-print(diagnostics_report_guide)
+show_step_result("Diagnosticos - referencia de pruebas", diagnostic_tests_reference)
+show_step_result("Diagnosticos - resumen por modelo", model_diagnostics_summary)
+show_step_result("Diagnosticos - alertas en formato largo", diagnostic_flags_long)
+show_step_result("Diagnosticos - interpretacion", model_diagnostic_interpretation)
+show_step_result("Diagnosticos - guia de reporte", diagnostics_report_guide)
 
 # se exporta esta salida para documentar los resultados.
-write_xlsx(
+export_xlsx(
   list(
     tests_reference = diagnostic_tests_reference,
     diagnostics_summary = model_diagnostics_summary,
@@ -4296,12 +4352,12 @@ final_outputs_summary <- final_outputs_catalog %>%
   arrange(output_group, delivery_status)
 
 # se informa en consola el estado de la corrida.
-print(final_outputs_catalog)
-print(missing_final_outputs)
-print(final_outputs_summary)
+show_step_result("Outputs finales - catalogo", final_outputs_catalog)
+show_step_result("Outputs finales - archivos faltantes", missing_final_outputs)
+show_step_result("Outputs finales - resumen", final_outputs_summary)
 
 # se exporta esta salida para documentar los resultados.
-write_xlsx(
+export_xlsx(
   list(
     outputs_catalog = final_outputs_catalog,
     missing_outputs = missing_final_outputs,
@@ -4429,12 +4485,12 @@ final_script_summary <- tibble(
 )
 
 # se informa en consola el estado de la corrida.
-print(final_reproducibility_check)
-print(final_methodological_notes)
-print(final_script_summary)
+show_step_result("Reproducibilidad - chequeo final", final_reproducibility_check)
+show_step_result("Reproducibilidad - notas metodologicas", final_methodological_notes)
+show_step_result("Reproducibilidad - resumen del script", final_script_summary)
 
 # se exporta esta salida para documentar los resultados.
-write_xlsx(
+export_xlsx(
   list(
     global_model_config = global_model_config,
     reproducibility_check = final_reproducibility_check,

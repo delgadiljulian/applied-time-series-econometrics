@@ -1,0 +1,17 @@
+Sistema,Variable,Metodo,Elasticidad,Clase
+Importaciones,PIB argentino,Engle-Granger,1.51840843099458,principal
+Importaciones,PIB argentino,Wickens-Breusch,2.09675403467767,robustez
+Importaciones,ITCRM,Engle-Granger,-0.399193203690215,principal
+Importaciones,ITCRM,Wickens-Breusch,-0.108836787817455,robustez
+Exportaciones (clasica),PIB de socios,Engle-Granger,0.720320971254635,indicativo
+Exportaciones (clasica),PIB de socios,Wickens-Breusch,0.651319337874033,indicativo
+Exportaciones (clasica),ITCRM,Engle-Granger,0.159388539916543,indicativo
+Exportaciones (clasica),ITCRM,Wickens-Breusch,0.18176872031133,indicativo
+Exportaciones (ampliada),PIB de socios,Engle-Granger,0.3550719556469,robustez
+Exportaciones (ampliada),PIB de socios,Wickens-Breusch,0.339224013421105,robustez
+Exportaciones (ampliada),ITCRM,Engle-Granger,0.0495686098936282,robustez
+Exportaciones (ampliada),ITCRM,Wickens-Breusch,0.0797156567591508,robustez
+Exportaciones (ampliada),Commodities,Engle-Granger,0.15521476846294,robustez
+Exportaciones (ampliada),Commodities,Wickens-Breusch,0.139436604784794,robustez
+Importaciones,PIB argentino,Johansen/VECM,3.53476476649223,sensibilidad
+Importaciones,ITCRM,Johansen/VECM,0.147763713440612,sensibilidad

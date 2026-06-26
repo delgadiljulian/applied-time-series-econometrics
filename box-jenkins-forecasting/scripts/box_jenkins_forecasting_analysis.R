@@ -3,9 +3,23 @@
 # Universidad de Buenos Aires (UBA)
 # Materia: Series de Tiempo
 # Trabajo Práctico N.º 1
+# Materia:
+# Econometría / Series de Tiempo
+#
+# Proyecto:
+# Elasticidades del Comercio Exterior Argentino
+# (Largo y Corto Plazo)
+#
+# Integrantes:
+# - Andrea Chasi
+# - Julián Delgadillo Marín
+# - Christian Arias
+# - Leonardo Ávila
+#
+# Período de análisis:
+# 2004Q1 – 2025Q4
 #
 #
-#********************************************************
 #********************************************************
 # Librerías
 #********************************************************
@@ -74,16 +88,72 @@ Eval_Pron=function(Y_P,Y_A,Nombre="Pron_1"){
 # se define la funcion que grafica la autocorrelacion residual y aplica la prueba Ljung-Box.
 corr_res <- function(residuos, lags = 12) {
   Acf(residuos, lag.max = lags, main = "ACF de residuos")
-  print(Box.test(residuos, lag = lags, type = "Ljung-Box"))
+  show_step_result(
+    paste("Ljung-Box de residuos - lag", lags),
+    Box.test(residuos, lag = lags, type = "Ljung-Box")
+  )
+}
+
+# muestra objetos en consola con el comportamiento normal de R.
+show_step_result <- function(title, object) {
+
+  cat("\n")
+  cat("============================================================\n")
+  cat("RESULTADO:", title, "\n")
+  cat("============================================================\n")
+
+  if (is.null(object)) {
+    cat("Objeto NULL.\n")
+    return(invisible(NULL))
+  }
+
+  if (inherits(object, "data.frame") || inherits(object, "matrix")) {
+    cat("Filas:", nrow(object), "| Columnas:", ncol(object), "\n\n")
+    print(object)
+    cat("\n")
+    return(invisible(NULL))
+  }
+
+  print(object)
+  cat("\n")
+  invisible(NULL)
 }
 
 
 #********************************************************
 # Carga de datos
 #********************************************************
+# se detecta la carpeta del proyecto para que el script corra tanto desde la
+# raiz del repositorio como desde box-jenkins-forecasting.
+candidate_project_dirs <- unique(c(
+  getwd(),
+  file.path(getwd(), "box-jenkins-forecasting"),
+  dirname(getwd()),
+  "C:/Users/julla/GitHub/applied-time-series-econometrics/box-jenkins-forecasting"
+))
+
+project_dir <- candidate_project_dirs[
+  file.exists(
+    file.path(
+      candidate_project_dirs,
+      "data",
+      "macroeconomic_quarterly_series.xlsx"
+    )
+  )
+][1]
+
+if (is.na(project_dir)) {
+  stop(
+    "Project directory not found. Run the script from the repository root ",
+    "or from the box-jenkins-forecasting folder."
+  )
+}
+
+project_dir <- normalizePath(project_dir, winslash = "/", mustWork = TRUE)
+
 # se construye la ruta ruta sin escribir separadores manualmente.
 ruta <- file.path(
-  "box-jenkins-forecasting",
+  project_dir,
   "data",
   "macroeconomic_quarterly_series.xlsx"
 )
@@ -94,7 +164,7 @@ if (!file.exists(ruta)) {
 }
 
 # se construye la ruta figures_dir sin escribir separadores manualmente.
-figures_dir <- file.path("box-jenkins-forecasting", "figures")
+figures_dir <- file.path(project_dir, "figures")
 if (!dir.exists(figures_dir)) {
   dir.create(figures_dir, recursive = TRUE)
 }
@@ -133,9 +203,9 @@ df <- read_excel(ruta, sheet = "Series TP1")
 colnames(df) <- c("fecha", "DL_CPRIV", "DL_EXPO", "DL_IBF", "DL_PIB")
 
 # se ejecuta este minibloque del procedimiento.
-str(df)
-summary(df)
-colSums(is.na(df))
+show_step_result("Estructura de la base", capture.output(str(df)))
+show_step_result("Resumen descriptivo de la base", summary(df))
+show_step_result("Valores faltantes por variable", colSums(is.na(df)))
 
 #********************************************************
 #********************************************************
@@ -213,21 +283,21 @@ title(main = "PACF - DL_CPRIV")
 # Modelo automático
 # se construye modelo_auto con las instrucciones de este minibloque.
 modelo_auto <- auto.arima(cpriv_train, seasonal = TRUE)
-summary(modelo_auto)
+show_step_result("DL_CPRIV - resumen modelo automatico", summary(modelo_auto))
 
 # Modelo manual MA
 # se construye modelo_m1 con las instrucciones de este minibloque.
 modelo_m1 <- Arima(cpriv_train,
                    order = c(0,0,1),
                    seasonal = list(order = c(0,1,1), period = 4))
-summary(modelo_m1)
+show_step_result("DL_CPRIV - resumen modelo manual MA", summary(modelo_m1))
 
 # Modelo manual AR
 # se construye modelo_m2 con las instrucciones de este minibloque.
 modelo_m2 <- Arima(cpriv_train,
                    order = c(1,0,0),
                    seasonal = list(order = c(0,1,1), period = 4))
-summary(modelo_m2)
+show_step_result("DL_CPRIV - resumen modelo manual AR", summary(modelo_m2))
 
 
 # -------------------------------
@@ -268,9 +338,9 @@ eval_m1   <- Eval_Pron(fc_m1$mean, cpriv_test, "Manual_MA")
 eval_m2   <- Eval_Pron(fc_m2$mean, cpriv_test, "Manual_AR")
 
 # Mostrar resultados
-eval_auto
-eval_m1
-eval_m2
+show_step_result("DL_CPRIV - evaluacion SARIMA automatico", eval_auto)
+show_step_result("DL_CPRIV - evaluacion SARIMA manual MA", eval_m1)
+show_step_result("DL_CPRIV - evaluacion SARIMA manual AR", eval_m2)
 
 
 # -------------------------------
@@ -278,7 +348,7 @@ eval_m2
 # -------------------------------
 
 # se comparan los resultados de los modelos en una misma tabla.
-cbind(eval_auto, eval_m1, eval_m2)
+show_step_result("DL_CPRIV - comparacion conjunta SARIMA", cbind(eval_auto, eval_m1, eval_m2))
 
 #********************************************************
 # a.5. Desestacionalización con X13 y modelización ARMA
@@ -321,17 +391,17 @@ title(main = "PACF - DL_CPRIV desestacionalizada")
 # Modelo automático (benchmark)
 # se construye modelo_sa_auto con las instrucciones de este minibloque.
 modelo_sa_auto <- auto.arima(cpriv_sa, seasonal = FALSE)
-summary(modelo_sa_auto)
+show_step_result("DL_CPRIV SA - resumen modelo automatico", summary(modelo_sa_auto))
 
 # Modelo manual (por formalidad): ARMA(1,1)
 # se construye modelo_sa_m1 con las instrucciones de este minibloque.
 modelo_sa_m1 <- Arima(cpriv_sa, order = c(1,0,1))
-summary(modelo_sa_m1)
+show_step_result("DL_CPRIV SA - resumen modelo ARMA", summary(modelo_sa_m1))
 
 # Modelo teórico correcto: ruido blanco
 # se construye modelo_sa_wn con las instrucciones de este minibloque.
 modelo_sa_wn <- Arima(cpriv_sa, order = c(0,0,0))
-summary(modelo_sa_wn)
+show_step_result("DL_CPRIV SA - resumen modelo ruido blanco", summary(modelo_sa_wn))
 
 # -------------------------------
 # a.5.3 Diagnóstico de residuos
@@ -418,12 +488,12 @@ eval_sa_wn <- Eval_Pron(
 )
 
 # Mostrar resultados
-eval_sa_auto
-eval_sa_m1
-eval_sa_wn
+show_step_result("DL_CPRIV SA - evaluacion automatico", eval_sa_auto)
+show_step_result("DL_CPRIV SA - evaluacion ARMA", eval_sa_m1)
+show_step_result("DL_CPRIV SA - evaluacion ruido blanco", eval_sa_wn)
 
 # Comparación conjunta
-cbind(eval_sa_auto, eval_sa_m1, eval_sa_wn)
+show_step_result("DL_CPRIV SA - comparacion conjunta", cbind(eval_sa_auto, eval_sa_m1, eval_sa_wn))
 
 # -------------------------------
 # a.6. Interpretación ARMA (no se requiere código adicional)
@@ -490,11 +560,7 @@ marcar_mejor <- function(tabla) {
 # se calcula tabla_final para usarlo en el paso siguiente.
 tabla_final <- marcar_mejor(tabla_comp)
 
-# se informa en consola el estado o resultado de la corrida.
-cat("\n==============================\n")
-cat("CUADRO COMPARATIVO DE PRONÓSTICOS\n")
-cat("==============================\n\n")
-print(tabla_final)
+show_step_result("DL_CPRIV - cuadro comparativo de pronosticos", tabla_final)
 
 
 # -------------------------------
@@ -517,11 +583,7 @@ anexo <- data.frame(
   SA_WN   = as.numeric(forecast_final_wn)
 )
 
-# se informa en consola el estado o resultado de la corrida.
-cat("\n==============================\n")
-cat("ANEXO: VALORES REALES VS PRONÓSTICOS\n")
-cat("==============================\n\n")
-print(anexo)
+show_step_result("DL_CPRIV - valores reales vs pronosticos", anexo)
 
 # -------------------------------
 # a.10. Conclusiones del análisis
@@ -616,7 +678,7 @@ title(main = "PACF - DL_EXPO", line = 2)
 # Modelo automático
 # se construye modelo_expo_auto con las instrucciones de este minibloque.
 modelo_expo_auto <- auto.arima(expo_train, seasonal = TRUE)
-summary(modelo_expo_auto)
+show_step_result("DL_EXPO - resumen modelo automatico", summary(modelo_expo_auto))
 
 # Modelo manual 1 (ARMA)
 # se construye modelo_expo_m1 con las instrucciones de este minibloque.
@@ -625,7 +687,7 @@ modelo_expo_m1 <- Arima(
   order = c(1,0,1),
   seasonal = list(order = c(0,1,1), period = 4)
 )
-summary(modelo_expo_m1)
+show_step_result("DL_EXPO - resumen modelo MA", summary(modelo_expo_m1))
 
 # Modelo manual 2 (AR)
 # se construye modelo_expo_m2 con las instrucciones de este minibloque.
@@ -634,7 +696,7 @@ modelo_expo_m2 <- Arima(
   order = c(2,0,0),
   seasonal = list(order = c(0,1,1), period = 4)
 )
-summary(modelo_expo_m2)
+show_step_result("DL_EXPO - resumen modelo AR", summary(modelo_expo_m2))
 
 
 # -------------------------------
@@ -694,16 +756,16 @@ par(mfrow = c(1,1))
 # -------------------------------
 
 # se imprime una etiqueta para ordenar la salida de evaluacion en consola.
-cat("Modelo Automático\n")
 eval_expo_auto <- Eval_Pron(pron_auto$mean, expo_test)
+show_step_result("DL_EXPO - evaluacion SARIMA automatico", eval_expo_auto)
 
 # se informa en consola el estado o resultado de la corrida.
-cat("\nModelo MA\n")
 eval_expo_m1 <- Eval_Pron(pron_m1$mean, expo_test)
+show_step_result("DL_EXPO - evaluacion SARIMA MA", eval_expo_m1)
 
 # se informa en consola el estado o resultado de la corrida.
-cat("\nModelo AR\n")
 eval_expo_m2 <- Eval_Pron(pron_m2$mean, expo_test)
+show_step_result("DL_EXPO - evaluacion SARIMA AR", eval_expo_m2)
 
 
 # -------------------------------
@@ -711,7 +773,7 @@ eval_expo_m2 <- Eval_Pron(pron_m2$mean, expo_test)
 # -------------------------------
 
 # se comparan los resultados de los modelos en una misma tabla.
-cbind(eval_expo_auto, eval_expo_m1, eval_expo_m2)
+show_step_result("DL_EXPO - comparacion conjunta SARIMA", cbind(eval_expo_auto, eval_expo_m1, eval_expo_m2))
 
 # -------------------------------
 # b.5 Desestacionalización - DL_EXPO
@@ -805,21 +867,21 @@ expo_sa_ts <- expo_sa
 # Modelo automático
 # se construye modelo_sa_auto con las instrucciones de este minibloque.
 modelo_sa_auto <- auto.arima(expo_sa_ts, seasonal = FALSE)
-summary(modelo_sa_auto)
+show_step_result("DL_EXPO SA - resumen modelo automatico", summary(modelo_sa_auto))
 
 # Modelo manual 1: MA(1) sin media
 # se construye modelo_sa_m1 con las instrucciones de este minibloque.
 modelo_sa_m1 <- Arima(expo_sa_ts,
                       order = c(0,0,1),
                       include.mean = FALSE)
-summary(modelo_sa_m1)
+show_step_result("DL_EXPO SA - resumen modelo MA", summary(modelo_sa_m1))
 
 # Modelo manual 2: MA(1) con media
 # se construye modelo_sa_m2 con las instrucciones de este minibloque.
 modelo_sa_m2 <- Arima(expo_sa_ts,
                       order = c(0,0,1),
                       include.mean = TRUE)
-summary(modelo_sa_m2)
+show_step_result("DL_EXPO SA - resumen modelo MA con media", summary(modelo_sa_m2))
 
 
 # -------------------------------
@@ -1008,16 +1070,16 @@ eval_m1   <- Eval_Pron(pron_final_m1_ts, expo_test, "MA1")
 eval_m2   <- Eval_Pron(pron_final_m2_ts, expo_test, "MA1_media")
 
 # Mostrar resultados individuales
-eval_auto
-eval_m1
-eval_m2
+show_step_result("DL_EXPO SA - evaluacion automatico", eval_auto)
+show_step_result("DL_EXPO SA - evaluacion MA", eval_m1)
+show_step_result("DL_EXPO SA - evaluacion MA con media", eval_m2)
 
 # -------------------------------
 # b.8.2 Tabla comparativa
 # -------------------------------
 
 # se comparan los resultados de los modelos en una misma tabla.
-cbind(eval_auto, eval_m1, eval_m2)
+show_step_result("DL_EXPO SA - comparacion conjunta", cbind(eval_auto, eval_m1, eval_m2))
 
 # -------------------------------
 # b.9 Cuadro comparativo global
@@ -1052,7 +1114,7 @@ tabla_total <- matrix(as.numeric(tabla_total),
                       ))
 
 # se ejecuta esta instruccion puntual del procedimiento.
-tabla_total
+show_step_result("Cuadro comparativo de pronosticos", tabla_total)
 
 
 # -------------------------------
@@ -1087,7 +1149,7 @@ for(i in 1:nrow(tabla_total)){
 }
 
 # se ejecuta esta instruccion puntual del procedimiento.
-tabla_mark
+show_step_result("Cuadro comparativo con mejor modelo marcado", tabla_mark)
 
 # -------------------------------
 # b.9.2 Anexo: valores reales y pronósticos
@@ -1117,7 +1179,7 @@ anexo <- data.frame(
 )
 
 # se ejecuta esta instruccion puntual del procedimiento.
-anexo
+show_step_result("Valores reales vs pronosticos", anexo)
 
 # -------------------------------
 # b.10 Conclusiones
@@ -1208,7 +1270,7 @@ Pacf(ibf_train, main = "PACF - DL_IBF")
 # Modelo automático (baseline)
 # se construye modelo_ibf_auto con las instrucciones de este minibloque.
 modelo_ibf_auto <- auto.arima(ibf_train, seasonal = TRUE)
-summary(modelo_ibf_auto)
+show_step_result("DL_IBF - resumen modelo automatico", summary(modelo_ibf_auto))
 
 # Modelo manual 1 (MA corto plazo)
 # se construye modelo_ibf_m1 con las instrucciones de este minibloque.
@@ -1217,7 +1279,7 @@ modelo_ibf_m1 <- Arima(
   order = c(0,0,1),
   seasonal = list(order = c(0,1,1), period = 4)
 )
-summary(modelo_ibf_m1)
+show_step_result("DL_IBF - resumen modelo MA", summary(modelo_ibf_m1))
 
 # Modelo manual 2 (AR corto plazo)
 # se construye modelo_ibf_m2 con las instrucciones de este minibloque.
@@ -1226,7 +1288,7 @@ modelo_ibf_m2 <- Arima(
   order = c(1,0,0),
   seasonal = list(order = c(0,1,1), period = 4)
 )
-summary(modelo_ibf_m2)
+show_step_result("DL_IBF - resumen modelo AR", summary(modelo_ibf_m2))
 
 
 # -------------------------------
@@ -1286,16 +1348,16 @@ par(mfrow = c(1,1))
 # -------------------------------
 
 # se imprime una etiqueta para ordenar la salida de evaluacion en consola.
-cat("Modelo Automático\n")
 eval_ibf_auto <- Eval_Pron(pron_ibf_auto$mean, ibf_test)
+show_step_result("DL_IBF - evaluacion SARIMA automatico", eval_ibf_auto)
 
 # se informa en consola el estado o resultado de la corrida.
-cat("\nModelo MA corto plazo\n")
 eval_ibf_m1 <- Eval_Pron(pron_ibf_m1$mean, ibf_test)
+show_step_result("DL_IBF - evaluacion SARIMA MA", eval_ibf_m1)
 
 # se informa en consola el estado o resultado de la corrida.
-cat("\nModelo AR corto plazo\n")
 eval_ibf_m2 <- Eval_Pron(pron_ibf_m2$mean, ibf_test)
+show_step_result("DL_IBF - evaluacion SARIMA AR", eval_ibf_m2)
 
 
 # -------------------------------
@@ -1303,10 +1365,13 @@ eval_ibf_m2 <- Eval_Pron(pron_ibf_m2$mean, ibf_test)
 # -------------------------------
 
 # se comparan los resultados de los modelos en una misma tabla.
-cbind(
-  Auto = eval_ibf_auto,
-  MA    = eval_ibf_m1,
-  AR    = eval_ibf_m2
+show_step_result(
+  "DL_IBF - comparacion conjunta SARIMA",
+  cbind(
+    Auto = eval_ibf_auto,
+    MA    = eval_ibf_m1,
+    AR    = eval_ibf_m2
+  )
 )
 
 
@@ -1400,21 +1465,21 @@ ibf_sa_ts <- ibf_sa
 # Modelo automático
 # se construye modelo_ibf_sa_auto con las instrucciones de este minibloque.
 modelo_ibf_sa_auto <- auto.arima(ibf_sa_ts, seasonal = FALSE)
-summary(modelo_ibf_sa_auto)
+show_step_result("DL_IBF SA - resumen modelo automatico", summary(modelo_ibf_sa_auto))
 
 # Modelo base correcto: ruido blanco con media
 # se construye modelo_ibf_sa_wn con las instrucciones de este minibloque.
 modelo_ibf_sa_wn <- Arima(ibf_sa_ts,
                           order = c(0,0,0),
                           include.mean = TRUE)
-summary(modelo_ibf_sa_wn)
+show_step_result("DL_IBF SA - resumen modelo ruido blanco", summary(modelo_ibf_sa_wn))
 
 # Modelo alternativo (solo para contraste)
 # se construye modelo_ibf_sa_m1 con las instrucciones de este minibloque.
 modelo_ibf_sa_m1 <- Arima(ibf_sa_ts,
                           order = c(0,0,1),
                           include.mean = TRUE)
-summary(modelo_ibf_sa_m1)
+show_step_result("DL_IBF SA - resumen modelo MA", summary(modelo_ibf_sa_m1))
 
 
 # -------------------------------
@@ -1536,8 +1601,8 @@ eval_ibf_sa_auto <- Eval_Pron(pron_final_ibf_auto_ts, ibf_test, "Auto")
 eval_ibf_sa_m1   <- Eval_Pron(pron_final_ibf_m1_ts,   ibf_test, "MA(1)")
 
 # Mostrar resultados individuales
-eval_ibf_sa_auto
-eval_ibf_sa_m1
+show_step_result("DL_IBF SA - evaluacion automatico", eval_ibf_sa_auto)
+show_step_result("DL_IBF SA - evaluacion MA", eval_ibf_sa_m1)
 
 
 # -------------------------------
@@ -1545,9 +1610,12 @@ eval_ibf_sa_m1
 # -------------------------------
 
 # se comparan los resultados de los modelos en una misma tabla.
-cbind(
-  Auto = eval_ibf_sa_auto,
-  MA1  = eval_ibf_sa_m1
+show_step_result(
+  "DL_IBF SA - comparacion conjunta",
+  cbind(
+    Auto = eval_ibf_sa_auto,
+    MA1  = eval_ibf_sa_m1
+  )
 )
 
 # -------------------------------
@@ -1584,7 +1652,7 @@ rownames(tabla_total) <- c(
 )
 
 # se ejecuta esta instruccion puntual del procedimiento.
-tabla_total
+show_step_result("Cuadro comparativo de pronosticos", tabla_total)
 
 
 # -------------------------------
@@ -1621,7 +1689,7 @@ for(i in 1:nrow(tabla_total)){
 }
 
 # se ejecuta esta instruccion puntual del procedimiento.
-tabla_mark
+show_step_result("Cuadro comparativo con mejor modelo marcado", tabla_mark)
 
 
 # -------------------------------
@@ -1657,7 +1725,7 @@ anexo <- data.frame(
 )
 
 # se ejecuta esta instruccion puntual del procedimiento.
-anexo
+show_step_result("Valores reales vs pronosticos", anexo)
 
 # -------------------------------
 # c.10 Conclusiones sobre el mejor método de pronóstico
@@ -1746,7 +1814,7 @@ title(main = "PACF - DL_PIB")
 # Modelo automático (baseline)
 # se construye modelo_pib_auto con las instrucciones de este minibloque.
 modelo_pib_auto <- auto.arima(pib_train, seasonal = TRUE)
-summary(modelo_pib_auto)
+show_step_result("DL_PIB - resumen modelo automatico", summary(modelo_pib_auto))
 
 # Modelo manual 1 (MA corto plazo - principal)
 # se construye modelo_pib_m1 con las instrucciones de este minibloque.
@@ -1755,7 +1823,7 @@ modelo_pib_m1 <- Arima(
   order = c(0,0,1),
   seasonal = list(order = c(0,1,1), period = 4)
 )
-summary(modelo_pib_m1)
+show_step_result("DL_PIB - resumen modelo MA", summary(modelo_pib_m1))
 
 # Modelo manual 2 (ARMA - alternativa)
 # se construye modelo_pib_m2 con las instrucciones de este minibloque.
@@ -1764,7 +1832,7 @@ modelo_pib_m2 <- Arima(
   order = c(1,0,1),
   seasonal = list(order = c(0,1,1), period = 4)
 )
-summary(modelo_pib_m2)
+show_step_result("DL_PIB - resumen modelo ARMA", summary(modelo_pib_m2))
 
 
 # -------------------------------
@@ -1823,16 +1891,16 @@ par(mfrow = c(1,1))
 # -------------------------------
 
 # se imprime una etiqueta para ordenar la salida de evaluacion en consola.
-cat("Modelo Automático\n")
 eval_pib_auto <- Eval_Pron(pron_pib_auto$mean, pib_test)
+show_step_result("DL_PIB - evaluacion SARIMA automatico", eval_pib_auto)
 
 # se informa en consola el estado o resultado de la corrida.
-cat("\nModelo MA corto plazo\n")
 eval_pib_m1 <- Eval_Pron(pron_pib_m1$mean, pib_test)
+show_step_result("DL_PIB - evaluacion SARIMA MA", eval_pib_m1)
 
 # se informa en consola el estado o resultado de la corrida.
-cat("\nModelo ARMA corto plazo\n")
 eval_pib_m2 <- Eval_Pron(pron_pib_m2$mean, pib_test)
+show_step_result("DL_PIB - evaluacion SARIMA ARMA", eval_pib_m2)
 
 
 # -------------------------------
@@ -1966,7 +2034,7 @@ pib_sa_ts <- pib_sa
 # Modelo automático
 # se construye modelo_pib_sa_auto con las instrucciones de este minibloque.
 modelo_pib_sa_auto <- auto.arima(pib_sa_ts, seasonal = FALSE)
-summary(modelo_pib_sa_auto)
+show_step_result("DL_PIB SA - resumen modelo automatico", summary(modelo_pib_sa_auto))
 
 # Modelo base: ruido blanco con media
 # se construye modelo_pib_sa_wn con las instrucciones de este minibloque.
@@ -1975,7 +2043,7 @@ modelo_pib_sa_wn <- Arima(
   order = c(0,0,0),
   include.mean = TRUE
 )
-summary(modelo_pib_sa_wn)
+show_step_result("DL_PIB SA - resumen modelo ruido blanco", summary(modelo_pib_sa_wn))
 
 # Modelo alternativo (solo para contraste)
 # se construye modelo_pib_sa_m1 con las instrucciones de este minibloque.
@@ -1984,7 +2052,7 @@ modelo_pib_sa_m1 <- Arima(
   order = c(0,0,1),
   include.mean = TRUE
 )
-summary(modelo_pib_sa_m1)
+show_step_result("DL_PIB SA - resumen modelo MA", summary(modelo_pib_sa_m1))
 
 
 # -------------------------------
@@ -2131,9 +2199,9 @@ eval_pib_sa_m1 <- Eval_Pron(
 )
 
 # Mostrar resultados individuales
-eval_pib_sa_auto
-eval_pib_sa_wn
-eval_pib_sa_m1
+show_step_result("DL_PIB SA - evaluacion automatico", eval_pib_sa_auto)
+show_step_result("DL_PIB SA - evaluacion ruido blanco", eval_pib_sa_wn)
+show_step_result("DL_PIB SA - evaluacion MA", eval_pib_sa_m1)
 
 
 # -------------------------------
@@ -2176,7 +2244,7 @@ rownames(tabla_total) <- c(
 )
 
 # se ejecuta esta instruccion puntual del procedimiento.
-tabla_total
+show_step_result("Cuadro comparativo de pronosticos", tabla_total)
 
 # -------------------------------
 # d.9.1 Marcar mejores valores (*)
@@ -2212,7 +2280,7 @@ for(i in 1:nrow(tabla_total)){
 }
 
 # se ejecuta esta instruccion puntual del procedimiento.
-tabla_mark
+show_step_result("Cuadro comparativo con mejor modelo marcado", tabla_mark)
 
 # -------------------------------
 # d.9.2 Anexo: valores reales y pronósticos - DL_PIB
@@ -2250,7 +2318,7 @@ anexo <- data.frame(
 )
 
 # se ejecuta esta instruccion puntual del procedimiento.
-anexo
+show_step_result("Valores reales vs pronosticos", anexo)
 
 
 # -------------------------------

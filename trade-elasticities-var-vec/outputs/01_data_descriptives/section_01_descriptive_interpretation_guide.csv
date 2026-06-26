@@ -1,5 +1,0 @@
-"topic","evidence","output"
-"tendencia","Los graficos en niveles logaritmicos permiten observar tendencias comunes de largo plazo y posibles cambios de pendiente en las series.","figure_01_log_levels.png"
-"estacionalidad","La tabla por trimestre de las primeras diferencias resume si algun trimestre muestra medias sistematicamente distintas.","section_01_descriptive_seasonality_by_quarter.csv"
-"volatilidad","La desviacion estandar de las diferencias logaritmicas se usa como medida simple de volatilidad trimestral.","section_01_descriptive_statistics.csv"
-"quiebres","Los maximos, minimos y graficos de diferencias ayudan a ubicar episodios de saltos asociados a crisis, shocks externos o cambios de regimen.","figure_02_log_differences.png"

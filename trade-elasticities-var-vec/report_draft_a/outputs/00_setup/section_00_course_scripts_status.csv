@@ -1,0 +1,5 @@
+"file","path","expected_function","loaded","status","message"
+"Test.ADF_Ver.3.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/required_scripts/Test.ADF_Ver.3.R","Test.ADF.Ver.3",TRUE,"loaded","Script de clase cargado correctamente."
+"vcorr_res.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/required_scripts/vcorr_res.R","vcorr_res",TRUE,"loaded","Script de clase cargado correctamente."
+"VAR_white_no_cross.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/required_scripts/VAR_white_no_cross.R","VAR_white_no_cross",TRUE,"loaded","Script de clase cargado correctamente."
+"VAR_lag_exclusion_wald.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/required_scripts/VAR_lag_exclusion_wald.R","VAR_lag_exclusion_wald",TRUE,"loaded","Script de clase cargado correctamente."

@@ -1,0 +1,194 @@
+"paso","script","ruta","estado","inicio","fin","duracion_segundos","numero_advertencias","advertencias","numero_objetos_nuevos","objetos_nuevos","error"
+1,"script01_load_data.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/scripts/script01_load_data.R","OK","2026-06-25 21:01:48","2026-06-25 21:01:56",8.19,6,"package ‘tidyverse’ was built under R version 4.3.2 || package ‘readr’ was built under R version 4.3.2 || package ‘forcats’ was built under R version 4.3.2 || package ‘lubridate’ was built under R version 4.3.2 || package ‘readxl’ was built under R version 4.3.2 || package ‘janitor’ was built under R version 4.3.3",7,"pib_brasil | pib_brasil_raw | pib_externo | pib_usa | pib_usa_raw | ruta_pib_brasil | ruta_pib_usa",NA
+2,"script02_daily_itcrm.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/scripts/script02_daily_itcrm.R","OK","2026-06-25 21:01:56","2026-06-25 21:02:25",28.47,18,"Expecting date in A10730 / R10730C1: got 'Nota: Datos provisorios sujetos a revisión.' || Expecting date in A10731 / R10731C1: got 'Fuente: INDEC, Direcciones de Estadísticas de la Ciudad Autónoma de Buenos Aires y de la Provincia de San Luis, Datastream y REM BCRA' || Expecting date in A10732 / R10732C1: got '*Promedio simple de valores de Brasil, Chile y Uruguay' || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""fecha""` instead of `.data$fecha`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""periodo""` instead of `.data$periodo`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""periodo_label""` instead of `.data$periodo_label`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""anio""` instead of `.data$anio`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""trimestre""` instead of `.data$trimestre`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""itcrm""` instead of `.data$itcrm`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""ln_itcrm""` instead of `.data$ln_itcrm`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""observaciones_diarias""` instead of `.data$observaciones_diarias`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""fecha_inicial""` instead of `.data$fecha_inicial`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""fecha_final""` instead of `.data$fecha_final`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""periodo_calculo""` instead of `.data$periodo_calculo`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""ponderador_brasil_original""` instead of `.data$ponderador_brasil_original`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""ponderador_usa_original""` instead of `.data$ponderador_usa_original`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""ponderador_brasil_normalizado""` instead of `.data$ponderador_brasil_normalizado`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""ponderador_usa_normalizado""` instead of `.data$ponderador_usa_normalizado`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.",25,"columnas_itcrm_faltantes | columnas_itcrm_requeridas | columnas_ponderadores_faltantes | columnas_ponderadores_requeridas | duplicados_itcrm | duplicados_ponderadores | grafico_itcrm | hojas_disponibles | hojas_faltantes | hojas_requeridas | itcrm_diario | itcrm_diario_2004_2025 | itcrm_exportar | itcrm_raw | itcrm_trimestral | paquetes | paquetes_faltantes | ponderadores_mensuales | ponderadores_promedio_2004_2022 | ponderadores_promedio_2004_2025 | ponderadores_raw | ruta_itcrm | suma_normalizada_2004_2025 | tabla_ponderadores | valores_no_positivos",NA
+3,"script03_ipm_ipx_gdp.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/scripts/script03_ipm_ipx_gdp.R","OK","2026-06-25 21:02:25","2026-06-25 21:02:49",24.05,0,NA,18,"anios | anios_raw | columnas_trimestrales | datos_arg_raw | datos_argentina | datos_argentina_excel | datos_argentina_long | duplicados_argentina | etiquetas_filas | etiquetas_trimestre | exportaciones_argentina | extraer_serie_argentina | grafico_datos_argentina | importaciones_argentina | pib_argentina | resumen_faltantes_argentina | ruta_comercio_arg | trimestres",NA
+4,"script04_commodities.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/scripts/script04_commodities.R","OK","2026-06-25 21:02:49","2026-06-25 21:02:56",7.12,0,NA,7,"commodities_excel | commodities_mensual | commodities_mensual_2004_2025 | commodities_raw | commodities_trimestral | grafico_commodities | ruta_commodities",NA
+5,"script05_partner_gdp.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/scripts/script05_partner_gdp.R","OK","2026-06-25 21:02:56","2026-06-25 21:03:04",7.84,0,NA,20,"grafico_pib_socios | periodo_base | pib_brasil_base | pib_socios | pib_socios_excel | pib_socios_long | pib_usa_base | ponderadores_muestra | ponderadores_pib_socios | resumen_pib_externo | ruta_pib_externo | ruta_ponderadores | tabla_ponderadores_pib_socios | valor_base_socios | variables_pib_faltantes | variables_pib_requeridas | variables_ponderadores_faltantes | variables_ponderadores_requeridas | w_brasil | w_usa",NA
+6,"script06_panel.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/scripts/script06_panel.R","OK","2026-06-25 21:03:04","2026-06-25 21:03:06",1.8,0,NA,44,"anio_inicio | archivos_faltantes | argentina_panel | calendario_esperado | commodities_panel | faltan_en_commodities | faltan_en_itcrm | faltan_en_socios | faltantes_argentina | faltantes_commodities | faltantes_itcrm | faltantes_socios | itcrm_panel | panel_diferencias | panel_diferencias_excel | panel_maestro | panel_maestro_excel | periodos_argentina | periodos_commodities | periodos_faltantes_panel | periodos_itcrm | periodos_socios | resumen_cobertura | resumen_panel | ruta_argentina | ruta_pib_socios | rutas_requeridas | sistema_exportaciones_ampliado_diferencias | sistema_exportaciones_ampliado_niveles | sistema_exportaciones_clasico_diferencias | sistema_exportaciones_clasico_niveles | sistema_importaciones_diferencias | sistema_importaciones_niveles | socios_panel | tabla_faltantes | trimestre_inicio | ts_diferencias | ts_niveles | variables_argentina | variables_commodities | variables_itcrm | variables_logs | variables_niveles | variables_socios",NA
+7,"script07_seasonality.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/scripts/script07_seasonality.R","OK","2026-06-25 21:03:06","2026-06-25 21:03:54",47.68,0,NA,26,"base_correlaciones | calcular_descriptivos | diccionario_series | grafico_estacionalidad | grafico_exportaciones | grafico_importaciones | grafico_indices_base | grafico_series_diferencias | grafico_series_logs | grafico_series_niveles | matriz_correlaciones | prueba_estacionalidad | ruta_panel | series_diferencias_long | series_indice_base | series_logs_long | series_niveles_long | tabla_cobertura_descriptiva | tabla_correlaciones | tabla_descriptivos_completa | tabla_descriptivos_diferencias | tabla_descriptivos_logs | tabla_descriptivos_niveles | tabla_estacionalidad | variables_faltantes | variables_requeridas",NA
+8,"script08_unit_roots.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/scripts/script08_unit_roots.R","OK","2026-06-25 21:03:54","2026-06-25 21:04:49",55.32,2,"package ‘dynlm’ was built under R version 4.3.3 || package ‘urca’ was built under R version 4.3.3",38,"clave_i | config_series | contador_adf | control_adf | criterio_i | criterios_rezagos | ejecutar_adf_docente | ejecutar_ocsb | encabezado_i | especificacion_i | especificaciones_adf | etiqueta_i | faltantes_en_diferencias | faltantes_en_niveles | i | inicio_ts | lista_resultados_adf | lista_resultados_ocsb | ocsb_con_error | ocsb_exitosos | resultado_ejecucion | resultado_i | resultados_adf | resultados_ocsb | robustez_adf | ruta_adf_curso | rutas_adf_existentes | rutas_posibles_adf | salida_adf_docente | serie_i | series_diferencias | series_niveles | tabla_adf_principal | tabla_control_ts | tabla_final_raices | tabla_informe_raices | tabla_orden_integracion | Test.ADF.Ver.3",NA
+9,"script09_engle_granger.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/scripts/script09_engle_granger.R","OK","2026-06-25 21:04:49","2026-06-25 21:05:08",19,1,"package ‘sandwich’ was built under R version 4.3.2",77,"adf_residual_engle_granger | ajustar_modelo_dinamico | ajuste_ecm | ajuste_wb | buscar_criticos_eg | calcular_ratio_largo_plazo | clave_modelo | coeficientes_diferencias | coeficientes_ecm | coeficientes_eg | coeficientes_wb | comparacion_largo_plazo | comparacion_modelos_corto_plazo | configuracion_excel | contador_eg | contador_modelos | contador_wb | crear_formula | decision_cointegracion | decision_eg_integral | denominador | dependent_i | diagnosticos_diferencias | diagnosticos_ecm | diagnosticos_lm | diagnosticos_todos | diagnosticos_wb | elasticidades_corto_plazo | elasticidades_corto_plazo_diferencias | elasticidades_corto_plazo_ecm | elasticidades_largo_plazo_eg | elasticidades_largo_plazo_wb | elasticidades_wb | especificaciones | estimar_engle_granger | extraer_coeftest | fit_i | grafico_elasticidades | grafico_residuos_eg | lag_i | max_lag_dinamico | model_key_i | modelos_eg | nombre_diferencia | nombre_ecm | nombre_residuo | obtener_p_value | panel_modelos | residuos_eg | residuos_eg_baseline | resultados_diferencias | resultados_ecm | resultados_eg | resultados_wb | resumen_diferencias | resumen_ecm | resumen_eg | resumen_lm | resumen_wb | seasonal_i | seleccion_lags_diferencias | seleccion_lags_ecm | seleccion_lags_eg | seleccion_lags_wb | spec_i | tabla_criticos_eg | tabla_lag_dependiente | tabla_terminos_ecm | tests_eg | variable_i | variables_corto_plazo | variables_diferencia | variables_largo_plazo | variables_nivel | vcov_i | x1_i | x2_i",NA
+10,"script10_selection_diagnostics.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/scripts/script10_selection_diagnostics.R","OK","2026-06-25 21:05:08","2026-06-25 21:06:04",56.42,47,"package ‘vars’ was built under R version 4.3.2 || package ‘strucchange’ was built under R version 4.3.2 || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""lag_label""` instead of `.data$lag_label`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""model_key""` instead of `.data$model_key`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""variant""` instead of `.data$variant`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""p_AIC""` instead of `.data$p_AIC`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""p_HQ""` instead of `.data$p_HQ`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""p_SC""` instead of `.data$p_SC`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""p_FPE""` instead of `.data$p_FPE`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""variant_label""` instead of `.data$variant_label`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""season""` instead of `.data$season`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""main_variant""` instead of `.data$main_variant`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""model_role""` instead of `.data$model_role`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""johansen_role""` instead of `.data$johansen_role`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""lag_number""` instead of `.data$lag_number`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""statistic""` instead of `.data$statistic`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""p_value""` instead of `.data$p_value`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""model_label""` instead of `.data$model_label`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""p_selected""` instead of `.data$p_selected`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""note""` instead of `.data$note`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""highest_lag_joint_statistic""` instead of `.data$highest_lag_joint_statistic`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""highest_lag_joint_p_value""` instead of `.data$highest_lag_joint_p_value`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""highest_lag_significant_10pct""` instead of `.data$highest_lag_significant_10pct`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""interpretation_role""` instead of `.data$interpretation_role`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""K_ca_jo""` instead of `.data$K_ca_jo`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""vecm_short_run_lags""` instead of `.data$vecm_short_run_lags`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""pt_p_value""` instead of `.data$pt_p_value`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""bg_p_value""` instead of `.data$bg_p_value`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""normality_p_value""` instead of `.data$normality_p_value`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""arch_p_value""` instead of `.data$arch_p_value`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""white_p_value""` instead of `.data$white_p_value`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""deterministic_johansen""` instead of `.data$deterministic_johansen`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""seasonal_johansen""` instead of `.data$seasonal_johansen`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""exogenous_johansen""` instead of `.data$exogenous_johansen`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""johansen_validity""` instead of `.data$johansen_validity`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""p_start""` instead of `.data$p_start`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""serial_clean_10pct""` instead of `.data$serial_clean_10pct`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""selection_formal""` instead of `.data$selection_formal`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""selection_reason""` instead of `.data$selection_reason`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""maximum_root_modulus_final""` instead of `.data$maximum_root_modulus_final`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""p""` instead of `.data$p`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""observations""` instead of `.data$observations`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""pt_lag""` instead of `.data$pt_lag`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""bg_lag""` instead of `.data$bg_lag`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""maximum_root_modulus""` instead of `.data$maximum_root_modulus`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""limpio_10pct""` instead of `.data$limpio_10pct`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. || Use of .data in tidyselect expressions was deprecated in tidyselect 1.2.0.
+ℹ Please use `""minimo_p_serial""` instead of `.data$minimo_p_serial`
+This warning is displayed once per session.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.",104,"ajuste_i | arch_resumen | bg_i | candidatos_limpios_johansen | clave_candidata | clave_final | config_sistemas | config_sistemas_excel | config_variantes | contador_diagnosticos | contador_exclusion | contador_ic | contador_normalidad | contador_raices | contador_seleccion | contador_vcorr | contador_white | crear_clave_modelo | crear_matriz_ts | criterios_ic | datos_grafico_vcorr | datos_i | datos_sistemas | diagnosticos_i | diagnosticos_importaciones_variantes | diagnosticos_k_definitivo | diagnosticos_rezagos_johansen | ejecutar_normalidad_arch | ejecutar_varselect | ejecutar_vcorr_ordenado | ejecutar_white_auxiliar | encabezado | endogenous_i | estimar_var | exclusion_impresa | exclusion_joint | exclusion_lag_mayor | exclusion_lags | exogenous_i | funciones_no_cargadas | funciones_requeridas | grafico_raices | grafico_vcorr | insumos_johansen | insumos_johansen_final | j | lag_correlacion_objetivo | lags_arch | lista_criterios_ic | lista_diagnosticos_candidatos | lista_exclusion | lista_normalidad_arch | lista_raices | lista_seleccion_final | lista_selecciones_ic | lista_vcorr | lista_white | localizar_archivo_funcion | max_lag_var | max_raices | max_raiz_i | model_label_i | modelo_i | modelos_var_candidatos | modelos_var_finales | nivel_significancia | normalidad_arch_final | normalidad_jb | ordenar_exclusion_lags | ordenar_varselect | ordenes_johansen_definitivos | p_i | print.VAR_lag_exclusion_wald | print.VAR_white_no_cross | pt_i | raices_finales | raices_i | resumen_final_var | resumen_modelo | ruta_exclusion | ruta_vcorr | ruta_white | salida_texto_var | season_i | seleccion_final | seleccion_i | seleccion_ic_i | seleccion_ordenada | seleccionar_orden_var | selecciones_ic | tabla_control_sistemas | test_serial_seguro | tipo_i | VAR_lag_exclusion_wald | VAR_white_no_cross | variables_numericas | variant_i | vcorr_final | vcorr_res | vcorr_revision | white_final | white_resumen | x_i | y_i",NA
+11,"script11_johansen_vecm.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/scripts/script11_johansen_vecm.R","OK","2026-06-25 21:06:04","2026-06-25 21:06:30",25.97,0,NA,97,"ajuste_alpha | ajuste_alpha_trade | beta_i | beta_system | beta_trade_r1 | coeficientes_var_diferencias | coeficientes_vecm_system | coeficientes_vecm_trade | comparacion_engle_granger | comparacion_metodos | config_modelos | configuracion_principal | configuracion_sensibilidad | constantes_largo_plazo | contador_rangos | contador_tests | corto_plazo_acumulado | corto_plazo_var_diferencias | corto_plazo_vecm | datos_grafico_elasticidades | datos_grafico_johansen | decision_modelos_finales_tp3 | decision_rango | diagnosticar_modelo_var | diagnosticos_script10 | diagnosticos_var_diferencias | diagnosticos_vec2var | ect_i | elasticidades_johansen | elasticidades_johansen_principales | estimar_ca_jo | estimar_var_diferencias | extraer_beta | extraer_coeficientes_mlm | extraer_coeficientes_varest | extraer_elasticidades_r1 | extraer_lag_termino | extraer_raices_vec2var | extraer_test_johansen | fecha_ect | grafico_ect | grafico_johansen | hojas_excel | indice_ect | johansen_i | K_i | lags_autocorrelacion | lista_beta_system | lista_beta_trade | lista_coef_diferencias | lista_coef_system | lista_coef_trade | lista_constantes_lr | lista_diagnosticos_diferencias | lista_diagnosticos_vec2var | lista_ect | lista_elasticidades | lista_raices_vecm | lista_rangos | lista_tests_johansen | lista_vcorr_vecm | localizar_archivo | max_lag_i | model_id_i | modelos_cajorls_system | modelos_cajorls_trade_r1 | modelos_johansen_eigen | modelos_johansen_trace | modelos_var_diferencias | modelos_vec2var_system | modelos_vec2var_trade_r1 | objeto_trace_i | ordenar_vcorr | r_system_i | raices_vecm | rangos_johansen | rangos_por_test | resumen_eigen | resumen_johansen | resumen_raices_vecm | resumen_trace | resumen_vecm_r1 | resumen_vecm_system | ruta_comparacion_eg | ruta_datos_sistemas | ruta_diagnosticos_var10 | ruta_insumos_johansen | salida_i | salida_texto | seleccionar_rango | serial.test | series_ect | tabla_i | tests_johansen | tiempo_completo | tolerancia_raiz_uno | vcorr_vecm",NA
+12,"script12_svar.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/scripts/script12_svar.R","ERROR","2026-06-25 21:06:30","2026-06-25 21:07:12",41.52,1,"dependency ‘gsl’ is not available",1,"paquetes_no_disponibles","No fue posible instalar o cargar:
+svars"
