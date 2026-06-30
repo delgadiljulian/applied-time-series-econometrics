@@ -57,21 +57,35 @@ trade-elasticities-var-vec/
 |
 ├── README.md
 |
-├── data/
-|   ├── raw/
-|   └── processed/
+├── report_draft_a/
+|   ├── 00_run_all.R
+|   ├── data/
+|   |   ├── raw/
+|   |   └── processed/
+|   ├── figures/
+|   ├── outputs/
+|   |   ├── figures/
+|   |   ├── logs/
+|   |   ├── models/
+|   |   └── tables/
+|   ├── report/
+|   └── scripts/
+|       └── required_scripts/
 |
-├── docs/
-|   └── assignment_prompt_tp3_2025.pdf
-|
-├── figures/
-|
-├── outputs/
-|
-├── report/
-|
-└── scripts/
+└── report_draft_b/
+    ├── data/
+    ├── docs/
+    ├── figures/
+    ├── outputs/
+    ├── report/
+    └── scripts/
 ```
+
+`report_draft_a/` is the active working draft. Its master script sets the
+project root to the folder where `00_run_all.R` lives, so generated `figures/`
+and `outputs/` folders remain inside `report_draft_a/`.
+
+`report_draft_b/` is kept as a parallel draft/reference workspace.
 
 ---
 
@@ -91,11 +105,29 @@ All core variables should be analyzed in natural logarithms.
 The main analysis-ready input is:
 
 ```text
-trade-elasticities-var-vec/data/processed/trade_elasticities_var_vec_panel_transformed_2004_2025.csv
+trade-elasticities-var-vec/report_draft_a/data/processed/trade_elasticities_var_vec_panel_transformed_2004_2025.csv
 ```
 
-Raw source-level inputs are stored in `data/raw/`, while processed and
-model-ready panels are stored in `data/processed/`.
+Raw source-level inputs are stored in `report_draft_a/data/raw/`, while
+processed and model-ready panels are stored in `report_draft_a/data/processed/`.
+
+---
+
+## Reproducible Run
+
+The active master script is:
+
+```text
+trade-elasticities-var-vec/report_draft_a/00_run_all.R
+```
+
+Run it from RStudio or with `Rscript`. The script detects `report_draft_a/` as
+the project root and writes generated files under:
+
+```text
+trade-elasticities-var-vec/report_draft_a/outputs/
+trade-elasticities-var-vec/report_draft_a/figures/
+```
 
 ---
 
@@ -138,8 +170,8 @@ checks rely on the available `vars` workflow.
 
 ### Class scripts used
 
-The following scripts from the course are stored under `scripts/required/` and
-are loaded by the master script:
+The following scripts from the course are stored under
+`report_draft_a/scripts/required_scripts/` and are loaded by the master script:
 
 - `Test.ADF_Ver.3.R`: class ADF unit-root test routine.
 - `vcorr_res.R`: residual autocorrelation diagnostics for VAR models.
@@ -149,13 +181,13 @@ are loaded by the master script:
 The current load status of these scripts is exported by:
 
 ```text
-outputs/00_setup/section_00_course_scripts_status.csv
+report_draft_a/outputs/00_setup/section_00_course_scripts_status.csv
 ```
 
 The package availability check is exported by:
 
 ```text
-outputs/00_setup/section_00_course_packages_status.csv
+report_draft_a/outputs/00_setup/section_00_course_packages_status.csv
 ```
 
 ---
