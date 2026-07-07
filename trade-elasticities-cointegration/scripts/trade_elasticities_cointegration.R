@@ -1,4 +1,4 @@
-#********************************************************
+﻿#********************************************************
 # UNIVERSIDAD DE BUENOS AIRES (UBA)
 # Facultad de Ciencias Económicas
 # Maestría en Economía Aplicada
@@ -97,11 +97,33 @@ project_dir <- "C:/Users/julla/GitHub/applied-time-series-econometrics/trade-ela
 # Carpetas del proyecto
 raw_data_dir       <- file.path(project_dir, "data/raw")
 processed_data_dir <- file.path(project_dir, "data/processed")
+processed_delivery_dir <- file.path(
+  processed_data_dir,
+  "final_data_panel"
+)
+processed_auxiliary_dir <- file.path(
+  processed_data_dir,
+  "auxiliary_data"
+)
 output_dir         <- file.path(project_dir, "outputs")
 figures_dir        <- file.path(project_dir, "figures")
 scripts_dir        <- file.path(project_dir, "scripts")
 report_dir         <- file.path(project_dir, "report")
 docs_dir           <- file.path(project_dir, "docs")
+
+delivery_data_files <- c(
+  "trade_elasticities_panel_transformed_2004_2025.csv",
+  "trade_elasticities_panel_transformed_2004_2025.dta"
+)
+
+processed_data_path <- function(file_name) {
+  target_dir <- if (file_name %in% delivery_data_files) {
+    processed_delivery_dir
+  } else {
+    processed_auxiliary_dir
+  }
+  file.path(target_dir, file_name)
+}
 
 # Agrupar salidas finales por bloque facilita revisar resultados y anexos.
 output_subdirs <- c(
@@ -119,6 +141,8 @@ walk(
   c(
     raw_data_dir,
     processed_data_dir,
+    processed_delivery_dir,
+    processed_auxiliary_dir,
     output_dir,
     figures_dir,
     scripts_dir,
@@ -500,18 +524,18 @@ show_step_result("INDEC - valores faltantes", arg_trade_missing)
 # Exportar a Stata.
 write_dta(
   arg_trade_processed,
-  file.path(processed_data_dir, "arg_trade_data_2004_2025.dta")
+  processed_data_path("arg_trade_data_2004_2025.dta")
 )
 
 # Exportar copia CSV.
 export_csv(
   arg_trade_processed,
-  file.path(processed_data_dir, "arg_trade_data_2004_2025.csv")
+  processed_data_path("arg_trade_data_2004_2025.csv")
 )
 
 # Reabrir .dta exportado.
 arg_trade_dta <- read_dta(
-  file.path(processed_data_dir, "arg_trade_data_2004_2025.dta")
+  processed_data_path("arg_trade_data_2004_2025.dta")
 )
 
 # ---------------------------------------------------------
@@ -602,18 +626,18 @@ show_step_result("ITCRM - valores faltantes", itcrm_missing)
 # Exportar a Stata.
 write_dta(
   itcrm_quarterly,
-  file.path(processed_data_dir, "arg_itcrm_quarterly_2004_2025.dta")
+  processed_data_path("arg_itcrm_quarterly_2004_2025.dta")
 )
 
 # Exportar copia CSV.
 export_csv(
   itcrm_quarterly,
-  file.path(processed_data_dir, "arg_itcrm_quarterly_2004_2025.csv")
+  processed_data_path("arg_itcrm_quarterly_2004_2025.csv")
 )
 
 # Reabrir .dta exportado.
 itcrm_dta <- read_dta(
-  file.path(processed_data_dir, "arg_itcrm_quarterly_2004_2025.dta")
+  processed_data_path("arg_itcrm_quarterly_2004_2025.dta")
 )
 
 # ---------------------------------------------------------
@@ -687,18 +711,18 @@ show_step_result("PIB EEUU - valores faltantes", usa_gdp_missing)
 # Exportar a Stata.
 write_dta(
   usa_gdp_quarterly,
-  file.path(processed_data_dir, "usa_real_gdp_quarterly_2004_2025.dta")
+  processed_data_path("usa_real_gdp_quarterly_2004_2025.dta")
 )
 
 # Exportar copia CSV.
 export_csv(
   usa_gdp_quarterly,
-  file.path(processed_data_dir, "usa_real_gdp_quarterly_2004_2025.csv")
+  processed_data_path("usa_real_gdp_quarterly_2004_2025.csv")
 )
 
 # Reabrir .dta exportado.
 usa_gdp_dta <- read_dta(
-  file.path(processed_data_dir, "usa_real_gdp_quarterly_2004_2025.dta")
+  processed_data_path("usa_real_gdp_quarterly_2004_2025.dta")
 )
 
 # ---------------------------------------------------------
@@ -772,18 +796,18 @@ show_step_result("PIB Brasil - valores faltantes", brazil_gdp_missing)
 # Exportar a Stata.
 write_dta(
   brazil_gdp_quarterly,
-  file.path(processed_data_dir, "brazil_real_gdp_quarterly_2004_2025.dta")
+  processed_data_path("brazil_real_gdp_quarterly_2004_2025.dta")
 )
 
 # Exportar copia CSV.
 export_csv(
   brazil_gdp_quarterly,
-  file.path(processed_data_dir, "brazil_real_gdp_quarterly_2004_2025.csv")
+  processed_data_path("brazil_real_gdp_quarterly_2004_2025.csv")
 )
 
 # Reabrir .dta exportado.
 brazil_gdp_dta <- read_dta(
-  file.path(processed_data_dir, "brazil_real_gdp_quarterly_2004_2025.dta")
+  processed_data_path("brazil_real_gdp_quarterly_2004_2025.dta")
 )
 
 # ---------------------------------------------------------
@@ -881,18 +905,18 @@ show_step_result("Commodity Price Index - valores faltantes", commodity_missing)
 # Exportar a Stata.
 write_dta(
   commodity_quarterly,
-  file.path(processed_data_dir, "world_bank_commodity_index_quarterly_2004_2025.dta")
+  processed_data_path("world_bank_commodity_index_quarterly_2004_2025.dta")
 )
 
 # Exportar copia CSV.
 export_csv(
   commodity_quarterly,
-  file.path(processed_data_dir, "world_bank_commodity_index_quarterly_2004_2025.csv")
+  processed_data_path("world_bank_commodity_index_quarterly_2004_2025.csv")
 )
 
 # Reabrir .dta exportado.
 commodity_dta <- read_dta(
-  file.path(processed_data_dir, "world_bank_commodity_index_quarterly_2004_2025.dta")
+  processed_data_path("world_bank_commodity_index_quarterly_2004_2025.dta")
 )
 
 #********************************************************
@@ -911,12 +935,11 @@ commodity_dta <- read_dta(
 # registrar rutas de las bases limpias generadas en la
 # seccion 5 para leerlas de forma homogenea.
 # Rutas de bases procesadas.
-arg_trade_dta_file <- file.path(processed_data_dir, "arg_trade_data_2004_2025.dta")
-itcrm_dta_file <- file.path(processed_data_dir, "arg_itcrm_quarterly_2004_2025.dta")
-usa_gdp_dta_file <- file.path(processed_data_dir, "usa_real_gdp_quarterly_2004_2025.dta")
-brazil_gdp_dta_file <- file.path(processed_data_dir, "brazil_real_gdp_quarterly_2004_2025.dta")
-commodity_dta_file <- file.path(
-  processed_data_dir,
+arg_trade_dta_file <- processed_data_path("arg_trade_data_2004_2025.dta")
+itcrm_dta_file <- processed_data_path("arg_itcrm_quarterly_2004_2025.dta")
+usa_gdp_dta_file <- processed_data_path("usa_real_gdp_quarterly_2004_2025.dta")
+brazil_gdp_dta_file <- processed_data_path("brazil_real_gdp_quarterly_2004_2025.dta")
+commodity_dta_file <- processed_data_path(
   "world_bank_commodity_index_quarterly_2004_2025.dta"
 )
 
@@ -1047,30 +1070,30 @@ trade_elasticities_panel_complete <- trade_elasticities_panel %>%
 # Exportar panel maestro.
 write_dta(
   trade_elasticities_panel,
-  file.path(processed_data_dir, "trade_elasticities_panel_2004_2025.dta")
+  processed_data_path("trade_elasticities_panel_2004_2025.dta")
 )
 
 # se exporta esta salida para documentar los resultados.
 export_csv(
   trade_elasticities_panel,
-  file.path(processed_data_dir, "trade_elasticities_panel_2004_2025.csv")
+  processed_data_path("trade_elasticities_panel_2004_2025.csv")
 )
 
 # Exportar panel de casos completos.
 write_dta(
   trade_elasticities_panel_complete,
-  file.path(processed_data_dir, "trade_elasticities_panel_complete_cases.dta")
+  processed_data_path("trade_elasticities_panel_complete_cases.dta")
 )
 
 # se exporta esta salida para documentar los resultados.
 export_csv(
   trade_elasticities_panel_complete,
-  file.path(processed_data_dir, "trade_elasticities_panel_complete_cases.csv")
+  processed_data_path("trade_elasticities_panel_complete_cases.csv")
 )
 
 # Reabrir .dta exportado.
 trade_elasticities_panel_dta <- read_dta(
-  file.path(processed_data_dir, "trade_elasticities_panel_2004_2025.dta")
+  processed_data_path("trade_elasticities_panel_2004_2025.dta")
 )
 
 #********************************************************
@@ -1243,30 +1266,30 @@ trade_elasticities_panel_transformed_complete <- trade_elasticities_panel_transf
 # Exportar base transformada.
 write_dta(
   trade_elasticities_panel_transformed,
-  file.path(processed_data_dir, "trade_elasticities_panel_transformed_2004_2025.dta")
+  processed_data_path("trade_elasticities_panel_transformed_2004_2025.dta")
 )
 
 # se exporta esta salida para documentar los resultados.
 export_csv(
   trade_elasticities_panel_transformed,
-  file.path(processed_data_dir, "trade_elasticities_panel_transformed_2004_2025.csv")
+  processed_data_path("trade_elasticities_panel_transformed_2004_2025.csv")
 )
 
 # Exportar base transformada con casos completos.
 write_dta(
   trade_elasticities_panel_transformed_complete,
-  file.path(processed_data_dir, "trade_elasticities_panel_transformed_complete_cases.dta")
+  processed_data_path("trade_elasticities_panel_transformed_complete_cases.dta")
 )
 
 # se exporta esta salida para documentar los resultados.
 export_csv(
   trade_elasticities_panel_transformed_complete,
-  file.path(processed_data_dir, "trade_elasticities_panel_transformed_complete_cases.csv")
+  processed_data_path("trade_elasticities_panel_transformed_complete_cases.csv")
 )
 
 # Reabrir .dta exportado.
 trade_elasticities_panel_transformed_dta <- read_dta(
-  file.path(processed_data_dir, "trade_elasticities_panel_transformed_2004_2025.dta")
+  processed_data_path("trade_elasticities_panel_transformed_2004_2025.dta")
 )
 
 #********************************************************
@@ -2424,12 +2447,12 @@ trade_elasticities_panel_modeling <- trade_elasticities_panel_transformed %>%
 # Exportar base de modelacion con residuos de cointegracion.
 write_dta(
   trade_elasticities_panel_modeling,
-  file.path(processed_data_dir, "trade_elasticities_panel_modeling_2004_2025.dta")
+  processed_data_path("trade_elasticities_panel_modeling_2004_2025.dta")
 )
 
 # Reabrir .dta exportado.
 trade_elasticities_panel_modeling_dta <- read_dta(
-  file.path(processed_data_dir, "trade_elasticities_panel_modeling_2004_2025.dta")
+  processed_data_path("trade_elasticities_panel_modeling_2004_2025.dta")
 )
 
 
@@ -4211,7 +4234,17 @@ final_outputs_catalog <- tibble(
     "trade_elasticities_cointegration.R"
   ),
   directory = c(
-    rep(processed_data_dir, 5),
+    vapply(
+      c(
+        "trade_elasticities_panel_2004_2025.dta",
+        "trade_elasticities_panel_2004_2025.csv",
+        "trade_elasticities_panel_transformed_2004_2025.dta",
+        "trade_elasticities_panel_transformed_2004_2025.csv",
+        "trade_elasticities_panel_modeling_2004_2025.dta"
+      ),
+      function(file_name) dirname(processed_data_path(file_name)),
+      character(1)
+    ),
     rep(figures_dir, 10),
     dirname(output_path("section_09_stationarity_results.xlsx")),
     dirname(output_path("section_10_cointegration_results.xlsx")),
@@ -4477,6 +4510,8 @@ final_script_summary <- tibble(
   project_dir = project_dir,
   output_dir = output_dir,
   processed_data_dir = processed_data_dir,
+  processed_delivery_dir = processed_delivery_dir,
+  processed_auxiliary_dir = processed_auxiliary_dir,
   figures_dir = figures_dir,
   all_final_checks_passed = all(final_reproducibility_check$passed),
   n_missing_outputs = nrow(missing_final_outputs),

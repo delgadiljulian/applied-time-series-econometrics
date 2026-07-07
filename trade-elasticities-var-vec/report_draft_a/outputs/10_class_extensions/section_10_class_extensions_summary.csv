@@ -1,5 +1,0 @@
-"extension","package","function_used","system","model_key","status","message"
-"IRF","vars","vars::irf","imports,exports,exports_augmented","multi_system_class_irf","ok","IRF calculada con vars::irf como en clase."
-"FEVD","vars","vars::fevd","imports,exports,exports_augmented","multi_system_class_fevd","ok","Descomposicion de varianza calculada con vars::fevd como en clase."
-"SVAR","vars/svars","vars::SVAR","exports","exports_var_diff_class_svar","ok","SVAR estimado con vars::SVAR; paquete svars disponible para extensiones SVAR."
-"LPIRF","lpirfs","lpirfs::lp_lin","exports","exports_var_diff_class_lpirfs","ok","Proyecciones locales calculadas con lpirfs::lp_lin como extension de clase."

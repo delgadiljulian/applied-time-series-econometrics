@@ -1,3 +1,0 @@
-"system","preferred_selected_lag","criteria_used","lag_max","var_type","note"
-"imports",4,"SC",8,"const","Criterio principal SC/BIC por parsimonia en muestra trimestral; AIC, HQ y FPE se reportan como contraste."
-"exports",1,"SC",8,"const","Criterio principal SC/BIC por parsimonia en muestra trimestral; AIC, HQ y FPE se reportan como contraste."

@@ -1,169 +1,135 @@
-# Función para realizar un test de exclusión
-# sobre cada lag del VAR. Ecuación por ecuación
-# y significatividad conjunta del lag completo
-# Hecho con IA (ChatGPT)
-# El argumento es un Var estimado con el paquete "vars"
+﻿#********************************************************
+#              VAR_LAG_EXCLUSION_WALD
+#   Wald tests for excluding each lag from a VAR system
+#********************************************************
 
-# Instala el paquete vars si no está ya instalado
-# si ya está , sólo lo actualiza con library()
-if (!requireNamespace("vars", quietly = TRUE)) {
-  install.packages("vars")
-}
-library(vars)
-#************************************************
-VAR_lag_exclusion_wald <- function(v, digits = 6) {
-  
-  if (!inherits(v, "varest")) {
-    stop("El objeto debe venir de vars::VAR().")
+# This helper recreates the course-style VAR lag exclusion test. For each lag,
+# it tests whether all coefficients attached to that lag are jointly zero across
+# all VAR equations.
+#
+# Arguments
+# var_reg: output from vars::VAR()
+# lags: integer vector of lags to test; defaults to 1:var_reg$p
+#
+# Returns
+# data.frame with Wald chi-square statistic, degrees of freedom and p-value.
+
+# H0: el bloque de coeficientes del rezago evaluado es cero en todo el VAR.
+VAR_lag_exclusion_wald <- function(var_reg, lags = NULL) {
+  if (is.null(var_reg$varresult) || is.null(var_reg$y)) {
+    stop("var_reg must be an object returned by vars::VAR().")
   }
-  
-  dat <- as.data.frame(v$datamat)
-  K <- v$K
-  p <- v$p
-  
-  y_names <- names(v$varresult)
-  
-  Y_dep <- as.matrix(dat[, 1:K, drop = FALSE])
-  X <- as.matrix(dat[, -(1:K), drop = FALSE])
-  
-  T_eff <- nrow(X)
-  m <- ncol(X)
-  
-  # Grados de libertad residuales por ecuación.
-  # Esto es clave para replicar EViews.
-  df_resid <- df.residual(v$varresult[[1]])
-  
-  XtX_inv <- solve(crossprod(X))
-  B_hat <- XtX_inv %*% crossprod(X, Y_dep)
-  
-  U_hat <- Y_dep - X %*% B_hat
-  
-  # Covarianza residual con corrección por grados de libertad, estilo EViews
-  Sigma_u <- crossprod(U_hat) / df_resid
-  
-  stat <- matrix(NA_real_, nrow = p, ncol = K + 1)
-  pval <- matrix(NA_real_, nrow = p, ncol = K + 1)
-  
-  colnames(stat) <- c(y_names, "Joint")
-  colnames(pval) <- c(y_names, "Joint")
-  rownames(stat) <- paste("Lag", 1:p)
-  rownames(pval) <- paste("Lag", 1:p)
-  
-  for (lag_test in 1:p) {
-    
-    lag_rows <- grep(paste0("\\.l", lag_test, "$"), colnames(X))
-    
-    if (length(lag_rows) == 0) {
-      stop(paste("No encontré regresores para el lag", lag_test))
+
+  # La inversa por SVD evita fallos cuando la covarianza del bloque pierde rango.
+  generalized_inverse <- function(matrix_x, tolerance = sqrt(.Machine$double.eps)) {
+    svd_x <- svd(matrix_x)
+    positive_values <- svd_x$d > tolerance * max(svd_x$d)
+
+    if (!any(positive_values)) {
+      stop("Covariance matrix has numerical rank zero.")
     }
-    
-    # ------------------------------------------------------------
-    # Tests ecuación por ecuación
-    # ------------------------------------------------------------
-    for (eq in 1:K) {
-      
-      b <- B_hat[lag_rows, eq, drop = FALSE]
-      
-      sigma2_eq <- crossprod(U_hat[, eq]) / df_resid
-      V_eq <- as.numeric(sigma2_eq) * XtX_inv[lag_rows, lag_rows, drop = FALSE]
-      
-      W_eq <- as.numeric(t(b) %*% solve(V_eq) %*% b)
-      df_eq <- length(lag_rows)
-      
-      stat[lag_test, eq] <- W_eq
-      pval[lag_test, eq] <- pchisq(W_eq, df = df_eq, lower.tail = FALSE)
-    }
-    
-    # ------------------------------------------------------------
-    # Test conjunto del sistema: H0: A_lag = 0
-    # ------------------------------------------------------------
-    V_beta <- kronecker(Sigma_u, XtX_inv)
-    beta_vec <- as.vector(B_hat)
-    
-    idx <- as.vector(sapply(1:K, function(eq) {
-      lag_rows + (eq - 1) * m
-    }))
-    
-    R <- diag(length(beta_vec))[idx, , drop = FALSE]
-    
-    r_beta <- R %*% beta_vec
-    RVR <- R %*% V_beta %*% t(R)
-    
-    W_joint <- as.numeric(t(r_beta) %*% solve(RVR) %*% r_beta)
-    df_joint <- length(idx)
-    
-    stat[lag_test, "Joint"] <- W_joint
-    pval[lag_test, "Joint"] <- pchisq(W_joint, df = df_joint, lower.tail = FALSE)
+
+    inverse_values <- rep(0, length(svd_x$d))
+    inverse_values[positive_values] <- 1 / svd_x$d[positive_values]
+
+    list(
+      inverse = svd_x$v %*% diag(inverse_values, nrow = length(inverse_values)) %*%
+        t(svd_x$u),
+      rank = sum(positive_values)
+    )
   }
-  
-  out <- list(
-    statistic = stat,
-    p.value = pval,
-    K = K,
-    p = p,
-    T_eff = T_eff,
-    df_resid = df_resid,
-    digits = digits,
-    call = v$call
+
+  if (is.null(lags)) {
+    lags <- seq_len(var_reg$p)
+  }
+
+  equation_names <- names(var_reg$varresult)
+  n_equations <- length(var_reg$varresult)
+
+  coefficient_matrix <- do.call(
+    cbind,
+    lapply(var_reg$varresult, stats::coef)
   )
-  
-  class(out) <- "VAR_lag_exclusion_wald"
-  return(out)
-}
-#********************************************
+  rownames(coefficient_matrix) <- names(stats::coef(var_reg$varresult[[1]]))
+  colnames(coefficient_matrix) <- equation_names
+  coefficient_names <- rownames(coefficient_matrix)
 
+  # Se alinean columnas y coeficientes para testear solo parametros estimados.
+  model_matrix_full <- stats::model.matrix(var_reg$varresult[[1]])
+  model_matrix <- model_matrix_full[, coefficient_names, drop = FALSE]
+  xtx_inverse <- generalized_inverse(crossprod(model_matrix))$inverse
 
-print.VAR_lag_exclusion_wald <- function(x, ...) {
-  
-  digits <- x$digits
-  stat <- x$statistic
-  pval <- x$p.value
-  
-  cat("\nVAR Lag Exclusion Wald Tests\n")
-  cat("Date:", format(Sys.Date(), "%m/%d/%y"),
-      " Time:", format(Sys.time(), "%H:%M"), "\n")
-  cat("Included observations:", x$T_eff, "after adjustments\n")
-  cat("\n")
-  cat("Chi-squared test statistics for lag exclusion:\n")
-  cat("Numbers in [ ] are p-values\n")
-  cat("\n")
-  
-  cn <- colnames(stat)
-  
-  first_col_width <- 10
-  num_width <- 14
-  
-  cat(strrep("=", first_col_width + num_width * length(cn)), "\n", sep = "")
-  
-  cat(sprintf("%-*s", first_col_width, ""))
-  for (j in seq_along(cn)) {
-    cat(sprintf("%*s", num_width, cn[j]))
-  }
-  cat("\n")
-  
-  cat(strrep("=", first_col_width + num_width * length(cn)), "\n", sep = "")
-  
-  for (i in seq_len(nrow(stat))) {
-    
-    cat(sprintf("%-*s", first_col_width, rownames(stat)[i]))
-    
-    for (j in seq_len(ncol(stat))) {
-      cat(sprintf("%*.6f", num_width, stat[i, j]))
+  residual_matrix <- do.call(
+    cbind,
+    lapply(var_reg$varresult, stats::resid)
+  )
+  colnames(residual_matrix) <- equation_names
+  sigma_u <- crossprod(residual_matrix) / stats::df.residual(var_reg$varresult[[1]])
+
+  beta_vector <- as.vector(coefficient_matrix)
+  beta_covariance <- kronecker(sigma_u, xtx_inverse)
+
+  results <- lapply(lags, function(lag_i) {
+    lag_pattern <- paste0("\\.l", lag_i, "$")
+    lag_rows <- grep(lag_pattern, coefficient_names)
+
+    if (length(lag_rows) == 0) {
+      return(data.frame(
+        lag = lag_i,
+        statistic = NA_real_,
+        df = NA_integer_,
+        p_value = NA_real_,
+        n_restrictions = 0L,
+        conclusion_5pct = "lag not found in VAR coefficients",
+        stringsAsFactors = FALSE
+      ))
     }
-    cat("\n")
-    
-    cat(sprintf("%-*s", first_col_width, ""))
-    
-    for (j in seq_len(ncol(pval))) {
-      cat(sprintf("%*s", num_width, paste0("[ ", formatC(pval[i, j], format = "f", digits = 4), "]")))
-    }
-    cat("\n\n")
-  }
-  
-  invisible(x)
-}
 
-# Ejemplo
-# data(Canada)
-# v=VAR(Canada, p = 2, type = "const")
-# VAR_lag_exclusion_wald(v)
+    # Se apilan los coeficientes del rezago i para todas las ecuaciones del VAR.
+    selected_positions <- unlist(lapply(seq_len(n_equations), function(eq_i) {
+      (eq_i - 1L) * nrow(coefficient_matrix) + lag_rows
+    }))
+
+    selected_beta <- beta_vector[selected_positions]
+    selected_covariance <- beta_covariance[
+      selected_positions,
+      selected_positions,
+      drop = FALSE
+    ]
+
+    covariance_inverse <- generalized_inverse(selected_covariance)
+    wald_statistic <- as.numeric(
+      t(selected_beta) %*% covariance_inverse$inverse %*% selected_beta
+    )
+    degrees_freedom <- covariance_inverse$rank
+    p_value <- stats::pchisq(
+      wald_statistic,
+      df = degrees_freedom,
+      lower.tail = FALSE
+    )
+
+    data.frame(
+      lag = lag_i,
+      statistic = wald_statistic,
+      df = degrees_freedom,
+      p_value = p_value,
+      n_restrictions = length(selected_beta),
+      conclusion_5pct = ifelse(
+        p_value < 0.05,
+        "reject lag exclusion",
+        "do not reject lag exclusion"
+      ),
+      note = ifelse(
+        p_value < 0.05,
+        "Lag jointly informative; do not exclude mechanically.",
+        "Weak evidence against exclusion; compare with BIC and diagnostics."
+      ),
+      stringsAsFactors = FALSE
+    )
+  })
+
+  # Se conservan restricciones nominales y df efectivo para auditar el Wald.
+  output <- do.call(rbind, results)
+  rownames(output) <- NULL
+  output
+}

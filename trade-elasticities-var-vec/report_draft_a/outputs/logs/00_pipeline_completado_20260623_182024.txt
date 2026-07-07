@@ -1,0 +1,12 @@
+﻿============================================================
+PIPELINE TP3 COMPLETADO CORRECTAMENTE
+============================================================
+Inicio: 2026-06-23 18:20:25
+Finalización: 2026-06-23 18:21:30
+Duración total en minutos: 1.08
+Scripts ejecutados: 13
+Scripts correctos: 13
+Advertencias: 3
+Salidas verificadas: 19
+Log: C:/Users/andre/Desktop/TP3_Series_Tiempo/outputs/logs/00_run_all_20260623_182024.log
+============================================================

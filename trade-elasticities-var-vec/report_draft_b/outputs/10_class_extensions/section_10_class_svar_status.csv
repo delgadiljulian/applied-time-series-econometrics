@@ -1,0 +1,2 @@
+﻿"system","model_key","variables","identification","status","message"
+"exports","exports_var_diff_class_svar","d_ln_exports_real, d_ln_pib_socios, d_ln_itcrm","recursive A-model SVAR, lower-triangular A","ok","SVAR estimado con vars::SVAR; paquete svars disponible para extensiones SVAR."

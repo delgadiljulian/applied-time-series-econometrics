@@ -1,2 +1,0 @@
-"system","model_key","variables","var_lag","var_type","n_input_obs","n_estimation_obs","first_quarter","last_quarter","status","message"
-"exports","exports_var_diff","d_ln_exports_real, d_ln_pib_socios, d_ln_itcrm",4,"const",75,71,"2004Q2","2022Q4","ok","VAR en diferencias estimado como especificacion operativa para exportaciones sin cointegracion robusta."

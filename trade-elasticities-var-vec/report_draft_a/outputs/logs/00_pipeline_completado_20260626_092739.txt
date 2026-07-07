@@ -1,0 +1,12 @@
+﻿============================================================
+PIPELINE TP3 COMPLETADO CORRECTAMENTE
+============================================================
+Inicio: 2026-06-26 09:27:39
+Finalización: 2026-06-26 09:29:45
+Duración total en minutos: 2.09
+Scripts ejecutados: 13
+Scripts correctos: 13
+Advertencias: 74
+Salidas verificadas: 19
+Log: C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/outputs/logs/00_run_all_20260626_092739.log
+============================================================

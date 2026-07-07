@@ -1,2 +1,0 @@
-"paso","script","ruta","estado","inicio","fin","duracion_segundos","numero_advertencias","advertencias","numero_objetos_nuevos","objetos_nuevos","error"
-1,"script01_load_data.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/scripts/script01_load_data.R","ERROR","2026-06-25 21:13:51","2026-06-25 21:13:52",0.78,0,NA,6,"pib_brasil | pib_brasil_raw | pib_usa | pib_usa_raw | ruta_pib_brasil | ruta_pib_usa","unused argument (periodo)"

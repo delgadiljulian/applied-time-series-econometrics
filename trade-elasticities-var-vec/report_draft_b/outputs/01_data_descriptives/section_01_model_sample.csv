@@ -1,0 +1,2 @@
+﻿"model_sample_start","model_sample_end","n_quarters","input_file","note"
+"2004Q1","2025Q4",88,"C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/data/processed/final_data_panel/trade_elasticities_var_vec_panel_transformed_2004_2025.csv","Muestra base TP3 para ADF y preparacion VAR/VEC; cada serie o sistema usa las observaciones completas disponibles dentro de la cobertura 2004Q1-2025Q4."

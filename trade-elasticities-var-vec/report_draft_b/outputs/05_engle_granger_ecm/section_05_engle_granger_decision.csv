@@ -1,0 +1,4 @@
+﻿"model_key","model_label","use_ecm","cointegration_evidence","next_step"
+"imports","Importaciones: comercio, PIB argentino e ITCRM",TRUE,"residuos estacionarios; evidencia de cointegracion","estimar ECM con residuo Engle-Granger rezagado"
+"exports","Exportaciones: comercio, PIB socios e ITCRM",FALSE,"no rechaza raiz unitaria en residuos","estimar modelo en primeras diferencias sin ECM"
+"exports_augmented","Exportaciones ampliadas: PIB socios, ITCRM y commodities",FALSE,"no rechaza raiz unitaria en residuos","estimar modelo en primeras diferencias sin ECM"

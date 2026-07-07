@@ -1,0 +1,468 @@
+﻿
+============================================================
+Serie: Importaciones reales
+Transformación: Logaritmo en nivel
+Modelo ADF: 3
+Criterio de rezagos: AIC
+============================================================
+[1] "Método AIC , lags =  4"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -3.164"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-4.04 -3.45 -3.15
+
+============================================================
+Serie: Importaciones reales
+Transformación: Logaritmo en nivel
+Modelo ADF: 3
+Criterio de rezagos: BIC
+============================================================
+[1] "Método BIC , lags =  1"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -2.958"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-4.04 -3.45 -3.15
+
+============================================================
+Serie: Importaciones reales
+Transformación: Logaritmo en nivel
+Modelo ADF: 3
+Criterio de rezagos: SW
+============================================================
+[1] "Metodo SW , lags =  4"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -3.164"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-4.04 -3.45 -3.15
+
+============================================================
+Serie: Exportaciones reales
+Transformación: Logaritmo en nivel
+Modelo ADF: 3
+Criterio de rezagos: AIC
+============================================================
+[1] "Método AIC , lags =  4"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -3.197"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-4.04 -3.45 -3.15
+
+============================================================
+Serie: Exportaciones reales
+Transformación: Logaritmo en nivel
+Modelo ADF: 3
+Criterio de rezagos: BIC
+============================================================
+[1] "Método BIC , lags =  4"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -3.197"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-4.04 -3.45 -3.15
+
+============================================================
+Serie: Exportaciones reales
+Transformación: Logaritmo en nivel
+Modelo ADF: 3
+Criterio de rezagos: SW
+============================================================
+[1] "Metodo SW , lags =  8"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -2.449"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-4.04 -3.45 -3.15
+
+============================================================
+Serie: PIB real de Argentina
+Transformación: Logaritmo en nivel
+Modelo ADF: 3
+Criterio de rezagos: AIC
+============================================================
+[1] "Método AIC , lags =  11"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -2.764"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-4.04 -3.45 -3.15
+
+============================================================
+Serie: PIB real de Argentina
+Transformación: Logaritmo en nivel
+Modelo ADF: 3
+Criterio de rezagos: BIC
+============================================================
+[1] "Método BIC , lags =  4"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -3.226"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-4.04 -3.45 -3.15
+
+============================================================
+Serie: PIB real de Argentina
+Transformación: Logaritmo en nivel
+Modelo ADF: 3
+Criterio de rezagos: SW
+============================================================
+[1] "Metodo SW , lags =  11"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -2.764"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-4.04 -3.45 -3.15
+
+============================================================
+Serie: ITCRM
+Transformación: Logaritmo en nivel
+Modelo ADF: 2
+Criterio de rezagos: AIC
+============================================================
+[1] "Método AIC , lags =  0"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -1.619"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: ITCRM
+Transformación: Logaritmo en nivel
+Modelo ADF: 2
+Criterio de rezagos: BIC
+============================================================
+[1] "Método BIC , lags =  0"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -1.619"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: ITCRM
+Transformación: Logaritmo en nivel
+Modelo ADF: 2
+Criterio de rezagos: SW
+============================================================
+[1] "Metodo SW , lags =  3"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -1.605"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: PIB de socios comerciales
+Transformación: Logaritmo en nivel
+Modelo ADF: 3
+Criterio de rezagos: AIC
+============================================================
+[1] "Método AIC , lags =  0"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -2.609"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-4.04 -3.45 -3.15
+
+============================================================
+Serie: PIB de socios comerciales
+Transformación: Logaritmo en nivel
+Modelo ADF: 3
+Criterio de rezagos: BIC
+============================================================
+[1] "Método BIC , lags =  0"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -2.609"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-4.04 -3.45 -3.15
+
+============================================================
+Serie: PIB de socios comerciales
+Transformación: Logaritmo en nivel
+Modelo ADF: 3
+Criterio de rezagos: SW
+============================================================
+[1] "Metodo SW , lags =  0"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -2.609"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-4.04 -3.45 -3.15
+
+============================================================
+Serie: Índice de commodities
+Transformación: Logaritmo en nivel
+Modelo ADF: 2
+Criterio de rezagos: AIC
+============================================================
+[1] "Método AIC , lags =  1"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -3.333"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: Índice de commodities
+Transformación: Logaritmo en nivel
+Modelo ADF: 2
+Criterio de rezagos: BIC
+============================================================
+[1] "Método BIC , lags =  1"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -3.333"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: Índice de commodities
+Transformación: Logaritmo en nivel
+Modelo ADF: 2
+Criterio de rezagos: SW
+============================================================
+[1] "Metodo SW , lags =  1"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -3.333"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: Importaciones reales
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: AIC
+============================================================
+[1] "Método AIC , lags =  5"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -4.695"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: Importaciones reales
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: BIC
+============================================================
+[1] "Método BIC , lags =  1"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -7.362"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: Importaciones reales
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: SW
+============================================================
+[1] "Metodo SW , lags =  5"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -4.695"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: Exportaciones reales
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: AIC
+============================================================
+[1] "Método AIC , lags =  6"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -5.176"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: Exportaciones reales
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: BIC
+============================================================
+[1] "Método BIC , lags =  3"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -4.944"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: Exportaciones reales
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: SW
+============================================================
+[1] "Metodo SW , lags =  6"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -5.176"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: PIB real de Argentina
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: AIC
+============================================================
+[1] "Método AIC , lags =  11"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -2.648"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: PIB real de Argentina
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: BIC
+============================================================
+[1] "Método BIC , lags =  7"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -2.866"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: PIB real de Argentina
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: SW
+============================================================
+[1] "Metodo SW , lags =  11"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -2.648"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: ITCRM
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: AIC
+============================================================
+[1] "Método AIC , lags =  0"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -8.582"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: ITCRM
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: BIC
+============================================================
+[1] "Método BIC , lags =  0"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -8.582"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: ITCRM
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: SW
+============================================================
+[1] "Metodo SW , lags =  2"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -6.079"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: PIB de socios comerciales
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: AIC
+============================================================
+[1] "Método AIC , lags =  1"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -7.81"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: PIB de socios comerciales
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: BIC
+============================================================
+[1] "Método BIC , lags =  0"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -9.405"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: PIB de socios comerciales
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: SW
+============================================================
+[1] "Metodo SW , lags =  0"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -9.405"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: Índice de commodities
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: AIC
+============================================================
+[1] "Método AIC , lags =  1"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -6.085"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: Índice de commodities
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: BIC
+============================================================
+[1] "Método BIC , lags =  0"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -6.356"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58
+
+============================================================
+Serie: Índice de commodities
+Transformación: Primera diferencia logarítmica
+Modelo ADF: 2
+Criterio de rezagos: SW
+============================================================
+[1] "Metodo SW , lags =  0"
+[1] "Cantidad máxima de lags:  11"
+[1] "Estadístico Tau:  -6.356"
+[1] "Valores críticos"
+ 1pct  5pct 10pct
+-3.51 -2.89 -2.58

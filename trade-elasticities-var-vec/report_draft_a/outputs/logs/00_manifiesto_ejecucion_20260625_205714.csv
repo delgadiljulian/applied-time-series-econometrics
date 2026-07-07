@@ -1,0 +1,2 @@
+﻿"paso","script","ruta","estado","inicio","fin","duracion_segundos","numero_advertencias","advertencias","numero_objetos_nuevos","objetos_nuevos","error"
+1,"script01_load_data.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_b/scripts/script01_load_data.R","ERROR","2026-06-25 20:57:15","2026-06-25 20:57:15",0.11,0,NA,0,NA,"there is no package called 'tidyverse'"

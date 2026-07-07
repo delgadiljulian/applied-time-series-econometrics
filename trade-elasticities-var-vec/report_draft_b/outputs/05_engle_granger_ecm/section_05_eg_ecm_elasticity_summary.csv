@@ -1,0 +1,8 @@
+﻿"flow","variable","long_run_model_key","short_run_model_prefix","long_run_term","short_run_term","long_run_estimate","short_run_estimate","interpretation"
+"Importaciones","PIB","imports","^imports_","ln_gdp_real","d_ln_gdp_real",1.51840843099458,0.492977162312406,"Elasticidad ingreso positiva; ECM estimado por evidencia de cointegracion."
+"Importaciones","TCR","imports","^imports_","ln_itcrm","d_ln_itcrm",-0.399193203690215,-0.0572387424957599,"Elasticidad cambiaria negativa; ECM estimado por evidencia de cointegracion."
+"Exportaciones","PIB socios","exports","^exports_(ecm|diff)","ln_pib_socios","d_ln_pib_socios",0.720320971254635,0.739300737615495,"Elasticidad de corto plazo en diferencias; largo plazo solo indicativo."
+"Exportaciones","TCR","exports","^exports_(ecm|diff)","ln_itcrm","d_ln_itcrm",0.159388539916543,-0.0565101570820007,"Elasticidad de corto plazo en diferencias; largo plazo solo indicativo."
+"Exportaciones ampliadas","PIB socios","exports_augmented","^exports_augmented_","ln_pib_socios","d_ln_pib_socios",0.3550719556469,-0.304594199925372,"Robustez de exportaciones con commodities como control externo."
+"Exportaciones ampliadas","TCR","exports_augmented","^exports_augmented_","ln_itcrm","d_ln_itcrm",0.0495686098936282,-0.113222349608704,"Robustez de exportaciones con commodities como control externo."
+"Exportaciones ampliadas","Commodities","exports_augmented","^exports_augmented_","ln_commodity_price_index","d_ln_commodity_price_index",0.15521476846294,0.262785411741994,"Control externo de commodities; no se interpreta como variable I(1) del vector de cointegracion."

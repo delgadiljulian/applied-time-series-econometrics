@@ -1,3 +1,0 @@
-"system","base_selected_lag","final_selected_lag","lag_max","var_type","selection_rule","pt_adjusted_p_value","bg_p_value","diagnostics_pass_5pct","diagnostic_status","note"
-"imports",4,4,8,"const","SC/BIC conservado por falta de candidato sin autocorrelacion",0.00149146683262191,0.00139367418754377,FALSE,"residual_autocorrelation_warning","Ningun rezago candidato elimina autocorrelacion; resultados indicativos."
-"exports",1,4,8,"const","menor rezago que pasa autocorrelacion residual",0.0864357144351274,0.0850880593443983,TRUE,"serial_diagnostic_pass","El rezago final retroalimenta los diagnosticos de autocorrelacion."

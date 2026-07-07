@@ -1,0 +1,4 @@
+﻿"system","variables","first_quarter","last_quarter","n_quarters","sample_rule","limiting_variables","full_window_available_vars"
+"imports","ln_imports_real, ln_gdp_real, ln_itcrm","2004Q1","2022Q4",76,"Interseccion completa de variables endogenas del sistema de importaciones.","ln_imports_real, ln_gdp_real","ln_itcrm"
+"exports","ln_exports_real, ln_pib_socios, ln_itcrm","2004Q1","2022Q4",76,"Interseccion completa de variables endogenas del sistema de exportaciones.","ln_exports_real","ln_pib_socios, ln_itcrm"
+"exports_augmented","ln_exports_real, ln_pib_socios, ln_itcrm, ln_commodity_price_index","2004Q1","2022Q4",76,"Robustez de exportaciones con commodities como control externo.","ln_exports_real","ln_pib_socios, ln_itcrm, ln_commodity_price_index"

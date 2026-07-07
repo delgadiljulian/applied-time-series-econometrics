@@ -1,7 +1,0 @@
-"series_key","series_label","level_conclusion_5pct","difference_conclusion_5pct","formal_order","interpretation"
-"imports","Importaciones reales","no rechaza raiz unitaria al 5%","rechaza raiz unitaria al 5%","I(1)","Serie compatible con uso en pruebas de cointegracion."
-"exports","Exportaciones reales","rechaza raiz unitaria al 5%","rechaza raiz unitaria al 5%","I(0)","Serie estacionaria en niveles segun ADF formal."
-"gdp_arg","PIB real Argentina","no rechaza raiz unitaria al 5%","rechaza raiz unitaria al 5%","I(1)","Serie compatible con uso en pruebas de cointegracion."
-"itcrm","Tipo de cambio real multilateral","no rechaza raiz unitaria al 5%","rechaza raiz unitaria al 5%","I(1)","Serie compatible con uso en pruebas de cointegracion."
-"pib_socios","PIB socios comerciales","no rechaza raiz unitaria al 5%","rechaza raiz unitaria al 5%","I(1)","Serie compatible con uso en pruebas de cointegracion."
-"commodities","Indice de precios de commodities","no rechaza raiz unitaria al 5%","rechaza raiz unitaria al 5%","I(1)","Serie compatible con uso en pruebas de cointegracion."

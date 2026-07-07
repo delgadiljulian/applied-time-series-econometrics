@@ -1,2 +1,0 @@
-"system","model_key","package","function_used","lag_order","horizon","status","message"
-"exports","exports_var_diff_class_lpirfs","lpirfs","lpirfs::lp_lin",4,12,"ok","Proyecciones locales calculadas con lpirfs::lp_lin como extension de clase."

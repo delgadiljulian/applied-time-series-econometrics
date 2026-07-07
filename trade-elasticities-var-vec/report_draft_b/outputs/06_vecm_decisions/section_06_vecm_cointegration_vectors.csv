@@ -1,0 +1,5 @@
+﻿"system","ecdet","spec","selected_var_lag","johansen_k","rank_used","relation","term","beta_coefficient","normalized_to","long_run_elasticity","status","note"
+"imports","const","transitory",4,4,1,"ect1","ln_imports_real.l1",1,"ln_imports_real.l1",NA,"ok","VECM estimado para importaciones con el rango de traza al 5%; se reporta como extension multivariada y respaldo del ECM uniecuacional."
+"imports","const","transitory",4,4,1,"ect1","ln_gdp_real.l1",-3.53476476649223,"ln_imports_real.l1",3.53476476649223,"ok","VECM estimado para importaciones con el rango de traza al 5%; se reporta como extension multivariada y respaldo del ECM uniecuacional."
+"imports","const","transitory",4,4,1,"ect1","ln_itcrm.l1",-0.147763713440612,"ln_imports_real.l1",0.147763713440612,"ok","VECM estimado para importaciones con el rango de traza al 5%; se reporta como extension multivariada y respaldo del ECM uniecuacional."
+"imports","const","transitory",4,4,1,"ect1","constant",36.1612796722986,"ln_imports_real.l1",NA,"ok","VECM estimado para importaciones con el rango de traza al 5%; se reporta como extension multivariada y respaldo del ECM uniecuacional."

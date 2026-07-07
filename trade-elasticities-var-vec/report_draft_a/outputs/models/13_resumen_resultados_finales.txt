@@ -1,0 +1,287 @@
+﻿============================================================
+SCRIPT 13: RESULTADOS FINALES DEL TP3
+============================================================
+
+DECISIÓN FINAL DE MODELOS:
+# A tibble: 4 × 25
+  model_id                         model_key
+  <chr>                            <chr>
+1 exports_classic__primary_K2      exports_classic
+2 exports_expanded__primary_K2     exports_expanded
+3 exports_expanded__sensitivity_K4 exports_expanded
+4 imports__primary_K2              imports
+  model_label_run                                                                 K rank_trace_10pct
+  <chr>                                                                       <int>            <int>
+1 Exportaciones: PIB socios e ITCRM                                               2                1
+2 Exportaciones ampliadas: PIB socios, ITCRM y commodities                        2                1
+3 Exportaciones ampliadas: PIB socios, ITCRM y commodities — sensibilidad K=4     4                1
+4 Importaciones: PIB argentino e ITCRM                                            2                2
+  rank_trace_5pct rank_eigen_10pct rank_eigen_5pct rank_system_vecm adjustment_estimate
+            <int>            <int>           <int>            <int>               <dbl>
+1               1                1               0                1             -0.282
+2               1                1               1                1             -0.314
+3               1                1               1                1             -0.0269
+4               2                2               2                2             -0.237
+  adjustment_p_value vecm_pt_p_value vecm_bg_p_value vecm_normality_p_value vecm_arch_p_value
+               <dbl>           <dbl>           <dbl>                  <dbl>             <dbl>
+1           0.000766           0.672          0.543                0                 0.00131
+2           0.000645           0.446          0.0641               0                 0.000304
+3           0.692              0.454          0.0626               0                 0.00131
+4           0.0513             0.220          0.0452               2.59e-13          0.102
+  recommended_multivariate_model
+  <chr>
+1 VECM con rango 1
+2 VECM con rango 1
+3 VECM con rango 1
+4 VECM con rango 2
+  inference_status
+  <chr>
+1 Johansen indicativo por rechazo de normalidad multivariada Traza y máximo autovalor coinciden en una r…
+2 Robustez indicativa con variable exógena I(0) Traza y máximo autovalor coinciden en una relación de co…
+3 Robustez indicativa con variable exógena I(0); sensibilidad con K=4 Traza y máximo autovalor coinciden…
+4 Johansen indicativo por autocorrelación, no normalidad y heterocedasticidad La traza detecta múltiples…
+  is_primary primary_order
+  <lgl>      <chr>
+1 TRUE       ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales
+2 TRUE       ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales
+3 FALSE      ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales
+4 TRUE       ln_pib_real -> ln_itcrm -> ln_importaciones_reales
+  alternative_order
+  <chr>
+1 ln_itcrm -> ln_pib_socios -> ln_exportaciones_reales
+2 ln_itcrm -> ln_pib_socios -> ln_exportaciones_reales
+3 ln_itcrm -> ln_pib_socios -> ln_exportaciones_reales
+4 ln_itcrm -> ln_pib_real -> ln_importaciones_reales
+  report_use
+  <chr>
+1 IRF principales de exportaciones. El sistema no presenta autocorrelación, aunque se rechaza normalidad…
+2 Robustez con commodities como control exógeno estacionario.
+3 Sensibilidad con K=4. No utilizar como especificación central.
+4 IRF indicativas del VECM con rango r=2. Interpretar con cautela por autocorrelación y no normalidad.
+  recommended_model model_label
+  <lgl>             <chr>
+1 TRUE              Exportaciones clásicas
+2 TRUE              Exportaciones ampliadas
+3 FALSE             Exportaciones ampliadas
+4 TRUE              Importaciones
+  final_role
+  <chr>
+1 Modelo multivariado principal de exportaciones.
+2 Robustez principal con commodities como control exógeno I(0).
+3 Análisis de sensibilidad. No utilizar como especificación central.
+4 Robustez multivariada indicativa. Las elasticidades principales de importaciones se apoyan en Engle-Gr…
+  recommended_final
+  <lgl>
+1 TRUE
+2 TRUE
+3 FALSE
+4 TRUE
+
+ELASTICIDADES DE LARGO PLAZO:
+# A tibble: 18 × 9
+   model_label             variable_label method          estimate   p_value expected_sign observed_sign
+   <chr>                   <chr>          <chr>              <dbl>     <dbl> <chr>         <chr>
+ 1 Exportaciones clásicas  ITCRM          Engle-Granger     0.145   1.32e- 1 Positivo      Positivo
+ 2 Exportaciones clásicas  ITCRM          Johansen          0.538  NA        Positivo      Positivo
+ 3 Exportaciones clásicas  ITCRM          Wickens-Breusch   0.317   1.24e- 2 Positivo      Positivo
+ 4 Exportaciones clásicas  PIB de socios  Engle-Granger     0.705   3.32e- 3 Positivo      Positivo
+ 5 Exportaciones clásicas  PIB de socios  Johansen          1.17   NA        Positivo      Positivo
+ 6 Exportaciones clásicas  PIB de socios  Wickens-Breusch   0.922   2.20e- 3 Positivo      Positivo
+ 7 Exportaciones ampliadas ITCRM          Engle-Granger     0.0666  5.28e- 1 Positivo      Positivo
+ 8 Exportaciones ampliadas ITCRM          Johansen          0.221  NA        Positivo      Positivo
+ 9 Exportaciones ampliadas ITCRM          Wickens-Breusch   0.234   1.25e- 1 Positivo      Positivo
+10 Exportaciones ampliadas PIB de socios  Engle-Granger     0.452   1.07e- 1 Positivo      Positivo
+11 Exportaciones ampliadas PIB de socios  Johansen          0.424  NA        Positivo      Positivo
+12 Exportaciones ampliadas PIB de socios  Wickens-Breusch   0.714   5.50e- 2 Positivo      Positivo
+13 Importaciones           ITCRM          Engle-Granger    -0.407   9.22e- 6 Negativo      Negativo
+14 Importaciones           ITCRM          Johansen         -0.0707 NA        Negativo      Negativo
+15 Importaciones           ITCRM          Wickens-Breusch  -0.347   5.32e- 2 Negativo      Negativo
+16 Importaciones           PIB argentino  Engle-Granger     1.52    2.15e-18 Positivo      Positivo
+17 Importaciones           PIB argentino  Johansen          2.41   NA        Positivo      Positivo
+18 Importaciones           PIB argentino  Wickens-Breusch   1.85    6.55e- 8 Positivo      Positivo
+   sign_consistent validity
+   <lgl>           <chr>
+ 1 TRUE            Resultado Engle-Granger; elasticidad reportada con interpretación indicativa.
+ 2 TRUE            Johansen indicativo por rechazo de normalidad multivariada
+ 3 TRUE            Resultado de la reparametrización Wickens-Breusch.
+ 4 TRUE            Resultado Engle-Granger; elasticidad reportada con interpretación indicativa.
+ 5 TRUE            Johansen indicativo por rechazo de normalidad multivariada
+ 6 TRUE            Resultado de la reparametrización Wickens-Breusch.
+ 7 TRUE            Resultado Engle-Granger; elasticidad reportada con interpretación indicativa.
+ 8 TRUE            Robustez indicativa con variable exógena I(0)
+ 9 TRUE            Resultado de la reparametrización Wickens-Breusch.
+10 TRUE            Resultado Engle-Granger; elasticidad reportada con interpretación indicativa.
+11 TRUE            Robustez indicativa con variable exógena I(0)
+12 TRUE            Resultado de la reparametrización Wickens-Breusch.
+13 TRUE            Resultado Engle-Granger; elasticidad reportada con interpretación indicativa.
+14 TRUE            Elasticidad de la relación r=1 normalizada económicamente; existen múltiples vectores.
+15 TRUE            Resultado de la reparametrización Wickens-Breusch.
+16 TRUE            Resultado Engle-Granger; elasticidad reportada con interpretación indicativa.
+17 TRUE            Elasticidad de la relación r=1 normalizada económicamente; existen múltiples vectores.
+18 TRUE            Resultado de la reparametrización Wickens-Breusch.
+
+ESTIMACIONES PREFERIDAS:
+# A tibble: 8 × 19
+  model_key        variable      cointegration_10pct ecm_status
+  <chr>            <chr>         <lgl>               <chr>
+1 exports_classic  ln_itcrm      TRUE                VECM estimado con rango 1.
+2 exports_classic  ln_pib_socios TRUE                VECM estimado con rango 1.
+3 exports_expanded ln_itcrm      TRUE                VECM estimado con rango 1.
+4 exports_expanded ln_pib_socios TRUE                VECM estimado con rango 1.
+5 imports          ln_itcrm      FALSE               ECM se estima sólo con fines indicativos
+6 imports          ln_itcrm      FALSE               ECM se estima sólo con fines indicativos
+7 imports          ln_pib_real   FALSE               ECM se estima sólo con fines indicativos
+8 imports          ln_pib_real   FALSE               ECM se estima sólo con fines indicativos
+  model_id                     method_code     method          estimate   p_value specification
+  <chr>                        <chr>           <chr>              <dbl>     <dbl> <chr>
+1 exports_classic__primary_K2  johansen        Johansen           0.538 NA        Principal
+2 exports_classic__primary_K2  johansen        Johansen           1.17  NA        Principal
+3 exports_expanded__primary_K2 johansen        Johansen           0.221 NA        Principal
+4 exports_expanded__primary_K2 johansen        Johansen           0.424 NA        Principal
+5 imports__engle_granger       engle_granger   Engle-Granger     -0.407  9.22e- 6 Principal
+6 imports__wickens_breusch     wickens_breusch Wickens-Breusch   -0.347  5.32e- 2 Principal
+7 imports__engle_granger       engle_granger   Engle-Granger      1.52   2.15e-18 Principal
+8 imports__wickens_breusch     wickens_breusch Wickens-Breusch    1.85   6.55e- 8 Principal
+  is_primary rank_trace_10pct
+  <lgl>                 <int>
+1 TRUE                      1
+2 TRUE                      1
+3 TRUE                      1
+4 TRUE                      1
+5 TRUE                     NA
+6 TRUE                     NA
+7 TRUE                     NA
+8 TRUE                     NA
+  validity                                                                      model_label
+  <chr>                                                                         <chr>
+1 Johansen indicativo por rechazo de normalidad multivariada                    Exportaciones clásicas
+2 Johansen indicativo por rechazo de normalidad multivariada                    Exportaciones clásicas
+3 Robustez indicativa con variable exógena I(0)                                 Exportaciones ampliadas
+4 Robustez indicativa con variable exógena I(0)                                 Exportaciones ampliadas
+5 Resultado Engle-Granger; elasticidad reportada con interpretación indicativa. Importaciones
+6 Resultado de la reparametrización Wickens-Breusch.                            Importaciones
+7 Resultado Engle-Granger; elasticidad reportada con interpretación indicativa. Importaciones
+8 Resultado de la reparametrización Wickens-Breusch.                            Importaciones
+  variable_label expected_sign observed_sign sign_consistent
+  <chr>          <chr>         <chr>         <lgl>
+1 ITCRM          Positivo      Positivo      TRUE
+2 PIB de socios  Positivo      Positivo      TRUE
+3 ITCRM          Positivo      Positivo      TRUE
+4 PIB de socios  Positivo      Positivo      TRUE
+5 ITCRM          Negativo      Negativo      TRUE
+6 ITCRM          Negativo      Negativo      TRUE
+7 PIB argentino  Positivo      Positivo      TRUE
+8 PIB argentino  Positivo      Positivo      TRUE
+  final_role
+  <chr>
+1 Estimación multivariada principal de exportaciones.
+2 Estimación multivariada principal de exportaciones.
+3 Robustez con commodities como variable exógena estacionaria.
+4 Robustez con commodities como variable exógena estacionaria.
+5 Estimación principal uniecuacional de importaciones; Johansen se utiliza como evidencia complementaria.
+6 Estimación principal uniecuacional de importaciones; Johansen se utiliza como evidencia complementaria.
+7 Estimación principal uniecuacional de importaciones; Johansen se utiliza como evidencia complementaria.
+8 Estimación principal uniecuacional de importaciones; Johansen se utiliza como evidencia complementaria.
+
+COEFICIENTES ECM Y VECM:
+# A tibble: 6 × 16
+  model_id                     model_key        model_label
+  <chr>                        <chr>            <chr>
+1 exports_classic__ecm         exports_classic  Exportaciones: PIB socios e ITCRM
+2 exports_classic__primary_K2  exports_classic  Exportaciones: PIB socios e ITCRM
+3 exports_expanded__ecm        exports_expanded Exportaciones ampliadas: PIB socios, ITCRM y commodities
+4 exports_expanded__primary_K2 exports_expanded Exportaciones ampliadas: PIB socios, ITCRM y commodities
+5 imports__ecm                 imports          Importaciones: PIB argentino e ITCRM
+6 imports__primary_K2          imports          Importaciones: PIB argentino e ITCRM
+  method_code method adjustment_estimate adjustment_std_error adjustment_statistic adjustment_p_value
+  <chr>       <chr>                <dbl>                <dbl>                <dbl>              <dbl>
+1 ecm         ECM                 -0.395               0.0934                -4.22          0.0000658
+2 vecm        VECM                -0.282              NA                     NA             0.000766
+3 ecm         ECM                 -0.427               0.098                 -4.35          0.0000418
+4 vecm        VECM                -0.314              NA                     NA             0.000645
+5 ecm         ECM                 -0.305               0.0781                -3.9           0.000207
+6 vecm        VECM                -0.237              NA                     NA             0.0513
+  adjustment_percent cointegration_10pct significant_10pct is_primary
+               <dbl> <lgl>               <lgl>             <lgl>
+1               39.5 FALSE               TRUE              TRUE
+2               28.2 TRUE                TRUE              TRUE
+3               42.7 FALSE               TRUE              TRUE
+4               31.4 TRUE                TRUE              TRUE
+5               30.5 FALSE               TRUE              TRUE
+6               23.7 TRUE                TRUE              TRUE
+  validity
+  <chr>
+1 Coeficiente ECM estimado con fines indicativos
+2 Johansen indicativo por rechazo de normalidad multivariada Traza y máximo autovalor coinciden en una r…
+3 Coeficiente ECM estimado con fines indicativos
+4 Robustez indicativa con variable exógena I(0) Traza y máximo autovalor coinciden en una relación de co…
+5 Coeficiente ECM estimado con fines indicativos
+6 Johansen indicativo por autocorrelación, no normalidad y heterocedasticidad La traza detecta múltiples…
+  interpretation
+  <chr>
+1 Ajuste negativo y significativo; se corrige 39.5% del desequilibrio por trimestre. Interpretación indi…
+2 Ajuste negativo y significativo; se corrige 28.2% del desequilibrio por trimestre.
+3 Ajuste negativo y significativo; se corrige 42.7% del desequilibrio por trimestre. Interpretación indi…
+4 Ajuste negativo y significativo; se corrige 31.4% del desequilibrio por trimestre.
+5 Ajuste negativo y significativo; se corrige 30.5% del desequilibrio por trimestre. Interpretación indi…
+6 Ajuste negativo y significativo; se corrige 23.7% del desequilibrio por trimestre.
+  model_label_short
+  <chr>
+1 Exportaciones clásicas
+2 Exportaciones clásicas
+3 Exportaciones ampliadas
+4 Exportaciones ampliadas
+5 Importaciones
+6 Importaciones
+
+RESPUESTAS DINÁMICAS PRINCIPALES:
+# A tibble: 6 × 16
+  model_id                     model_key        model_short             impulse       impulse_label
+  <chr>                        <chr>            <chr>                   <chr>         <chr>
+1 exports_classic__primary_K2  exports_classic  Exportaciones clásicas  ln_itcrm      ITCRM
+2 exports_classic__primary_K2  exports_classic  Exportaciones clásicas  ln_pib_socios PIB de socios
+3 exports_expanded__primary_K2 exports_expanded Exportaciones ampliadas ln_itcrm      ITCRM
+4 exports_expanded__primary_K2 exports_expanded Exportaciones ampliadas ln_pib_socios PIB de socios
+5 imports__primary_K2          imports          Importaciones           ln_itcrm      ITCRM
+6 imports__primary_K2          imports          Importaciones           ln_pib_real   PIB argentino
+  response                response_label       impact_response response_h1 response_h4 response_h8
+  <chr>                   <chr>                          <dbl>       <dbl>       <dbl>       <dbl>
+1 ln_exportaciones_reales Exportaciones reales          0.240        0.294       0.506       0.561
+2 ln_exportaciones_reales Exportaciones reales          0.445        0.621       0.951       1.02
+3 ln_exportaciones_reales Exportaciones reales          0.236        0.251       0.270       0.277
+4 ln_exportaciones_reales Exportaciones reales          0.160        0.155       0.414       0.500
+5 ln_importaciones_reales Importaciones reales         -0.0587      -0.169      -0.709      -0.846
+6 ln_importaciones_reales Importaciones reales          1.29         2.01        1.70        1.65
+  response_h12 maximum_absolute_response peak_horizon expected_sign expected_sign_h4
+         <dbl>                     <dbl>        <int> <chr>         <lgl>
+1        0.565                     0.565           12 Positivo      TRUE
+2        1.03                      1.03            12 Positivo      TRUE
+3        0.279                     0.279           12 Positivo      TRUE
+4        0.521                     0.521           12 Positivo      TRUE
+5       -0.820                    -0.846            8 Negativo      TRUE
+6        1.71                      2.01             1 Positivo      TRUE
+
+FEVD A DOCE TRIMESTRES:
+# A tibble: 9 × 9
+  model_id                     model_key        model_short             response
+  <chr>                        <chr>            <chr>                   <chr>
+1 exports_classic__primary_K2  exports_classic  Exportaciones clásicas  ln_exportaciones_reales
+2 exports_classic__primary_K2  exports_classic  Exportaciones clásicas  ln_exportaciones_reales
+3 exports_classic__primary_K2  exports_classic  Exportaciones clásicas  ln_exportaciones_reales
+4 exports_expanded__primary_K2 exports_expanded Exportaciones ampliadas ln_exportaciones_reales
+5 exports_expanded__primary_K2 exports_expanded Exportaciones ampliadas ln_exportaciones_reales
+6 exports_expanded__primary_K2 exports_expanded Exportaciones ampliadas ln_exportaciones_reales
+7 imports__primary_K2          imports          Importaciones           ln_importaciones_reales
+8 imports__primary_K2          imports          Importaciones           ln_importaciones_reales
+9 imports__primary_K2          imports          Importaciones           ln_importaciones_reales
+  response_label       impulse                 impulse_label        horizon fevd_percent
+  <chr>                <chr>                   <chr>                  <int>        <dbl>
+1 Exportaciones reales ln_itcrm                ITCRM                     12        46.3
+2 Exportaciones reales ln_exportaciones_reales Exportaciones reales      12        39.6
+3 Exportaciones reales ln_pib_socios           PIB de socios             12        14.1
+4 Exportaciones reales ln_exportaciones_reales Exportaciones reales      12        71.7
+5 Exportaciones reales ln_itcrm                ITCRM                     12        23.7
+6 Exportaciones reales ln_pib_socios           PIB de socios             12         4.61
+7 Importaciones reales ln_pib_real             PIB argentino             12        58.7
+8 Importaciones reales ln_itcrm                ITCRM                     12        31.3
+9 Importaciones reales ln_importaciones_reales Importaciones reales      12        10.0

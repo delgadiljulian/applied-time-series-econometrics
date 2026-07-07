@@ -1,0 +1,4 @@
+﻿"model_key","model_label","model_type","formula","n_obs","first_quarter","last_quarter","r_squared","adj_r_squared","aic","bic"
+"imports_ecm","Importaciones - ECM","ecm","d_ln_imports_real ~ d_ln_gdp_real + d_ln_itcrm + l1_resid_imports",75,"2004Q2","2022Q4",0.446295484829212,0.422899519399461,-194.348732132834,-182.761291565152
+"exports_diff","Exportaciones - primeras diferencias","short_run_diff","d_ln_exports_real ~ d_ln_pib_socios + d_ln_itcrm",75,"2004Q2","2022Q4",0.0117659082678677,-0.0156850387246914,-106.764742825521,-97.4947903713757
+"exports_augmented_diff","Exportaciones ampliadas - primeras diferencias","short_run_diff_robustness","d_ln_exports_real ~ d_ln_pib_socios + d_ln_itcrm + d_ln_commodity_price_index",75,"2004Q2","2022Q4",0.0594567531444787,0.0197154891928371,-108.474390884274,-96.8869503165923

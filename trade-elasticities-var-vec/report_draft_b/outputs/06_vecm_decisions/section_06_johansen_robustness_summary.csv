@@ -1,0 +1,5 @@
+﻿"system","deterministic_specification","selected_var_lag","johansen_k","rank_trace_5pct","rank_eigen_5pct","integration_warning"
+"imports","const",4,4,1,0,"Todas las variables del sistema son compatibles con I(1) segun ADF formal."
+"exports","const",4,4,0,0,"Lectura cautelosa: exports=I(0) segun ADF formal."
+"imports","none",4,4,1,0,"Todas las variables del sistema son compatibles con I(1) segun ADF formal."
+"exports","none",4,4,0,0,"Lectura cautelosa: exports=I(0) segun ADF formal."

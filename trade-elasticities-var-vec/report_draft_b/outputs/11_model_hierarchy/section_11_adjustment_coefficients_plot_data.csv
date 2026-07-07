@@ -1,0 +1,6 @@
+﻿Sistema,Modelo,Coeficiente,Clase,Inferencia,Nota
+Importaciones,ECM Engle-Granger,-0.525005578906693,principal,p < 0.001,Termino de correccion del error del ECM principal.
+Importaciones,Wickens-Breusch,-0.569547281147921,robustez,No reportada,Elasticidades Wickens-Breusch calculadas desde ECM no restringido: -coeficiente de nivel explicativo rezagado dividido por coeficiente de variable dependiente rezagada.
+Exportaciones clasicas,Wickens-Breusch,-0.718264969310106,indicativo,No reportada,"Elasticidades Wickens-Breusch calculadas con fines indicativos, segun consigna TP3, aunque Engle-Granger no respalda cointegracion para exportaciones."
+Exportaciones ampliadas,Wickens-Breusch,-0.791338958771517,robustez,No reportada,Robustez Wickens-Breusch para exportaciones ampliadas; commodities se interpreta como control externo.
+Importaciones,VECM,0.0880011969232295,sensibilidad,No exportable,Coeficiente alpha de la ecuacion de importaciones; el signo depende de la normalizacion del vector de cointegracion.

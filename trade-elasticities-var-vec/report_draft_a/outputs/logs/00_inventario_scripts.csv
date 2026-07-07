@@ -1,0 +1,14 @@
+﻿"paso","script","ruta","existe"
+1,"script01_load_data.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script01_load_data.R",TRUE
+2,"script02_daily_itcrm.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script02_daily_itcrm.R",TRUE
+3,"script03_ipm_ipx_gdp.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script03_ipm_ipx_gdp.R",TRUE
+4,"script04_commodities.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script04_commodities.R",TRUE
+5,"script05_partner_gdp.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script05_partner_gdp.R",TRUE
+6,"script06_panel.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script06_panel.R",TRUE
+7,"script07_seasonality.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script07_seasonality.R",TRUE
+8,"script08_unit_roots.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script08_unit_roots.R",TRUE
+9,"script09_engle_granger.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script09_engle_granger.R",TRUE
+10,"script10_selection_diagnostics.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script10_selection_diagnostics.R",TRUE
+11,"script11_johansen_vecm.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script11_johansen_vecm.R",TRUE
+12,"script12_svar.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script12_svar.R",TRUE
+13,"script13_compilation.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script13_compilation.R",TRUE

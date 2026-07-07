@@ -1,9 +1,15 @@
+﻿#********************************************************
+#                   VCORR_RES
+#     Verificación de autocorrelación en modelos VAR
+#********************************************************
+# Versión 16/07/24
+
 # Es una función para calcular el test Q y sus p-value
 # para los residuos de una estimación VAR. Sus argumentos son
 # var_reg: una salida de una estimación VAR
 # lags: cuántos lags desea analizar (debe ser<=T/3)
-# tipo: tipo de estadístico
-# c("PT.asymptotic", "PT.adjusted", "BG", "ES")) 
+# tipo: tipo de estadístico según lo siguiente
+# c("PT.asymptotic", "PT.adjusted", "BG", "ES"))
 vcorr_res=function(var_reg,lags,tipo="PT.adjusted") {
 
 T=var_reg$obs
@@ -14,7 +20,7 @@ lag=c()
 q_values=c()
 p_values=c()
 for(i in 1:lags)   {
-  lag=c(lag,i)  
+  lag=c(lag,i)
   warn<-options(warn=-1)
   if(tipo=="BG" | tipo=="ES") {
     p=serial.test(var_reg,lags.bg=i,type=tipo)}
@@ -35,7 +41,7 @@ for(i in 1:lags)   {
 
 correlograma=cbind(lag,q_values,p_values)
 rownames(correlograma)=NULL
-colnames(correlograma)=c("lag","Estad?stico Q","p-value")
+colnames(correlograma)=c("lag","Estadístico Q","p-value")
 return(correlograma)
 options(digits=4)
 print(correlograma)
