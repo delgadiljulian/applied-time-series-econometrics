@@ -1,4 +1,4 @@
-﻿
+
 ============================================================
 Modelo: Importaciones: PIB argentino e ITCRM
 K: 2
@@ -9,11 +9,11 @@ Rango utilizado en el VECM: 2
 
 TEST DE TRAZA:
 
-######################
-# Johansen-Procedure #
-######################
+###################### 
+# Johansen-Procedure # 
+###################### 
 
-Test type: trace statistic , without linear trend and constant in cointegration
+Test type: trace statistic , without linear trend and constant in cointegration 
 
 Eigenvalues (lambda):
 [1]  0.2501435339769533805487  0.1775184143305536255131  0.0829402029798408102490
@@ -46,11 +46,11 @@ ln_itcrm.d                                0.27695102    -0.06227658  0.01698510 
 
 TEST DE MÁXIMO AUTOVALOR:
 
-######################
-# Johansen-Procedure #
-######################
+###################### 
+# Johansen-Procedure # 
+###################### 
 
-Test type: maximal eigenvalue statistic (lambda max) , without linear trend and constant in cointegration
+Test type: maximal eigenvalue statistic (lambda max) , without linear trend and constant in cointegration 
 
 Eigenvalues (lambda):
 [1]  0.2501435339769533805487  0.1775184143305536255131  0.0829402029798408102490
@@ -85,86 +85,86 @@ VECM CON RANGO DEL SISTEMA:
 Response ln_importaciones_reales.d :
 
 Call:
-lm(formula = ln_importaciones_reales.d ~ ect1 + ect2 + sd1 +
-    sd2 + sd3 + ln_importaciones_reales.dl1 + ln_pib_real.dl1 +
+lm(formula = ln_importaciones_reales.d ~ ect1 + ect2 + sd1 + 
+    sd2 + sd3 + ln_importaciones_reales.dl1 + ln_pib_real.dl1 + 
     ln_itcrm.dl1 - 1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.235915 -0.035082  0.000055  0.050358  0.173526
+      Min        1Q    Median        3Q       Max 
+-0.235915 -0.035082  0.000055  0.050358  0.173526 
 
 Coefficients:
-                            Estimate Std. Error t value Pr(>|t|)
+                            Estimate Std. Error t value Pr(>|t|)   
 ect1                        -0.36274    0.11870  -3.056  0.00307 **
-ect2                         0.46804    0.27334   1.712  0.09081 .
-sd1                         -0.01887    0.03468  -0.544  0.58798
-sd2                          0.05377    0.03086   1.743  0.08531 .
-sd3                         -0.03942    0.05282  -0.746  0.45768
-ln_importaciones_reales.dl1  0.20590    0.13142   1.567  0.12123
-ln_pib_real.dl1              0.43115    0.29984   1.438  0.15445
-ln_itcrm.dl1                 0.07409    0.12758   0.581  0.56308
+ect2                         0.46804    0.27334   1.712  0.09081 . 
+sd1                         -0.01887    0.03468  -0.544  0.58798   
+sd2                          0.05377    0.03086   1.743  0.08531 . 
+sd3                         -0.03942    0.05282  -0.746  0.45768   
+ln_importaciones_reales.dl1  0.20590    0.13142   1.567  0.12123   
+ln_pib_real.dl1              0.43115    0.29984   1.438  0.15445   
+ln_itcrm.dl1                 0.07409    0.12758   0.581  0.56308   
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.06575 on 78 degrees of freedom
-Multiple R-squared:  0.4393,	Adjusted R-squared:  0.3817
+Multiple R-squared:  0.4393,	Adjusted R-squared:  0.3817 
 F-statistic: 7.638 on 8 and 78 DF,  p-value: 0.0000001706
 
 
 Response ln_pib_real.d :
 
 Call:
-lm(formula = ln_pib_real.d ~ ect1 + ect2 + sd1 + sd2 + sd3 +
-    ln_importaciones_reales.dl1 + ln_pib_real.dl1 + ln_itcrm.dl1 -
+lm(formula = ln_pib_real.d ~ ect1 + ect2 + sd1 + sd2 + sd3 + 
+    ln_importaciones_reales.dl1 + ln_pib_real.dl1 + ln_itcrm.dl1 - 
     1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.149539 -0.014204  0.004886  0.020880  0.072093
+      Min        1Q    Median        3Q       Max 
+-0.149539 -0.014204  0.004886  0.020880  0.072093 
 
 Coefficients:
-                            Estimate Std. Error t value        Pr(>|t|)
-ect1                         0.04372    0.05914   0.739          0.4620
-ect2                        -0.24585    0.13619  -1.805          0.0749 .
-sd1                         -0.01108    0.01728  -0.641          0.5233
+                            Estimate Std. Error t value        Pr(>|t|)    
+ect1                         0.04372    0.05914   0.739          0.4620    
+ect2                        -0.24585    0.13619  -1.805          0.0749 .  
+sd1                         -0.01108    0.01728  -0.641          0.5233    
 sd2                          0.11875    0.01537   7.724 0.0000000000321 ***
-sd3                         -0.04248    0.02632  -1.614          0.1105
-ln_importaciones_reales.dl1  0.06230    0.06548   0.951          0.3443
-ln_pib_real.dl1             -0.01471    0.14939  -0.098          0.9218
-ln_itcrm.dl1                -0.02236    0.06357  -0.352          0.7259
+sd3                         -0.04248    0.02632  -1.614          0.1105    
+ln_importaciones_reales.dl1  0.06230    0.06548   0.951          0.3443    
+ln_pib_real.dl1             -0.01471    0.14939  -0.098          0.9218    
+ln_itcrm.dl1                -0.02236    0.06357  -0.352          0.7259    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.03276 on 78 degrees of freedom
-Multiple R-squared:  0.8221,	Adjusted R-squared:  0.8038
+Multiple R-squared:  0.8221,	Adjusted R-squared:  0.8038 
 F-statistic: 45.05 on 8 and 78 DF,  p-value: < 0.00000000000000022
 
 
 Response ln_itcrm.d :
 
 Call:
-lm(formula = ln_itcrm.d ~ ect1 + ect2 + sd1 + sd2 + sd3 + ln_importaciones_reales.dl1 +
+lm(formula = ln_itcrm.d ~ ect1 + ect2 + sd1 + sd2 + sd3 + ln_importaciones_reales.dl1 + 
     ln_pib_real.dl1 + ln_itcrm.dl1 - 1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.217554 -0.037057 -0.005042  0.024508  0.212353
+      Min        1Q    Median        3Q       Max 
+-0.217554 -0.037057 -0.005042  0.024508  0.212353 
 
 Coefficients:
-                            Estimate Std. Error t value Pr(>|t|)
-ect1                         0.21467    0.10592   2.027  0.04610 *
+                            Estimate Std. Error t value Pr(>|t|)   
+ect1                         0.21467    0.10592   2.027  0.04610 * 
 ect2                        -0.71882    0.24390  -2.947  0.00423 **
-sd1                          0.03343    0.03094   1.080  0.28332
-sd2                         -0.02385    0.02753  -0.866  0.38905
-sd3                          0.09538    0.04713   2.024  0.04643 *
-ln_importaciones_reales.dl1 -0.10018    0.11727  -0.854  0.39555
-ln_pib_real.dl1             -0.05141    0.26755  -0.192  0.84813
-ln_itcrm.dl1                 0.10034    0.11384   0.881  0.38080
+sd1                          0.03343    0.03094   1.080  0.28332   
+sd2                         -0.02385    0.02753  -0.866  0.38905   
+sd3                          0.09538    0.04713   2.024  0.04643 * 
+ln_importaciones_reales.dl1 -0.10018    0.11727  -0.854  0.39555   
+ln_pib_real.dl1             -0.05141    0.26755  -0.192  0.84813   
+ln_itcrm.dl1                 0.10034    0.11384   0.881  0.38080   
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.05867 on 78 degrees of freedom
-Multiple R-squared:  0.2514,	Adjusted R-squared:  0.1746
+Multiple R-squared:  0.2514,	Adjusted R-squared:  0.1746 
 F-statistic: 3.273 on 8 and 78 DF,  p-value: 0.002867
 
 
@@ -173,82 +173,82 @@ VECM ECONÓMICO CON r = 1:
 Response ln_importaciones_reales.d :
 
 Call:
-lm(formula = ln_importaciones_reales.d ~ ect1 + sd1 + sd2 + sd3 +
-    ln_importaciones_reales.dl1 + ln_pib_real.dl1 + ln_itcrm.dl1 -
+lm(formula = ln_importaciones_reales.d ~ ect1 + sd1 + sd2 + sd3 + 
+    ln_importaciones_reales.dl1 + ln_pib_real.dl1 + ln_itcrm.dl1 - 
     1, data = data.mat)
 
 Residuals:
-     Min       1Q   Median       3Q      Max
--0.23687 -0.03155  0.01401  0.05167  0.21659
+     Min       1Q   Median       3Q      Max 
+-0.23687 -0.03155  0.01401  0.05167  0.21659 
 
 Coefficients:
-                            Estimate Std. Error t value Pr(>|t|)
+                            Estimate Std. Error t value Pr(>|t|)  
 ect1                        -0.23730    0.11989  -1.979   0.0513 .
-sd1                         -0.01138    0.03681  -0.309   0.7580
+sd1                         -0.01138    0.03681  -0.309   0.7580  
 sd2                          0.06573    0.03260   2.016   0.0472 *
-sd3                         -0.03196    0.05613  -0.569   0.5707
-ln_importaciones_reales.dl1  0.19001    0.13969   1.360   0.1776
-ln_pib_real.dl1              0.37964    0.31849   1.192   0.2368
-ln_itcrm.dl1                -0.01283    0.13289  -0.097   0.9233
+sd3                         -0.03196    0.05613  -0.569   0.5707  
+ln_importaciones_reales.dl1  0.19001    0.13969   1.360   0.1776  
+ln_pib_real.dl1              0.37964    0.31849   1.192   0.2368  
+ln_itcrm.dl1                -0.01283    0.13289  -0.097   0.9233  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.06993 on 79 degrees of freedom
-Multiple R-squared:  0.3576,	Adjusted R-squared:  0.3006
+Multiple R-squared:  0.3576,	Adjusted R-squared:  0.3006 
 F-statistic: 6.281 on 7 and 79 DF,  p-value: 0.000007216
 
 
 Response ln_pib_real.d :
 
 Call:
-lm(formula = ln_pib_real.d ~ ect1 + sd1 + sd2 + sd3 + ln_importaciones_reales.dl1 +
+lm(formula = ln_pib_real.d ~ ect1 + sd1 + sd2 + sd3 + ln_importaciones_reales.dl1 + 
     ln_pib_real.dl1 + ln_itcrm.dl1 - 1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.149869 -0.013068  0.005999  0.022667  0.082067
+      Min        1Q    Median        3Q       Max 
+-0.149869 -0.013068  0.005999  0.022667  0.082067 
 
 Coefficients:
-                             Estimate Std. Error t value        Pr(>|t|)
-ect1                         0.087131   0.057733   1.509           0.135
-sd1                         -0.008486   0.017725  -0.479           0.633
+                             Estimate Std. Error t value        Pr(>|t|)    
+ect1                         0.087131   0.057733   1.509           0.135    
+sd1                         -0.008486   0.017725  -0.479           0.633    
 sd2                          0.122888   0.015699   7.828 0.0000000000189 ***
-sd3                         -0.039897   0.027030  -1.476           0.144
-ln_importaciones_reales.dl1  0.056803   0.067270   0.844           0.401
-ln_pib_real.dl1             -0.032538   0.153373  -0.212           0.833
-ln_itcrm.dl1                -0.052446   0.063996  -0.820           0.415
+sd3                         -0.039897   0.027030  -1.476           0.144    
+ln_importaciones_reales.dl1  0.056803   0.067270   0.844           0.401    
+ln_pib_real.dl1             -0.032538   0.153373  -0.212           0.833    
+ln_itcrm.dl1                -0.052446   0.063996  -0.820           0.415    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.03368 on 79 degrees of freedom
-Multiple R-squared:  0.8096,	Adjusted R-squared:  0.7927
+Multiple R-squared:  0.8096,	Adjusted R-squared:  0.7927 
 F-statistic: 47.98 on 7 and 79 DF,  p-value: < 0.00000000000000022
 
 
 Response ln_itcrm.d :
 
 Call:
-lm(formula = ln_itcrm.d ~ ect1 + sd1 + sd2 + sd3 + ln_importaciones_reales.dl1 +
+lm(formula = ln_itcrm.d ~ ect1 + sd1 + sd2 + sd3 + ln_importaciones_reales.dl1 + 
     ln_pib_real.dl1 + ln_itcrm.dl1 - 1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.216326 -0.036159 -0.002483  0.030717  0.236057
+      Min        1Q    Median        3Q       Max 
+-0.216326 -0.036159 -0.002483  0.030717  0.236057 
 
 Coefficients:
-                            Estimate Std. Error t value Pr(>|t|)
+                            Estimate Std. Error t value Pr(>|t|)   
 ect1                         0.27695    0.10217   2.711  0.00823 **
-sd1                          0.03715    0.03137   1.184  0.23989
-sd2                         -0.01791    0.02778  -0.645  0.52100
-sd3                          0.09908    0.04783   2.071  0.04159 *
-ln_importaciones_reales.dl1 -0.10807    0.11905  -0.908  0.36674
-ln_pib_real.dl1             -0.07698    0.27142  -0.284  0.77746
-ln_itcrm.dl1                 0.05719    0.11325   0.505  0.61500
+sd1                          0.03715    0.03137   1.184  0.23989   
+sd2                         -0.01791    0.02778  -0.645  0.52100   
+sd3                          0.09908    0.04783   2.071  0.04159 * 
+ln_importaciones_reales.dl1 -0.10807    0.11905  -0.908  0.36674   
+ln_pib_real.dl1             -0.07698    0.27142  -0.284  0.77746   
+ln_itcrm.dl1                 0.05719    0.11325   0.505  0.61500   
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.0596 on 79 degrees of freedom
-Multiple R-squared:  0.2176,	Adjusted R-squared:  0.1483
+Multiple R-squared:  0.2176,	Adjusted R-squared:  0.1483 
 F-statistic: 3.138 on 7 and 79 DF,  p-value: 0.005614
 
 
@@ -263,11 +263,11 @@ Rango utilizado en el VECM: 1
 
 TEST DE TRAZA:
 
-######################
-# Johansen-Procedure #
-######################
+###################### 
+# Johansen-Procedure # 
+###################### 
 
-Test type: trace statistic , without linear trend and constant in cointegration
+Test type: trace statistic , without linear trend and constant in cointegration 
 
 Eigenvalues (lambda):
 [1]  0.2145224595402608902539  0.1142045000394981690839  0.0772691805068439901971
@@ -304,11 +304,11 @@ ln_itcrm.d                 0.0000000000000012580407
 
 TEST DE MÁXIMO AUTOVALOR:
 
-######################
-# Johansen-Procedure #
-######################
+###################### 
+# Johansen-Procedure # 
+###################### 
 
-Test type: maximal eigenvalue statistic (lambda max) , without linear trend and constant in cointegration
+Test type: maximal eigenvalue statistic (lambda max) , without linear trend and constant in cointegration 
 
 Eigenvalues (lambda):
 [1]  0.2145224595402608902539  0.1142045000394981690839  0.0772691805068439901971
@@ -347,82 +347,82 @@ VECM CON RANGO DEL SISTEMA:
 Response ln_exportaciones_reales.d :
 
 Call:
-lm(formula = ln_exportaciones_reales.d ~ ect1 + sd1 + sd2 + sd3 +
-    ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 -
+lm(formula = ln_exportaciones_reales.d ~ ect1 + sd1 + sd2 + sd3 + 
+    ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 - 
     1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.185327 -0.046143  0.000829  0.029900  0.177855
+      Min        1Q    Median        3Q       Max 
+-0.185327 -0.046143  0.000829  0.029900  0.177855 
 
 Coefficients:
-                             Estimate Std. Error t value Pr(>|t|)
+                             Estimate Std. Error t value Pr(>|t|)    
 ect1                        -0.282342   0.080655  -3.501 0.000766 ***
-sd1                         -0.064353   0.022121  -2.909 0.004705 **
+sd1                         -0.064353   0.022121  -2.909 0.004705 ** 
 sd2                          0.118556   0.025117   4.720  0.00001 ***
-sd3                          0.073234   0.026393   2.775 0.006891 **
-ln_exportaciones_reales.dl1 -0.154487   0.110405  -1.399 0.165643
-ln_pib_socios.dl1            0.016633   0.511127   0.033 0.974122
-ln_itcrm.dl1                 0.007012   0.126349   0.055 0.955881
+sd3                          0.073234   0.026393   2.775 0.006891 ** 
+ln_exportaciones_reales.dl1 -0.154487   0.110405  -1.399 0.165643    
+ln_pib_socios.dl1            0.016633   0.511127   0.033 0.974122    
+ln_itcrm.dl1                 0.007012   0.126349   0.055 0.955881    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.06916 on 79 degrees of freedom
-Multiple R-squared:  0.6344,	Adjusted R-squared:  0.602
+Multiple R-squared:  0.6344,	Adjusted R-squared:  0.602 
 F-statistic: 19.59 on 7 and 79 DF,  p-value: 0.000000000000005962
 
 
 Response ln_pib_socios.d :
 
 Call:
-lm(formula = ln_pib_socios.d ~ ect1 + sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 +
+lm(formula = ln_pib_socios.d ~ ect1 + sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 + 
     ln_pib_socios.dl1 + ln_itcrm.dl1 - 1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.087065 -0.001868  0.004368  0.010523  0.067707
+      Min        1Q    Median        3Q       Max 
+-0.087065 -0.001868  0.004368  0.010523  0.067707 
 
 Coefficients:
-                             Estimate Std. Error t value Pr(>|t|)
+                             Estimate Std. Error t value Pr(>|t|)  
 ect1                        -0.042649   0.018774  -2.272   0.0258 *
-sd1                         -0.002804   0.005149  -0.545   0.5875
+sd1                         -0.002804   0.005149  -0.545   0.5875  
 sd2                         -0.010184   0.005846  -1.742   0.0854 .
-sd3                          0.003544   0.006143   0.577   0.5656
-ln_exportaciones_reales.dl1  0.001908   0.025699   0.074   0.9410
-ln_pib_socios.dl1           -0.009655   0.118973  -0.081   0.9355
-ln_itcrm.dl1                 0.023229   0.029410   0.790   0.4320
+sd3                          0.003544   0.006143   0.577   0.5656  
+ln_exportaciones_reales.dl1  0.001908   0.025699   0.074   0.9410  
+ln_pib_socios.dl1           -0.009655   0.118973  -0.081   0.9355  
+ln_itcrm.dl1                 0.023229   0.029410   0.790   0.4320  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.0161 on 79 degrees of freedom
-Multiple R-squared:  0.1137,	Adjusted R-squared:  0.03516
+Multiple R-squared:  0.1137,	Adjusted R-squared:  0.03516 
 F-statistic: 1.448 on 7 and 79 DF,  p-value: 0.1984
 
 
 Response ln_itcrm.d :
 
 Call:
-lm(formula = ln_itcrm.d ~ ect1 + sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 +
+lm(formula = ln_itcrm.d ~ ect1 + sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 + 
     ln_pib_socios.dl1 + ln_itcrm.dl1 - 1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.168457 -0.026450 -0.000276  0.034647  0.170988
+      Min        1Q    Median        3Q       Max 
+-0.168457 -0.026450 -0.000276  0.034647  0.170988 
 
 Coefficients:
-                            Estimate Std. Error t value   Pr(>|t|)
-ect1                         0.10206    0.06322   1.614    0.11043
-sd1                          0.01970    0.01734   1.136    0.25931
-sd2                         -0.04544    0.01969  -2.308    0.02359 *
+                            Estimate Std. Error t value   Pr(>|t|)    
+ect1                         0.10206    0.06322   1.614    0.11043    
+sd1                          0.01970    0.01734   1.136    0.25931    
+sd2                         -0.04544    0.01969  -2.308    0.02359 *  
 sd3                          0.09114    0.02069   4.406 0.00003278 ***
 ln_exportaciones_reales.dl1 -0.47033    0.08653  -5.435 0.00000059 ***
-ln_pib_socios.dl1            0.24902    0.40061   0.622    0.53598
-ln_itcrm.dl1                 0.30082    0.09903   3.038    0.00323 **
+ln_pib_socios.dl1            0.24902    0.40061   0.622    0.53598    
+ln_itcrm.dl1                 0.30082    0.09903   3.038    0.00323 ** 
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.05421 on 79 degrees of freedom
-Multiple R-squared:  0.3526,	Adjusted R-squared:  0.2953
+Multiple R-squared:  0.3526,	Adjusted R-squared:  0.2953 
 F-statistic: 6.148 on 7 and 79 DF,  p-value: 0.000009441
 
 
@@ -431,82 +431,82 @@ VECM ECONÓMICO CON r = 1:
 Response ln_exportaciones_reales.d :
 
 Call:
-lm(formula = ln_exportaciones_reales.d ~ ect1 + sd1 + sd2 + sd3 +
-    ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 -
+lm(formula = ln_exportaciones_reales.d ~ ect1 + sd1 + sd2 + sd3 + 
+    ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 - 
     1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.185327 -0.046143  0.000829  0.029900  0.177855
+      Min        1Q    Median        3Q       Max 
+-0.185327 -0.046143  0.000829  0.029900  0.177855 
 
 Coefficients:
-                             Estimate Std. Error t value Pr(>|t|)
+                             Estimate Std. Error t value Pr(>|t|)    
 ect1                        -0.282342   0.080655  -3.501 0.000766 ***
-sd1                         -0.064353   0.022121  -2.909 0.004705 **
+sd1                         -0.064353   0.022121  -2.909 0.004705 ** 
 sd2                          0.118556   0.025117   4.720  0.00001 ***
-sd3                          0.073234   0.026393   2.775 0.006891 **
-ln_exportaciones_reales.dl1 -0.154487   0.110405  -1.399 0.165643
-ln_pib_socios.dl1            0.016633   0.511127   0.033 0.974122
-ln_itcrm.dl1                 0.007012   0.126349   0.055 0.955881
+sd3                          0.073234   0.026393   2.775 0.006891 ** 
+ln_exportaciones_reales.dl1 -0.154487   0.110405  -1.399 0.165643    
+ln_pib_socios.dl1            0.016633   0.511127   0.033 0.974122    
+ln_itcrm.dl1                 0.007012   0.126349   0.055 0.955881    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.06916 on 79 degrees of freedom
-Multiple R-squared:  0.6344,	Adjusted R-squared:  0.602
+Multiple R-squared:  0.6344,	Adjusted R-squared:  0.602 
 F-statistic: 19.59 on 7 and 79 DF,  p-value: 0.000000000000005962
 
 
 Response ln_pib_socios.d :
 
 Call:
-lm(formula = ln_pib_socios.d ~ ect1 + sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 +
+lm(formula = ln_pib_socios.d ~ ect1 + sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 + 
     ln_pib_socios.dl1 + ln_itcrm.dl1 - 1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.087065 -0.001868  0.004368  0.010523  0.067707
+      Min        1Q    Median        3Q       Max 
+-0.087065 -0.001868  0.004368  0.010523  0.067707 
 
 Coefficients:
-                             Estimate Std. Error t value Pr(>|t|)
+                             Estimate Std. Error t value Pr(>|t|)  
 ect1                        -0.042649   0.018774  -2.272   0.0258 *
-sd1                         -0.002804   0.005149  -0.545   0.5875
+sd1                         -0.002804   0.005149  -0.545   0.5875  
 sd2                         -0.010184   0.005846  -1.742   0.0854 .
-sd3                          0.003544   0.006143   0.577   0.5656
-ln_exportaciones_reales.dl1  0.001908   0.025699   0.074   0.9410
-ln_pib_socios.dl1           -0.009655   0.118973  -0.081   0.9355
-ln_itcrm.dl1                 0.023229   0.029410   0.790   0.4320
+sd3                          0.003544   0.006143   0.577   0.5656  
+ln_exportaciones_reales.dl1  0.001908   0.025699   0.074   0.9410  
+ln_pib_socios.dl1           -0.009655   0.118973  -0.081   0.9355  
+ln_itcrm.dl1                 0.023229   0.029410   0.790   0.4320  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.0161 on 79 degrees of freedom
-Multiple R-squared:  0.1137,	Adjusted R-squared:  0.03516
+Multiple R-squared:  0.1137,	Adjusted R-squared:  0.03516 
 F-statistic: 1.448 on 7 and 79 DF,  p-value: 0.1984
 
 
 Response ln_itcrm.d :
 
 Call:
-lm(formula = ln_itcrm.d ~ ect1 + sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 +
+lm(formula = ln_itcrm.d ~ ect1 + sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 + 
     ln_pib_socios.dl1 + ln_itcrm.dl1 - 1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.168457 -0.026450 -0.000276  0.034647  0.170988
+      Min        1Q    Median        3Q       Max 
+-0.168457 -0.026450 -0.000276  0.034647  0.170988 
 
 Coefficients:
-                            Estimate Std. Error t value   Pr(>|t|)
-ect1                         0.10206    0.06322   1.614    0.11043
-sd1                          0.01970    0.01734   1.136    0.25931
-sd2                         -0.04544    0.01969  -2.308    0.02359 *
+                            Estimate Std. Error t value   Pr(>|t|)    
+ect1                         0.10206    0.06322   1.614    0.11043    
+sd1                          0.01970    0.01734   1.136    0.25931    
+sd2                         -0.04544    0.01969  -2.308    0.02359 *  
 sd3                          0.09114    0.02069   4.406 0.00003278 ***
 ln_exportaciones_reales.dl1 -0.47033    0.08653  -5.435 0.00000059 ***
-ln_pib_socios.dl1            0.24902    0.40061   0.622    0.53598
-ln_itcrm.dl1                 0.30082    0.09903   3.038    0.00323 **
+ln_pib_socios.dl1            0.24902    0.40061   0.622    0.53598    
+ln_itcrm.dl1                 0.30082    0.09903   3.038    0.00323 ** 
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.05421 on 79 degrees of freedom
-Multiple R-squared:  0.3526,	Adjusted R-squared:  0.2953
+Multiple R-squared:  0.3526,	Adjusted R-squared:  0.2953 
 F-statistic: 6.148 on 7 and 79 DF,  p-value: 0.000009441
 
 
@@ -521,11 +521,11 @@ Rango utilizado en el VECM: 1
 
 TEST DE TRAZA:
 
-######################
-# Johansen-Procedure #
-######################
+###################### 
+# Johansen-Procedure # 
+###################### 
 
-Test type: trace statistic , without linear trend and constant in cointegration
+Test type: trace statistic , without linear trend and constant in cointegration 
 
 Eigenvalues (lambda):
 [1] 0.292740023095325430091 0.131737019224960727470 0.052667337942363348646 0.000000000000000622929
@@ -561,11 +561,11 @@ ln_itcrm.d                -0.00000000000003079576
 
 TEST DE MÁXIMO AUTOVALOR:
 
-######################
-# Johansen-Procedure #
-######################
+###################### 
+# Johansen-Procedure # 
+###################### 
 
-Test type: maximal eigenvalue statistic (lambda max) , without linear trend and constant in cointegration
+Test type: maximal eigenvalue statistic (lambda max) , without linear trend and constant in cointegration 
 
 Eigenvalues (lambda):
 [1] 0.292740023095325430091 0.131737019224960727470 0.052667337942363348646 0.000000000000000622929
@@ -603,87 +603,87 @@ VECM CON RANGO DEL SISTEMA:
 Response ln_exportaciones_reales.d :
 
 Call:
-lm(formula = ln_exportaciones_reales.d ~ ect1 + commodity_c +
-    sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 +
+lm(formula = ln_exportaciones_reales.d ~ ect1 + commodity_c + 
+    sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + 
     ln_itcrm.dl1 - 1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.149650 -0.055479 -0.008554  0.031758  0.178695
+      Min        1Q    Median        3Q       Max 
+-0.149650 -0.055479 -0.008554  0.031758  0.178695 
 
 Coefficients:
-                            Estimate Std. Error t value  Pr(>|t|)
+                            Estimate Std. Error t value  Pr(>|t|)    
 ect1                        -0.31448    0.08845  -3.556  0.000645 ***
-commodity_c                  0.04939    0.03182   1.552  0.124683
-sd1                         -0.06469    0.02219  -2.916  0.004633 **
+commodity_c                  0.04939    0.03182   1.552  0.124683    
+sd1                         -0.06469    0.02219  -2.916  0.004633 ** 
 sd2                          0.11633    0.02535   4.589 0.0000168 ***
-sd3                          0.06555    0.02702   2.426  0.017589 *
-ln_exportaciones_reales.dl1 -0.11642    0.11419  -1.020  0.311084
-ln_pib_socios.dl1           -0.11262    0.53299  -0.211  0.833200
-ln_itcrm.dl1                 0.04684    0.12532   0.374  0.709571
+sd3                          0.06555    0.02702   2.426  0.017589 *  
+ln_exportaciones_reales.dl1 -0.11642    0.11419  -1.020  0.311084    
+ln_pib_socios.dl1           -0.11262    0.53299  -0.211  0.833200    
+ln_itcrm.dl1                 0.04684    0.12532   0.374  0.709571    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.06936 on 78 degrees of freedom
-Multiple R-squared:  0.637,	Adjusted R-squared:  0.5998
+Multiple R-squared:  0.637,	Adjusted R-squared:  0.5998 
 F-statistic: 17.11 on 8 and 78 DF,  p-value: 0.00000000000002117
 
 
 Response ln_pib_socios.d :
 
 Call:
-lm(formula = ln_pib_socios.d ~ ect1 + commodity_c + sd1 + sd2 +
-    sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 -
+lm(formula = ln_pib_socios.d ~ ect1 + commodity_c + sd1 + sd2 + 
+    sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 - 
     1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.073023 -0.003064  0.003236  0.008460  0.061992
+      Min        1Q    Median        3Q       Max 
+-0.073023 -0.003064  0.003236  0.008460  0.061992 
 
 Coefficients:
-                              Estimate Std. Error t value Pr(>|t|)
+                              Estimate Std. Error t value Pr(>|t|)    
 ect1                        -0.0749730  0.0190763  -3.930 0.000182 ***
-commodity_c                  0.0223913  0.0068628   3.263 0.001639 **
-sd1                         -0.0037650  0.0047854  -0.787 0.433803
-sd2                         -0.0139148  0.0054673  -2.545 0.012898 *
-sd3                         -0.0005228  0.0058280  -0.090 0.928752
-ln_exportaciones_reales.dl1  0.0212469  0.0246277   0.863 0.390934
-ln_pib_socios.dl1           -0.1427372  0.1149546  -1.242 0.218074
-ln_itcrm.dl1                 0.0283042  0.0270290   1.047 0.298251
+commodity_c                  0.0223913  0.0068628   3.263 0.001639 ** 
+sd1                         -0.0037650  0.0047854  -0.787 0.433803    
+sd2                         -0.0139148  0.0054673  -2.545 0.012898 *  
+sd3                         -0.0005228  0.0058280  -0.090 0.928752    
+ln_exportaciones_reales.dl1  0.0212469  0.0246277   0.863 0.390934    
+ln_pib_socios.dl1           -0.1427372  0.1149546  -1.242 0.218074    
+ln_itcrm.dl1                 0.0283042  0.0270290   1.047 0.298251    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.01496 on 78 degrees of freedom
-Multiple R-squared:  0.2445,	Adjusted R-squared:  0.167
+Multiple R-squared:  0.2445,	Adjusted R-squared:  0.167 
 F-statistic: 3.155 on 8 and 78 DF,  p-value: 0.003802
 
 
 Response ln_itcrm.d :
 
 Call:
-lm(formula = ln_itcrm.d ~ ect1 + commodity_c + sd1 + sd2 + sd3 +
-    ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 -
+lm(formula = ln_itcrm.d ~ ect1 + commodity_c + sd1 + sd2 + sd3 + 
+    ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 - 
     1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.168043 -0.027908 -0.006196  0.032703  0.163753
+      Min        1Q    Median        3Q       Max 
+-0.168043 -0.027908 -0.006196  0.032703  0.163753 
 
 Coefficients:
-                            Estimate Std. Error t value  Pr(>|t|)
-ect1                         0.08169    0.06860   1.191   0.23732
-commodity_c                 -0.05330    0.02468  -2.160   0.03386 *
-sd1                          0.01889    0.01721   1.098   0.27564
-sd2                         -0.04584    0.01966  -2.332   0.02231 *
+                            Estimate Std. Error t value  Pr(>|t|)    
+ect1                         0.08169    0.06860   1.191   0.23732    
+commodity_c                 -0.05330    0.02468  -2.160   0.03386 *  
+sd1                          0.01889    0.01721   1.098   0.27564    
+sd2                         -0.04584    0.01966  -2.332   0.02231 *  
 sd3                          0.09198    0.02096   4.389 0.0000354 ***
 ln_exportaciones_reales.dl1 -0.46827    0.08856  -5.288 0.0000011 ***
-ln_pib_socios.dl1            0.35024    0.41337   0.847   0.39943
-ln_itcrm.dl1                 0.26298    0.09720   2.706   0.00837 **
+ln_pib_socios.dl1            0.35024    0.41337   0.847   0.39943    
+ln_itcrm.dl1                 0.26298    0.09720   2.706   0.00837 ** 
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.05379 on 78 degrees of freedom
-Multiple R-squared:  0.3706,	Adjusted R-squared:  0.3061
+Multiple R-squared:  0.3706,	Adjusted R-squared:  0.3061 
 F-statistic: 5.742 on 8 and 78 DF,  p-value: 0.000009558
 
 
@@ -692,87 +692,87 @@ VECM ECONÓMICO CON r = 1:
 Response ln_exportaciones_reales.d :
 
 Call:
-lm(formula = ln_exportaciones_reales.d ~ ect1 + commodity_c +
-    sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 +
+lm(formula = ln_exportaciones_reales.d ~ ect1 + commodity_c + 
+    sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + 
     ln_itcrm.dl1 - 1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.149650 -0.055479 -0.008554  0.031758  0.178695
+      Min        1Q    Median        3Q       Max 
+-0.149650 -0.055479 -0.008554  0.031758  0.178695 
 
 Coefficients:
-                            Estimate Std. Error t value  Pr(>|t|)
+                            Estimate Std. Error t value  Pr(>|t|)    
 ect1                        -0.31448    0.08845  -3.556  0.000645 ***
-commodity_c                  0.04939    0.03182   1.552  0.124683
-sd1                         -0.06469    0.02219  -2.916  0.004633 **
+commodity_c                  0.04939    0.03182   1.552  0.124683    
+sd1                         -0.06469    0.02219  -2.916  0.004633 ** 
 sd2                          0.11633    0.02535   4.589 0.0000168 ***
-sd3                          0.06555    0.02702   2.426  0.017589 *
-ln_exportaciones_reales.dl1 -0.11642    0.11419  -1.020  0.311084
-ln_pib_socios.dl1           -0.11262    0.53299  -0.211  0.833200
-ln_itcrm.dl1                 0.04684    0.12532   0.374  0.709571
+sd3                          0.06555    0.02702   2.426  0.017589 *  
+ln_exportaciones_reales.dl1 -0.11642    0.11419  -1.020  0.311084    
+ln_pib_socios.dl1           -0.11262    0.53299  -0.211  0.833200    
+ln_itcrm.dl1                 0.04684    0.12532   0.374  0.709571    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.06936 on 78 degrees of freedom
-Multiple R-squared:  0.637,	Adjusted R-squared:  0.5998
+Multiple R-squared:  0.637,	Adjusted R-squared:  0.5998 
 F-statistic: 17.11 on 8 and 78 DF,  p-value: 0.00000000000002117
 
 
 Response ln_pib_socios.d :
 
 Call:
-lm(formula = ln_pib_socios.d ~ ect1 + commodity_c + sd1 + sd2 +
-    sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 -
+lm(formula = ln_pib_socios.d ~ ect1 + commodity_c + sd1 + sd2 + 
+    sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 - 
     1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.073023 -0.003064  0.003236  0.008460  0.061992
+      Min        1Q    Median        3Q       Max 
+-0.073023 -0.003064  0.003236  0.008460  0.061992 
 
 Coefficients:
-                              Estimate Std. Error t value Pr(>|t|)
+                              Estimate Std. Error t value Pr(>|t|)    
 ect1                        -0.0749730  0.0190763  -3.930 0.000182 ***
-commodity_c                  0.0223913  0.0068628   3.263 0.001639 **
-sd1                         -0.0037650  0.0047854  -0.787 0.433803
-sd2                         -0.0139148  0.0054673  -2.545 0.012898 *
-sd3                         -0.0005228  0.0058280  -0.090 0.928752
-ln_exportaciones_reales.dl1  0.0212469  0.0246277   0.863 0.390934
-ln_pib_socios.dl1           -0.1427372  0.1149546  -1.242 0.218074
-ln_itcrm.dl1                 0.0283042  0.0270290   1.047 0.298251
+commodity_c                  0.0223913  0.0068628   3.263 0.001639 ** 
+sd1                         -0.0037650  0.0047854  -0.787 0.433803    
+sd2                         -0.0139148  0.0054673  -2.545 0.012898 *  
+sd3                         -0.0005228  0.0058280  -0.090 0.928752    
+ln_exportaciones_reales.dl1  0.0212469  0.0246277   0.863 0.390934    
+ln_pib_socios.dl1           -0.1427372  0.1149546  -1.242 0.218074    
+ln_itcrm.dl1                 0.0283042  0.0270290   1.047 0.298251    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.01496 on 78 degrees of freedom
-Multiple R-squared:  0.2445,	Adjusted R-squared:  0.167
+Multiple R-squared:  0.2445,	Adjusted R-squared:  0.167 
 F-statistic: 3.155 on 8 and 78 DF,  p-value: 0.003802
 
 
 Response ln_itcrm.d :
 
 Call:
-lm(formula = ln_itcrm.d ~ ect1 + commodity_c + sd1 + sd2 + sd3 +
-    ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 -
+lm(formula = ln_itcrm.d ~ ect1 + commodity_c + sd1 + sd2 + sd3 + 
+    ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 - 
     1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.168043 -0.027908 -0.006196  0.032703  0.163753
+      Min        1Q    Median        3Q       Max 
+-0.168043 -0.027908 -0.006196  0.032703  0.163753 
 
 Coefficients:
-                            Estimate Std. Error t value  Pr(>|t|)
-ect1                         0.08169    0.06860   1.191   0.23732
-commodity_c                 -0.05330    0.02468  -2.160   0.03386 *
-sd1                          0.01889    0.01721   1.098   0.27564
-sd2                         -0.04584    0.01966  -2.332   0.02231 *
+                            Estimate Std. Error t value  Pr(>|t|)    
+ect1                         0.08169    0.06860   1.191   0.23732    
+commodity_c                 -0.05330    0.02468  -2.160   0.03386 *  
+sd1                          0.01889    0.01721   1.098   0.27564    
+sd2                         -0.04584    0.01966  -2.332   0.02231 *  
 sd3                          0.09198    0.02096   4.389 0.0000354 ***
 ln_exportaciones_reales.dl1 -0.46827    0.08856  -5.288 0.0000011 ***
-ln_pib_socios.dl1            0.35024    0.41337   0.847   0.39943
-ln_itcrm.dl1                 0.26298    0.09720   2.706   0.00837 **
+ln_pib_socios.dl1            0.35024    0.41337   0.847   0.39943    
+ln_itcrm.dl1                 0.26298    0.09720   2.706   0.00837 ** 
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.05379 on 78 degrees of freedom
-Multiple R-squared:  0.3706,	Adjusted R-squared:  0.3061
+Multiple R-squared:  0.3706,	Adjusted R-squared:  0.3061 
 F-statistic: 5.742 on 8 and 78 DF,  p-value: 0.000009558
 
 
@@ -787,11 +787,11 @@ Rango utilizado en el VECM: 1
 
 TEST DE TRAZA:
 
-######################
-# Johansen-Procedure #
-######################
+###################### 
+# Johansen-Procedure # 
+###################### 
 
-Test type: trace statistic , without linear trend and constant in cointegration
+Test type: trace statistic , without linear trend and constant in cointegration 
 
 Eigenvalues (lambda):
 [1] 0.3233432607983959816700 0.1095352296138622644195 0.0527319199203883787197 0.0000000000000007366151
@@ -827,11 +827,11 @@ ln_itcrm.d                 0.0000000000000009712085
 
 TEST DE MÁXIMO AUTOVALOR:
 
-######################
-# Johansen-Procedure #
-######################
+###################### 
+# Johansen-Procedure # 
+###################### 
 
-Test type: maximal eigenvalue statistic (lambda max) , without linear trend and constant in cointegration
+Test type: maximal eigenvalue statistic (lambda max) , without linear trend and constant in cointegration 
 
 Eigenvalues (lambda):
 [1] 0.3233432607983959816700 0.1095352296138622644195 0.0527319199203883787197 0.0000000000000007366151
@@ -869,111 +869,111 @@ VECM CON RANGO DEL SISTEMA:
 Response ln_exportaciones_reales.d :
 
 Call:
-lm(formula = ln_exportaciones_reales.d ~ ect1 + commodity_c +
-    sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 +
-    ln_itcrm.dl1 + ln_exportaciones_reales.dl2 + ln_pib_socios.dl2 +
-    ln_itcrm.dl2 + ln_exportaciones_reales.dl3 + ln_pib_socios.dl3 +
+lm(formula = ln_exportaciones_reales.d ~ ect1 + commodity_c + 
+    sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + 
+    ln_itcrm.dl1 + ln_exportaciones_reales.dl2 + ln_pib_socios.dl2 + 
+    ln_itcrm.dl2 + ln_exportaciones_reales.dl3 + ln_pib_socios.dl3 + 
     ln_itcrm.dl3 - 1, data = data.mat)
 
 Residuals:
-     Min       1Q   Median       3Q      Max
--0.18794 -0.04531 -0.00491  0.03667  0.17871
+     Min       1Q   Median       3Q      Max 
+-0.18794 -0.04531 -0.00491  0.03667  0.17871 
 
 Coefficients:
-                            Estimate Std. Error t value Pr(>|t|)
-ect1                        -0.02692    0.06766  -0.398  0.69199
-commodity_c                 -0.01465    0.03888  -0.377  0.70750
+                            Estimate Std. Error t value Pr(>|t|)   
+ect1                        -0.02692    0.06766  -0.398  0.69199   
+commodity_c                 -0.01465    0.03888  -0.377  0.70750   
 sd1                         -0.11407    0.04303  -2.651  0.00992 **
-sd2                          0.06468    0.03623   1.785  0.07854 .
-sd3                          0.01706    0.04272   0.399  0.69089
+sd2                          0.06468    0.03623   1.785  0.07854 . 
+sd3                          0.01706    0.04272   0.399  0.69089   
 ln_exportaciones_reales.dl1 -0.39954    0.13855  -2.884  0.00522 **
-ln_pib_socios.dl1            0.63451    0.60968   1.041  0.30158
-ln_itcrm.dl1                -0.03520    0.14866  -0.237  0.81352
-ln_exportaciones_reales.dl2 -0.36709    0.13864  -2.648  0.01000 *
-ln_pib_socios.dl2            1.35048    0.58423   2.312  0.02375 *
-ln_itcrm.dl2                 0.21529    0.15461   1.393  0.16817
-ln_exportaciones_reales.dl3 -0.04350    0.13563  -0.321  0.74936
-ln_pib_socios.dl3            0.72709    0.59963   1.213  0.22937
-ln_itcrm.dl3                 0.03236    0.14031   0.231  0.81828
+ln_pib_socios.dl1            0.63451    0.60968   1.041  0.30158   
+ln_itcrm.dl1                -0.03520    0.14866  -0.237  0.81352   
+ln_exportaciones_reales.dl2 -0.36709    0.13864  -2.648  0.01000 * 
+ln_pib_socios.dl2            1.35048    0.58423   2.312  0.02375 * 
+ln_itcrm.dl2                 0.21529    0.15461   1.393  0.16817   
+ln_exportaciones_reales.dl3 -0.04350    0.13563  -0.321  0.74936   
+ln_pib_socios.dl3            0.72709    0.59963   1.213  0.22937   
+ln_itcrm.dl3                 0.03236    0.14031   0.231  0.81828   
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.07068 on 70 degrees of freedom
-Multiple R-squared:  0.6616,	Adjusted R-squared:  0.594
+Multiple R-squared:  0.6616,	Adjusted R-squared:  0.594 
 F-statistic: 9.777 on 14 and 70 DF,  p-value: 0.00000000001389
 
 
 Response ln_pib_socios.d :
 
 Call:
-lm(formula = ln_pib_socios.d ~ ect1 + commodity_c + sd1 + sd2 +
-    sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 +
-    ln_exportaciones_reales.dl2 + ln_pib_socios.dl2 + ln_itcrm.dl2 +
-    ln_exportaciones_reales.dl3 + ln_pib_socios.dl3 + ln_itcrm.dl3 -
+lm(formula = ln_pib_socios.d ~ ect1 + commodity_c + sd1 + sd2 + 
+    sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 + 
+    ln_exportaciones_reales.dl2 + ln_pib_socios.dl2 + ln_itcrm.dl2 + 
+    ln_exportaciones_reales.dl3 + ln_pib_socios.dl3 + ln_itcrm.dl3 - 
     1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.069893 -0.005514  0.001638  0.007154  0.047500
+      Min        1Q    Median        3Q       Max 
+-0.069893 -0.005514  0.001638  0.007154  0.047500 
 
 Coefficients:
-                             Estimate Std. Error t value   Pr(>|t|)
+                             Estimate Std. Error t value   Pr(>|t|)    
 ect1                        -0.071403   0.013645  -5.233 0.00000166 ***
 commodity_c                  0.032482   0.007840   4.143 0.00009454 ***
-sd1                         -0.000432   0.008678  -0.050    0.96044
-sd2                         -0.006838   0.007306  -0.936    0.35248
-sd3                          0.001787   0.008615   0.207    0.83623
-ln_exportaciones_reales.dl1  0.044642   0.027941   1.598    0.11461
-ln_pib_socios.dl1           -0.281836   0.122953  -2.292    0.02490 *
-ln_itcrm.dl1                 0.031505   0.029980   1.051    0.29694
-ln_exportaciones_reales.dl2  0.024718   0.027960   0.884    0.37969
-ln_pib_socios.dl2           -0.362777   0.117821  -3.079    0.00297 **
-ln_itcrm.dl2                -0.020842   0.031179  -0.668    0.50603
-ln_exportaciones_reales.dl3  0.014269   0.027352   0.522    0.60352
-ln_pib_socios.dl3           -0.185373   0.120928  -1.533    0.12980
-ln_itcrm.dl3                -0.012169   0.028297  -0.430    0.66849
+sd1                         -0.000432   0.008678  -0.050    0.96044    
+sd2                         -0.006838   0.007306  -0.936    0.35248    
+sd3                          0.001787   0.008615   0.207    0.83623    
+ln_exportaciones_reales.dl1  0.044642   0.027941   1.598    0.11461    
+ln_pib_socios.dl1           -0.281836   0.122953  -2.292    0.02490 *  
+ln_itcrm.dl1                 0.031505   0.029980   1.051    0.29694    
+ln_exportaciones_reales.dl2  0.024718   0.027960   0.884    0.37969    
+ln_pib_socios.dl2           -0.362777   0.117821  -3.079    0.00297 ** 
+ln_itcrm.dl2                -0.020842   0.031179  -0.668    0.50603    
+ln_exportaciones_reales.dl3  0.014269   0.027352   0.522    0.60352    
+ln_pib_socios.dl3           -0.185373   0.120928  -1.533    0.12980    
+ln_itcrm.dl3                -0.012169   0.028297  -0.430    0.66849    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.01425 on 70 degrees of freedom
-Multiple R-squared:  0.3788,	Adjusted R-squared:  0.2545
+Multiple R-squared:  0.3788,	Adjusted R-squared:  0.2545 
 F-statistic: 3.048 on 14 and 70 DF,  p-value: 0.001038
 
 
 Response ln_itcrm.d :
 
 Call:
-lm(formula = ln_itcrm.d ~ ect1 + commodity_c + sd1 + sd2 + sd3 +
-    ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 +
-    ln_exportaciones_reales.dl2 + ln_pib_socios.dl2 + ln_itcrm.dl2 +
-    ln_exportaciones_reales.dl3 + ln_pib_socios.dl3 + ln_itcrm.dl3 -
+lm(formula = ln_itcrm.d ~ ect1 + commodity_c + sd1 + sd2 + sd3 + 
+    ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 + 
+    ln_exportaciones_reales.dl2 + ln_pib_socios.dl2 + ln_itcrm.dl2 + 
+    ln_exportaciones_reales.dl3 + ln_pib_socios.dl3 + ln_itcrm.dl3 - 
     1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.152808 -0.030064 -0.003544  0.036586  0.167105
+      Min        1Q    Median        3Q       Max 
+-0.152808 -0.030064 -0.003544  0.036586  0.167105 
 
 Coefficients:
-                              Estimate Std. Error t value  Pr(>|t|)
-ect1                         0.0891903  0.0530464   1.681    0.0971 .
-commodity_c                 -0.0677887  0.0304808  -2.224    0.0294 *
-sd1                          0.0071958  0.0337387   0.213    0.8317
-sd2                         -0.0625514  0.0284024  -2.202    0.0309 *
-sd3                          0.0822721  0.0334901   2.457    0.0165 *
+                              Estimate Std. Error t value  Pr(>|t|)    
+ect1                         0.0891903  0.0530464   1.681    0.0971 .  
+commodity_c                 -0.0677887  0.0304808  -2.224    0.0294 *  
+sd1                          0.0071958  0.0337387   0.213    0.8317    
+sd2                         -0.0625514  0.0284024  -2.202    0.0309 *  
+sd3                          0.0822721  0.0334901   2.457    0.0165 *  
 ln_exportaciones_reales.dl1 -0.5124100  0.1086230  -4.717 0.0000118 ***
-ln_pib_socios.dl1            0.5619005  0.4779998   1.176    0.2438
-ln_itcrm.dl1                 0.2621624  0.1165530   2.249    0.0276 *
-ln_exportaciones_reales.dl2 -0.0646633  0.1086969  -0.595    0.5538
-ln_pib_socios.dl2            0.2085600  0.4580462   0.455    0.6503
-ln_itcrm.dl2                -0.0293590  0.1212141  -0.242    0.8093
-ln_exportaciones_reales.dl3 -0.0005061  0.1063331  -0.005    0.9962
-ln_pib_socios.dl3            0.6321679  0.4701261   1.345    0.1831
-ln_itcrm.dl3                -0.0808935  0.1100097  -0.735    0.4646
+ln_pib_socios.dl1            0.5619005  0.4779998   1.176    0.2438    
+ln_itcrm.dl1                 0.2621624  0.1165530   2.249    0.0276 *  
+ln_exportaciones_reales.dl2 -0.0646633  0.1086969  -0.595    0.5538    
+ln_pib_socios.dl2            0.2085600  0.4580462   0.455    0.6503    
+ln_itcrm.dl2                -0.0293590  0.1212141  -0.242    0.8093    
+ln_exportaciones_reales.dl3 -0.0005061  0.1063331  -0.005    0.9962    
+ln_pib_socios.dl3            0.6321679  0.4701261   1.345    0.1831    
+ln_itcrm.dl3                -0.0808935  0.1100097  -0.735    0.4646    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.05542 on 70 degrees of freedom
-Multiple R-squared:  0.3969,	Adjusted R-squared:  0.2762
+Multiple R-squared:  0.3969,	Adjusted R-squared:  0.2762 
 F-statistic:  3.29 on 14 and 70 DF,  p-value: 0.0004767
 
 
@@ -982,111 +982,111 @@ VECM ECONÓMICO CON r = 1:
 Response ln_exportaciones_reales.d :
 
 Call:
-lm(formula = ln_exportaciones_reales.d ~ ect1 + commodity_c +
-    sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 +
-    ln_itcrm.dl1 + ln_exportaciones_reales.dl2 + ln_pib_socios.dl2 +
-    ln_itcrm.dl2 + ln_exportaciones_reales.dl3 + ln_pib_socios.dl3 +
+lm(formula = ln_exportaciones_reales.d ~ ect1 + commodity_c + 
+    sd1 + sd2 + sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + 
+    ln_itcrm.dl1 + ln_exportaciones_reales.dl2 + ln_pib_socios.dl2 + 
+    ln_itcrm.dl2 + ln_exportaciones_reales.dl3 + ln_pib_socios.dl3 + 
     ln_itcrm.dl3 - 1, data = data.mat)
 
 Residuals:
-     Min       1Q   Median       3Q      Max
--0.18794 -0.04531 -0.00491  0.03667  0.17871
+     Min       1Q   Median       3Q      Max 
+-0.18794 -0.04531 -0.00491  0.03667  0.17871 
 
 Coefficients:
-                            Estimate Std. Error t value Pr(>|t|)
-ect1                        -0.02692    0.06766  -0.398  0.69199
-commodity_c                 -0.01465    0.03888  -0.377  0.70750
+                            Estimate Std. Error t value Pr(>|t|)   
+ect1                        -0.02692    0.06766  -0.398  0.69199   
+commodity_c                 -0.01465    0.03888  -0.377  0.70750   
 sd1                         -0.11407    0.04303  -2.651  0.00992 **
-sd2                          0.06468    0.03623   1.785  0.07854 .
-sd3                          0.01706    0.04272   0.399  0.69089
+sd2                          0.06468    0.03623   1.785  0.07854 . 
+sd3                          0.01706    0.04272   0.399  0.69089   
 ln_exportaciones_reales.dl1 -0.39954    0.13855  -2.884  0.00522 **
-ln_pib_socios.dl1            0.63451    0.60968   1.041  0.30158
-ln_itcrm.dl1                -0.03520    0.14866  -0.237  0.81352
-ln_exportaciones_reales.dl2 -0.36709    0.13864  -2.648  0.01000 *
-ln_pib_socios.dl2            1.35048    0.58423   2.312  0.02375 *
-ln_itcrm.dl2                 0.21529    0.15461   1.393  0.16817
-ln_exportaciones_reales.dl3 -0.04350    0.13563  -0.321  0.74936
-ln_pib_socios.dl3            0.72709    0.59963   1.213  0.22937
-ln_itcrm.dl3                 0.03236    0.14031   0.231  0.81828
+ln_pib_socios.dl1            0.63451    0.60968   1.041  0.30158   
+ln_itcrm.dl1                -0.03520    0.14866  -0.237  0.81352   
+ln_exportaciones_reales.dl2 -0.36709    0.13864  -2.648  0.01000 * 
+ln_pib_socios.dl2            1.35048    0.58423   2.312  0.02375 * 
+ln_itcrm.dl2                 0.21529    0.15461   1.393  0.16817   
+ln_exportaciones_reales.dl3 -0.04350    0.13563  -0.321  0.74936   
+ln_pib_socios.dl3            0.72709    0.59963   1.213  0.22937   
+ln_itcrm.dl3                 0.03236    0.14031   0.231  0.81828   
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.07068 on 70 degrees of freedom
-Multiple R-squared:  0.6616,	Adjusted R-squared:  0.594
+Multiple R-squared:  0.6616,	Adjusted R-squared:  0.594 
 F-statistic: 9.777 on 14 and 70 DF,  p-value: 0.00000000001389
 
 
 Response ln_pib_socios.d :
 
 Call:
-lm(formula = ln_pib_socios.d ~ ect1 + commodity_c + sd1 + sd2 +
-    sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 +
-    ln_exportaciones_reales.dl2 + ln_pib_socios.dl2 + ln_itcrm.dl2 +
-    ln_exportaciones_reales.dl3 + ln_pib_socios.dl3 + ln_itcrm.dl3 -
+lm(formula = ln_pib_socios.d ~ ect1 + commodity_c + sd1 + sd2 + 
+    sd3 + ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 + 
+    ln_exportaciones_reales.dl2 + ln_pib_socios.dl2 + ln_itcrm.dl2 + 
+    ln_exportaciones_reales.dl3 + ln_pib_socios.dl3 + ln_itcrm.dl3 - 
     1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.069893 -0.005514  0.001638  0.007154  0.047500
+      Min        1Q    Median        3Q       Max 
+-0.069893 -0.005514  0.001638  0.007154  0.047500 
 
 Coefficients:
-                             Estimate Std. Error t value   Pr(>|t|)
+                             Estimate Std. Error t value   Pr(>|t|)    
 ect1                        -0.071403   0.013645  -5.233 0.00000166 ***
 commodity_c                  0.032482   0.007840   4.143 0.00009454 ***
-sd1                         -0.000432   0.008678  -0.050    0.96044
-sd2                         -0.006838   0.007306  -0.936    0.35248
-sd3                          0.001787   0.008615   0.207    0.83623
-ln_exportaciones_reales.dl1  0.044642   0.027941   1.598    0.11461
-ln_pib_socios.dl1           -0.281836   0.122953  -2.292    0.02490 *
-ln_itcrm.dl1                 0.031505   0.029980   1.051    0.29694
-ln_exportaciones_reales.dl2  0.024718   0.027960   0.884    0.37969
-ln_pib_socios.dl2           -0.362777   0.117821  -3.079    0.00297 **
-ln_itcrm.dl2                -0.020842   0.031179  -0.668    0.50603
-ln_exportaciones_reales.dl3  0.014269   0.027352   0.522    0.60352
-ln_pib_socios.dl3           -0.185373   0.120928  -1.533    0.12980
-ln_itcrm.dl3                -0.012169   0.028297  -0.430    0.66849
+sd1                         -0.000432   0.008678  -0.050    0.96044    
+sd2                         -0.006838   0.007306  -0.936    0.35248    
+sd3                          0.001787   0.008615   0.207    0.83623    
+ln_exportaciones_reales.dl1  0.044642   0.027941   1.598    0.11461    
+ln_pib_socios.dl1           -0.281836   0.122953  -2.292    0.02490 *  
+ln_itcrm.dl1                 0.031505   0.029980   1.051    0.29694    
+ln_exportaciones_reales.dl2  0.024718   0.027960   0.884    0.37969    
+ln_pib_socios.dl2           -0.362777   0.117821  -3.079    0.00297 ** 
+ln_itcrm.dl2                -0.020842   0.031179  -0.668    0.50603    
+ln_exportaciones_reales.dl3  0.014269   0.027352   0.522    0.60352    
+ln_pib_socios.dl3           -0.185373   0.120928  -1.533    0.12980    
+ln_itcrm.dl3                -0.012169   0.028297  -0.430    0.66849    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.01425 on 70 degrees of freedom
-Multiple R-squared:  0.3788,	Adjusted R-squared:  0.2545
+Multiple R-squared:  0.3788,	Adjusted R-squared:  0.2545 
 F-statistic: 3.048 on 14 and 70 DF,  p-value: 0.001038
 
 
 Response ln_itcrm.d :
 
 Call:
-lm(formula = ln_itcrm.d ~ ect1 + commodity_c + sd1 + sd2 + sd3 +
-    ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 +
-    ln_exportaciones_reales.dl2 + ln_pib_socios.dl2 + ln_itcrm.dl2 +
-    ln_exportaciones_reales.dl3 + ln_pib_socios.dl3 + ln_itcrm.dl3 -
+lm(formula = ln_itcrm.d ~ ect1 + commodity_c + sd1 + sd2 + sd3 + 
+    ln_exportaciones_reales.dl1 + ln_pib_socios.dl1 + ln_itcrm.dl1 + 
+    ln_exportaciones_reales.dl2 + ln_pib_socios.dl2 + ln_itcrm.dl2 + 
+    ln_exportaciones_reales.dl3 + ln_pib_socios.dl3 + ln_itcrm.dl3 - 
     1, data = data.mat)
 
 Residuals:
-      Min        1Q    Median        3Q       Max
--0.152808 -0.030064 -0.003544  0.036586  0.167105
+      Min        1Q    Median        3Q       Max 
+-0.152808 -0.030064 -0.003544  0.036586  0.167105 
 
 Coefficients:
-                              Estimate Std. Error t value  Pr(>|t|)
-ect1                         0.0891903  0.0530464   1.681    0.0971 .
-commodity_c                 -0.0677887  0.0304808  -2.224    0.0294 *
-sd1                          0.0071958  0.0337387   0.213    0.8317
-sd2                         -0.0625514  0.0284024  -2.202    0.0309 *
-sd3                          0.0822721  0.0334901   2.457    0.0165 *
+                              Estimate Std. Error t value  Pr(>|t|)    
+ect1                         0.0891903  0.0530464   1.681    0.0971 .  
+commodity_c                 -0.0677887  0.0304808  -2.224    0.0294 *  
+sd1                          0.0071958  0.0337387   0.213    0.8317    
+sd2                         -0.0625514  0.0284024  -2.202    0.0309 *  
+sd3                          0.0822721  0.0334901   2.457    0.0165 *  
 ln_exportaciones_reales.dl1 -0.5124100  0.1086230  -4.717 0.0000118 ***
-ln_pib_socios.dl1            0.5619005  0.4779998   1.176    0.2438
-ln_itcrm.dl1                 0.2621624  0.1165530   2.249    0.0276 *
-ln_exportaciones_reales.dl2 -0.0646633  0.1086969  -0.595    0.5538
-ln_pib_socios.dl2            0.2085600  0.4580462   0.455    0.6503
-ln_itcrm.dl2                -0.0293590  0.1212141  -0.242    0.8093
-ln_exportaciones_reales.dl3 -0.0005061  0.1063331  -0.005    0.9962
-ln_pib_socios.dl3            0.6321679  0.4701261   1.345    0.1831
-ln_itcrm.dl3                -0.0808935  0.1100097  -0.735    0.4646
+ln_pib_socios.dl1            0.5619005  0.4779998   1.176    0.2438    
+ln_itcrm.dl1                 0.2621624  0.1165530   2.249    0.0276 *  
+ln_exportaciones_reales.dl2 -0.0646633  0.1086969  -0.595    0.5538    
+ln_pib_socios.dl2            0.2085600  0.4580462   0.455    0.6503    
+ln_itcrm.dl2                -0.0293590  0.1212141  -0.242    0.8093    
+ln_exportaciones_reales.dl3 -0.0005061  0.1063331  -0.005    0.9962    
+ln_pib_socios.dl3            0.6321679  0.4701261   1.345    0.1831    
+ln_itcrm.dl3                -0.0808935  0.1100097  -0.735    0.4646    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.05542 on 70 degrees of freedom
-Multiple R-squared:  0.3969,	Adjusted R-squared:  0.2762
+Multiple R-squared:  0.3969,	Adjusted R-squared:  0.2762 
 F-statistic:  3.29 on 14 and 70 DF,  p-value: 0.0004767
 
 

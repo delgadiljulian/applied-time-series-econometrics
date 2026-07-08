@@ -1,4 +1,4 @@
-﻿quarter,year,q,quarter_date,stata_qdate,brazil_gdp_real,ln_brazil_gdp_real
+quarter,year,q,quarter_date,stata_qdate,brazil_gdp_real,ln_brazil_gdp_real
 2004Q1,2004,1,2004-01-01,176,212575,12.267050146253993
 2004Q2,2004,2,2004-04-01,177,218449.6,12.294310603295278
 2004Q3,2004,3,2004-07-01,178,221208.8,12.306862330840802

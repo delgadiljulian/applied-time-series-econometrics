@@ -1,4 +1,4 @@
-﻿quarter,year,q,quarter_date,stata_qdate,commodity_price_index,ln_commodity_price_index,commodity_monthly_obs
+quarter,year,q,quarter_date,stata_qdate,commodity_price_index,ln_commodity_price_index,commodity_monthly_obs
 2004Q1,2004,1,2004-01-01,176,49.420678279773334,3.9003689252694635,3
 2004Q2,2004,2,2004-04-01,177,52.83770588241,3.9672250624059697,3
 2004Q3,2004,3,2004-07-01,178,56.42361893053333,4.032887846206149,3

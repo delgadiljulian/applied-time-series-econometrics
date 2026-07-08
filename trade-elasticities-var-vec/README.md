@@ -58,7 +58,6 @@ trade-elasticities-var-vec/
 ├── README.md
 |
 ├── report_draft_a/
-|   ├── 00_run_all.R
 |   ├── data/
 |   |   ├── raw/
 |   |   └── processed/
@@ -70,6 +69,8 @@ trade-elasticities-var-vec/
 |   |   └── tables/
 |   ├── report/
 |   └── scripts/
+|       ├── 00_run_all.R
+|       ├── pipeline_steps/
 |       └── required_scripts/
 |
 └── report_draft_b/
@@ -81,9 +82,10 @@ trade-elasticities-var-vec/
     └── scripts/
 ```
 
-`report_draft_a/` is the active working draft. Its master script sets the
-project root to the folder where `00_run_all.R` lives, so generated `figures/`
-and `outputs/` folders remain inside `report_draft_a/`.
+`report_draft_a/` is the active working draft. Its master script sets
+`report_draft_a/` as the project root even though the runner lives under
+`scripts/`, so generated `figures/` and `outputs/` folders remain inside
+`report_draft_a/`.
 
 `report_draft_b/` is kept as a parallel draft/reference workspace.
 
@@ -105,11 +107,12 @@ All core variables should be analyzed in natural logarithms.
 The main analysis-ready input is:
 
 ```text
-trade-elasticities-var-vec/report_draft_a/data/processed/trade_elasticities_var_vec_panel_transformed_2004_2025.csv
+trade-elasticities-var-vec/report_draft_a/data/processed/final_data_panel/panel_maestro_2004_2025.xlsx
 ```
 
 Raw source-level inputs are stored in `report_draft_a/data/raw/`, while
-processed and model-ready panels are stored in `report_draft_a/data/processed/`.
+processed auxiliary files and model-ready panels are stored in
+`report_draft_a/data/processed/`.
 
 ---
 
@@ -118,7 +121,7 @@ processed and model-ready panels are stored in `report_draft_a/data/processed/`.
 The active master script is:
 
 ```text
-trade-elasticities-var-vec/report_draft_a/00_run_all.R
+trade-elasticities-var-vec/report_draft_a/scripts/00_run_all.R
 ```
 
 Run it from RStudio or with `Rscript`. The script detects `report_draft_a/` as

@@ -1,4 +1,4 @@
-﻿============================================================
+============================================================
 SCRIPT 12: SVAR, IRF, FEVD Y PROYECCIONES LOCALES
 ============================================================
 
@@ -8,61 +8,61 @@ Bandas de proyecciones locales: aproximadamente 90%, con errores Newey-West.
 
 ESTADO DE LA IDENTIFICACIÓN:
 # A tibble: 8 × 7
-  model_id                         model_key
-  <chr>                            <chr>
-1 imports__primary_K2              imports
-2 imports__primary_K2              imports
-3 exports_classic__primary_K2      exports_classic
-4 exports_classic__primary_K2      exports_classic
+  model_id                         model_key       
+  <chr>                            <chr>           
+1 imports__primary_K2              imports         
+2 imports__primary_K2              imports         
+3 exports_classic__primary_K2      exports_classic 
+4 exports_classic__primary_K2      exports_classic 
 5 exports_expanded__primary_K2     exports_expanded
 6 exports_expanded__primary_K2     exports_expanded
 7 exports_expanded__sensitivity_K4 exports_expanded
 8 exports_expanded__sensitivity_K4 exports_expanded
-  model_label_run                                                             identification
-  <chr>                                                                       <chr>
-1 Importaciones: PIB argentino e ITCRM                                        Cholesky principal
+  model_label_run                                                             identification      
+  <chr>                                                                       <chr>               
+1 Importaciones: PIB argentino e ITCRM                                        Cholesky principal  
 2 Importaciones: PIB argentino e ITCRM                                        Cholesky alternativo
-3 Exportaciones: PIB socios e ITCRM                                           Cholesky principal
+3 Exportaciones: PIB socios e ITCRM                                           Cholesky principal  
 4 Exportaciones: PIB socios e ITCRM                                           Cholesky alternativo
-5 Exportaciones ampliadas: PIB socios, ITCRM y commodities                    Cholesky principal
+5 Exportaciones ampliadas: PIB socios, ITCRM y commodities                    Cholesky principal  
 6 Exportaciones ampliadas: PIB socios, ITCRM y commodities                    Cholesky alternativo
-7 Exportaciones ampliadas: PIB socios, ITCRM y commodities — sensibilidad K=4 Cholesky principal
+7 Exportaciones ampliadas: PIB socios, ITCRM y commodities — sensibilidad K=4 Cholesky principal  
 8 Exportaciones ampliadas: PIB socios, ITCRM y commodities — sensibilidad K=4 Cholesky alternativo
   causal_order                                         status error
   <chr>                                                <chr>  <chr>
-1 ln_pib_real -> ln_itcrm -> ln_importaciones_reales   OK     <NA>
-2 ln_itcrm -> ln_pib_real -> ln_importaciones_reales   OK     <NA>
-3 ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales OK     <NA>
-4 ln_itcrm -> ln_pib_socios -> ln_exportaciones_reales OK     <NA>
-5 ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales OK     <NA>
-6 ln_itcrm -> ln_pib_socios -> ln_exportaciones_reales OK     <NA>
-7 ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales OK     <NA>
-8 ln_itcrm -> ln_pib_socios -> ln_exportaciones_reales OK     <NA>
+1 ln_pib_real -> ln_itcrm -> ln_importaciones_reales   OK     <NA> 
+2 ln_itcrm -> ln_pib_real -> ln_importaciones_reales   OK     <NA> 
+3 ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales OK     <NA> 
+4 ln_itcrm -> ln_pib_socios -> ln_exportaciones_reales OK     <NA> 
+5 ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales OK     <NA> 
+6 ln_itcrm -> ln_pib_socios -> ln_exportaciones_reales OK     <NA> 
+7 ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales OK     <NA> 
+8 ln_itcrm -> ln_pib_socios -> ln_exportaciones_reales OK     <NA> 
 
 ESTADO DE OBJETOS NATIVOS:
 # A tibble: 8 × 9
-  model_id                         model_key
-  <chr>                            <chr>
-1 imports__primary_K2              imports
-2 imports__primary_K2              imports
-3 exports_classic__primary_K2      exports_classic
-4 exports_classic__primary_K2      exports_classic
+  model_id                         model_key       
+  <chr>                            <chr>           
+1 imports__primary_K2              imports         
+2 imports__primary_K2              imports         
+3 exports_classic__primary_K2      exports_classic 
+4 exports_classic__primary_K2      exports_classic 
 5 exports_expanded__primary_K2     exports_expanded
 6 exports_expanded__primary_K2     exports_expanded
 7 exports_expanded__sensitivity_K4 exports_expanded
 8 exports_expanded__sensitivity_K4 exports_expanded
-  model_label_run                                                             method_code
-  <chr>                                                                       <chr>
-1 Importaciones: PIB argentino e ITCRM                                        chol_primary
+  model_label_run                                                             method_code     
+  <chr>                                                                       <chr>           
+1 Importaciones: PIB argentino e ITCRM                                        chol_primary    
 2 Importaciones: PIB argentino e ITCRM                                        chol_alternative
-3 Exportaciones: PIB socios e ITCRM                                           chol_primary
+3 Exportaciones: PIB socios e ITCRM                                           chol_primary    
 4 Exportaciones: PIB socios e ITCRM                                           chol_alternative
-5 Exportaciones ampliadas: PIB socios, ITCRM y commodities                    chol_primary
+5 Exportaciones ampliadas: PIB socios, ITCRM y commodities                    chol_primary    
 6 Exportaciones ampliadas: PIB socios, ITCRM y commodities                    chol_alternative
-7 Exportaciones ampliadas: PIB socios, ITCRM y commodities — sensibilidad K=4 chol_primary
+7 Exportaciones ampliadas: PIB socios, ITCRM y commodities — sensibilidad K=4 chol_primary    
 8 Exportaciones ampliadas: PIB socios, ITCRM y commodities — sensibilidad K=4 chol_alternative
-  method                    irf_status irf_error
-  <chr>                     <chr>      <chr>
+  method                    irf_status irf_error                                                      
+  <chr>                     <chr>      <chr>                                                          
 1 SVAR Cholesky principal   ERROR      Not compatible with requested type: [type=NULL; target=double].
 2 SVAR Cholesky alternativo ERROR      Not compatible with requested type: [type=NULL; target=double].
 3 SVAR Cholesky principal   ERROR      Not compatible with requested type: [type=NULL; target=double].
@@ -71,8 +71,8 @@ ESTADO DE OBJETOS NATIVOS:
 6 SVAR Cholesky alternativo ERROR      Not compatible with requested type: [type=NULL; target=double].
 7 SVAR Cholesky principal   ERROR      Not compatible with requested type: [type=NULL; target=double].
 8 SVAR Cholesky alternativo ERROR      Not compatible with requested type: [type=NULL; target=double].
-  fevd_status fevd_error
-  <chr>       <chr>
+  fevd_status fevd_error                                                     
+  <chr>       <chr>                                                          
 1 ERROR       Not compatible with requested type: [type=NULL; target=double].
 2 ERROR       Not compatible with requested type: [type=NULL; target=double].
 3 ERROR       Not compatible with requested type: [type=NULL; target=double].
@@ -84,24 +84,24 @@ ESTADO DE OBJETOS NATIVOS:
 
 ESTADO DE PROYECCIONES LOCALES:
 # A tibble: 4 × 7
-  model_id                         model_key
-  <chr>                            <chr>
-1 imports__primary_K2              imports
-2 exports_classic__primary_K2      exports_classic
+  model_id                         model_key       
+  <chr>                            <chr>           
+1 imports__primary_K2              imports         
+2 exports_classic__primary_K2      exports_classic 
 3 exports_expanded__primary_K2     exports_expanded
 4 exports_expanded__sensitivity_K4 exports_expanded
-  model_label_run
-  <chr>
-1 Importaciones: PIB argentino e ITCRM
-2 Exportaciones: PIB socios e ITCRM
-3 Exportaciones ampliadas: PIB socios, ITCRM y commodities
+  model_label_run                                                            
+  <chr>                                                                      
+1 Importaciones: PIB argentino e ITCRM                                       
+2 Exportaciones: PIB socios e ITCRM                                          
+3 Exportaciones ampliadas: PIB socios, ITCRM y commodities                   
 4 Exportaciones ampliadas: PIB socios, ITCRM y commodities — sensibilidad K=4
   causal_order                                         endogenous_lags status error
   <chr>                                                          <int> <chr>  <chr>
-1 ln_pib_real -> ln_itcrm -> ln_importaciones_reales                 1 OK     <NA>
-2 ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales               1 OK     <NA>
-3 ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales               1 OK     <NA>
-4 ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales               3 OK     <NA>
+1 ln_pib_real -> ln_itcrm -> ln_importaciones_reales                 1 OK     <NA> 
+2 ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales               1 OK     <NA> 
+3 ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales               1 OK     <NA> 
+4 ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales               3 OK     <NA> 
 
 RESUMEN DE RESPUESTAS:
 # A tibble: 24 × 9
@@ -112,75 +112,75 @@ RESUMEN DE RESPUESTAS:
  3 Exportaciones clásicas      SVAR Cholesky principal   ITCRM                  0.240        0.506
  4 Exportaciones clásicas      SVAR Cholesky principal   PIB de socios          0.445        0.951
  5 Exportaciones clásicas      Proyecciones locales      ITCRM                  0.150        0.481
- 6 Exportaciones clásicas      Proyecciones locales      PIB de socios          0.830        2.01
+ 6 Exportaciones clásicas      Proyecciones locales      PIB de socios          0.830        2.01 
  7 Exportaciones ampliadas     SVAR Cholesky alternativo ITCRM                  0.238        0.279
  8 Exportaciones ampliadas     SVAR Cholesky alternativo PIB de socios          0.0731       0.314
  9 Exportaciones ampliadas     SVAR Cholesky principal   ITCRM                  0.236        0.270
 10 Exportaciones ampliadas     SVAR Cholesky principal   PIB de socios          0.160        0.414
 11 Exportaciones ampliadas     Proyecciones locales      ITCRM                  0.156        0.450
-12 Exportaciones ampliadas     Proyecciones locales      PIB de socios          0.835        2.34
+12 Exportaciones ampliadas     Proyecciones locales      PIB de socios          0.835        2.34 
 13 Exportaciones ampliadas K=4 SVAR Cholesky alternativo ITCRM                  0.203        0.327
 14 Exportaciones ampliadas K=4 SVAR Cholesky alternativo PIB de socios          0.998        0.746
 15 Exportaciones ampliadas K=4 SVAR Cholesky principal   ITCRM                  0.168        0.301
 16 Exportaciones ampliadas K=4 SVAR Cholesky principal   PIB de socios          1.09         0.906
 17 Exportaciones ampliadas K=4 Proyecciones locales      ITCRM                  0.158        0.313
-18 Exportaciones ampliadas K=4 Proyecciones locales      PIB de socios          1.21         2.20
+18 Exportaciones ampliadas K=4 Proyecciones locales      PIB de socios          1.21         2.20 
 19 Importaciones               SVAR Cholesky alternativo ITCRM                 -0.140       -0.807
-20 Importaciones               SVAR Cholesky alternativo PIB argentino          1.28         1.55
+20 Importaciones               SVAR Cholesky alternativo PIB argentino          1.28         1.55 
 21 Importaciones               SVAR Cholesky principal   ITCRM                 -0.0587      -0.709
-22 Importaciones               SVAR Cholesky principal   PIB argentino          1.29         1.70
+22 Importaciones               SVAR Cholesky principal   PIB argentino          1.29         1.70 
 23 Importaciones               Proyecciones locales      ITCRM                 -0.114       -0.503
-24 Importaciones               Proyecciones locales      PIB argentino          1.28         1.65
+24 Importaciones               Proyecciones locales      PIB argentino          1.28         1.65 
    response_h8 response_h12 expected_sign expected_sign_h4
-         <dbl>        <dbl> <chr>         <lgl>
- 1      0.573         0.576 Positivo      TRUE
- 2      0.943         0.946 Positivo      TRUE
- 3      0.561         0.565 Positivo      TRUE
- 4      1.02          1.03  Positivo      TRUE
- 5      0.392         0.361 Positivo      TRUE
- 6      1.61          1.56  Positivo      TRUE
- 7      0.288         0.291 Positivo      TRUE
- 8      0.397         0.418 Positivo      TRUE
- 9      0.277         0.279 Positivo      TRUE
-10      0.500         0.521 Positivo      TRUE
-11      0.340         0.338 Positivo      TRUE
-12      2.12          1.90  Positivo      TRUE
-13      0.326         0.322 Positivo      TRUE
-14      0.903         0.795 Positivo      TRUE
-15      0.295         0.294 Positivo      TRUE
-16      1.06          0.951 Positivo      TRUE
-17      0.0559        0.181 Positivo      TRUE
-18      2.31          2.26  Positivo      TRUE
-19     -0.940        -0.918 Negativo      TRUE
-20      1.48          1.55  Positivo      TRUE
-21     -0.846        -0.820 Negativo      TRUE
-22      1.65          1.71  Positivo      TRUE
-23     -0.435        -0.768 Negativo      TRUE
-24      1.08          1.04  Positivo      TRUE
+         <dbl>        <dbl> <chr>         <lgl>           
+ 1      0.573         0.576 Positivo      TRUE            
+ 2      0.943         0.946 Positivo      TRUE            
+ 3      0.561         0.565 Positivo      TRUE            
+ 4      1.02          1.03  Positivo      TRUE            
+ 5      0.392         0.361 Positivo      TRUE            
+ 6      1.61          1.56  Positivo      TRUE            
+ 7      0.288         0.291 Positivo      TRUE            
+ 8      0.397         0.418 Positivo      TRUE            
+ 9      0.277         0.279 Positivo      TRUE            
+10      0.500         0.521 Positivo      TRUE            
+11      0.340         0.338 Positivo      TRUE            
+12      2.12          1.90  Positivo      TRUE            
+13      0.326         0.322 Positivo      TRUE            
+14      0.903         0.795 Positivo      TRUE            
+15      0.295         0.294 Positivo      TRUE            
+16      1.06          0.951 Positivo      TRUE            
+17      0.0559        0.181 Positivo      TRUE            
+18      2.31          2.26  Positivo      TRUE            
+19     -0.940        -0.918 Negativo      TRUE            
+20      1.48          1.55  Positivo      TRUE            
+21     -0.846        -0.820 Negativo      TRUE            
+22      1.65          1.71  Positivo      TRUE            
+23     -0.435        -0.768 Negativo      TRUE            
+24      1.08          1.04  Positivo      TRUE            
 
 DECISIÓN PARA EL INFORME:
 # A tibble: 4 × 5
-  model_short                 primary_order
-  <chr>                       <chr>
-1 Importaciones               ln_pib_real -> ln_itcrm -> ln_importaciones_reales
+  model_short                 primary_order                                       
+  <chr>                       <chr>                                               
+1 Importaciones               ln_pib_real -> ln_itcrm -> ln_importaciones_reales  
 2 Exportaciones clásicas      ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales
 3 Exportaciones ampliadas     ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales
 4 Exportaciones ampliadas K=4 ln_pib_socios -> ln_itcrm -> ln_exportaciones_reales
-  alternative_order
-  <chr>
-1 ln_itcrm -> ln_pib_real -> ln_importaciones_reales
+  alternative_order                                   
+  <chr>                                               
+1 ln_itcrm -> ln_pib_real -> ln_importaciones_reales  
 2 ln_itcrm -> ln_pib_socios -> ln_exportaciones_reales
 3 ln_itcrm -> ln_pib_socios -> ln_exportaciones_reales
 4 ln_itcrm -> ln_pib_socios -> ln_exportaciones_reales
-  report_use
-  <chr>
-1 IRF indicativas del VECM con rango r=2. Interpretar con cautela por autocorrelación y no normalidad.
+  report_use                                                                                             
+  <chr>                                                                                                  
+1 IRF indicativas del VECM con rango r=2. Interpretar con cautela por autocorrelación y no normalidad.   
 2 IRF principales de exportaciones. El sistema no presenta autocorrelación, aunque se rechaza normalidad…
-3 Robustez con commodities como control exógeno estacionario.
-4 Sensibilidad con K=4. No utilizar como especificación central.
+3 Robustez con commodities como control exógeno estacionario.                                            
+4 Sensibilidad con K=4. No utilizar como especificación central.                                         
   recommended_model
-  <lgl>
-1 TRUE
-2 TRUE
-3 TRUE
-4 FALSE
+  <lgl>            
+1 TRUE             
+2 TRUE             
+3 TRUE             
+4 FALSE            

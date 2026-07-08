@@ -1,4 +1,4 @@
-﻿
+
 ============================================================
 Serie: Importaciones reales
 Transformación: Logaritmo en nivel
@@ -9,8 +9,8 @@ Criterio de rezagos: AIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -3.164"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--4.04 -3.45 -3.15
+ 1pct  5pct 10pct 
+-4.04 -3.45 -3.15 
 
 ============================================================
 Serie: Importaciones reales
@@ -22,8 +22,8 @@ Criterio de rezagos: BIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -2.958"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--4.04 -3.45 -3.15
+ 1pct  5pct 10pct 
+-4.04 -3.45 -3.15 
 
 ============================================================
 Serie: Importaciones reales
@@ -35,8 +35,8 @@ Criterio de rezagos: SW
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -3.164"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--4.04 -3.45 -3.15
+ 1pct  5pct 10pct 
+-4.04 -3.45 -3.15 
 
 ============================================================
 Serie: Exportaciones reales
@@ -48,8 +48,8 @@ Criterio de rezagos: AIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -3.197"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--4.04 -3.45 -3.15
+ 1pct  5pct 10pct 
+-4.04 -3.45 -3.15 
 
 ============================================================
 Serie: Exportaciones reales
@@ -61,8 +61,8 @@ Criterio de rezagos: BIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -3.197"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--4.04 -3.45 -3.15
+ 1pct  5pct 10pct 
+-4.04 -3.45 -3.15 
 
 ============================================================
 Serie: Exportaciones reales
@@ -74,8 +74,8 @@ Criterio de rezagos: SW
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -2.449"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--4.04 -3.45 -3.15
+ 1pct  5pct 10pct 
+-4.04 -3.45 -3.15 
 
 ============================================================
 Serie: PIB real de Argentina
@@ -87,8 +87,8 @@ Criterio de rezagos: AIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -2.764"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--4.04 -3.45 -3.15
+ 1pct  5pct 10pct 
+-4.04 -3.45 -3.15 
 
 ============================================================
 Serie: PIB real de Argentina
@@ -100,8 +100,8 @@ Criterio de rezagos: BIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -3.226"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--4.04 -3.45 -3.15
+ 1pct  5pct 10pct 
+-4.04 -3.45 -3.15 
 
 ============================================================
 Serie: PIB real de Argentina
@@ -113,8 +113,8 @@ Criterio de rezagos: SW
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -2.764"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--4.04 -3.45 -3.15
+ 1pct  5pct 10pct 
+-4.04 -3.45 -3.15 
 
 ============================================================
 Serie: ITCRM
@@ -126,8 +126,8 @@ Criterio de rezagos: AIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -1.619"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: ITCRM
@@ -139,8 +139,8 @@ Criterio de rezagos: BIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -1.619"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: ITCRM
@@ -152,8 +152,8 @@ Criterio de rezagos: SW
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -1.605"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: PIB de socios comerciales
@@ -165,8 +165,8 @@ Criterio de rezagos: AIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -2.609"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--4.04 -3.45 -3.15
+ 1pct  5pct 10pct 
+-4.04 -3.45 -3.15 
 
 ============================================================
 Serie: PIB de socios comerciales
@@ -178,8 +178,8 @@ Criterio de rezagos: BIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -2.609"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--4.04 -3.45 -3.15
+ 1pct  5pct 10pct 
+-4.04 -3.45 -3.15 
 
 ============================================================
 Serie: PIB de socios comerciales
@@ -191,8 +191,8 @@ Criterio de rezagos: SW
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -2.609"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--4.04 -3.45 -3.15
+ 1pct  5pct 10pct 
+-4.04 -3.45 -3.15 
 
 ============================================================
 Serie: Índice de commodities
@@ -204,8 +204,8 @@ Criterio de rezagos: AIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -3.333"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: Índice de commodities
@@ -217,8 +217,8 @@ Criterio de rezagos: BIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -3.333"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: Índice de commodities
@@ -230,8 +230,8 @@ Criterio de rezagos: SW
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -3.333"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: Importaciones reales
@@ -243,8 +243,8 @@ Criterio de rezagos: AIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -4.695"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: Importaciones reales
@@ -256,8 +256,8 @@ Criterio de rezagos: BIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -7.362"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: Importaciones reales
@@ -269,8 +269,8 @@ Criterio de rezagos: SW
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -4.695"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: Exportaciones reales
@@ -282,8 +282,8 @@ Criterio de rezagos: AIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -5.176"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: Exportaciones reales
@@ -295,8 +295,8 @@ Criterio de rezagos: BIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -4.944"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: Exportaciones reales
@@ -308,8 +308,8 @@ Criterio de rezagos: SW
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -5.176"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: PIB real de Argentina
@@ -321,8 +321,8 @@ Criterio de rezagos: AIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -2.648"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: PIB real de Argentina
@@ -334,8 +334,8 @@ Criterio de rezagos: BIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -2.866"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: PIB real de Argentina
@@ -347,8 +347,8 @@ Criterio de rezagos: SW
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -2.648"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: ITCRM
@@ -360,8 +360,8 @@ Criterio de rezagos: AIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -8.582"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: ITCRM
@@ -373,8 +373,8 @@ Criterio de rezagos: BIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -8.582"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: ITCRM
@@ -386,8 +386,8 @@ Criterio de rezagos: SW
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -6.079"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: PIB de socios comerciales
@@ -399,8 +399,8 @@ Criterio de rezagos: AIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -7.81"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: PIB de socios comerciales
@@ -412,8 +412,8 @@ Criterio de rezagos: BIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -9.405"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: PIB de socios comerciales
@@ -425,8 +425,8 @@ Criterio de rezagos: SW
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -9.405"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: Índice de commodities
@@ -438,8 +438,8 @@ Criterio de rezagos: AIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -6.085"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: Índice de commodities
@@ -451,8 +451,8 @@ Criterio de rezagos: BIC
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -6.356"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 
 
 ============================================================
 Serie: Índice de commodities
@@ -464,5 +464,5 @@ Criterio de rezagos: SW
 [1] "Cantidad máxima de lags:  11"
 [1] "Estadístico Tau:  -6.356"
 [1] "Valores críticos"
- 1pct  5pct 10pct
--3.51 -2.89 -2.58
+ 1pct  5pct 10pct 
+-3.51 -2.89 -2.58 

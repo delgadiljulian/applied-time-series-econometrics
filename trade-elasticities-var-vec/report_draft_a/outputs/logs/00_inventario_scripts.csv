@@ -1,4 +1,4 @@
-﻿"paso","script","ruta","existe"
+"paso","script","ruta","existe"
 1,"script01_load_data.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script01_load_data.R",TRUE
 2,"script02_daily_itcrm.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script02_daily_itcrm.R",TRUE
 3,"script03_ipm_ipx_gdp.R","C:/Users/julla/GitHub/applied-time-series-econometrics/trade-elasticities-var-vec/report_draft_a/scripts/pipeline_steps/script03_ipm_ipx_gdp.R",TRUE

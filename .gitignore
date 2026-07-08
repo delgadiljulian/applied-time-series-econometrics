@@ -53,6 +53,9 @@ vignettes/*.pdf
 # Local temporary course material not intended for public sync
 local_clases_teorico_practicas/
 
+# Local delivery bundle not intended for public sync
+entrega/
+
 # Project-local R package libraries
 **/r_libs/
 

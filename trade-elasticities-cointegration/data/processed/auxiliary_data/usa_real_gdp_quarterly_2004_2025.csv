@@ -1,4 +1,4 @@
-﻿quarter,year,q,quarter_date,stata_qdate,usa_gdp_real,ln_usa_gdp_real
+quarter,year,q,quarter_date,stata_qdate,usa_gdp_real,ln_usa_gdp_real
 2004Q1,2004,1,2004-01-01,176,15248.68,9.632248220912203
 2004Q2,2004,2,2004-04-01,177,15366.85,9.639967870831144
 2004Q3,2004,3,2004-07-01,178,15512.619,9.649409100716316

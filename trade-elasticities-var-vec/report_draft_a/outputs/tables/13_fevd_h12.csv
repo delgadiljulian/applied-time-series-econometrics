@@ -1,4 +1,4 @@
-﻿model_id,model_key,model_short,response,response_label,impulse,impulse_label,horizon,fevd_percent
+model_id,model_key,model_short,response,response_label,impulse,impulse_label,horizon,fevd_percent
 exports_classic__primary_K2,exports_classic,Exportaciones clásicas,ln_exportaciones_reales,Exportaciones reales,ln_itcrm,ITCRM,12,46.31831943405817
 exports_classic__primary_K2,exports_classic,Exportaciones clásicas,ln_exportaciones_reales,Exportaciones reales,ln_exportaciones_reales,Exportaciones reales,12,39.56843968626679
 exports_classic__primary_K2,exports_classic,Exportaciones clásicas,ln_exportaciones_reales,Exportaciones reales,ln_pib_socios,PIB de socios,12,14.113240879675038
